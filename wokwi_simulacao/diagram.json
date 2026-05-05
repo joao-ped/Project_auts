@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "author": "Voz Autista v2.0 - Comunicador Assistivo",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 200,
+      "left": 200,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd",
+      "top": -40,
+      "left": 160,
+      "attrs": {
+        "pins": "i2c"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_cat_up",
+      "top": 140,
+      "left": -120,
+      "attrs": {
+        "color": "red",
+        "label": "Cat+"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_cat_down",
+      "top": 140,
+      "left": -40,
+      "attrs": {
+        "color": "yellow",
+        "label": "Cat-"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_word_up",
+      "top": 140,
+      "left": 40,
+      "attrs": {
+        "color": "green",
+        "label": "Pal+"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_word_down",
+      "top": 140,
+      "left": 120,
+      "attrs": {
+        "color": "blue",
+        "label": "Pal-"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_speak",
+      "top": 140,
+      "left": 200,
+      "attrs": {
+        "color": "black",
+        "label": "FALAR"
+      }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzzer",
+      "top": 40,
+      "left": 520,
+      "attrs": {
+        "volume": "0.05"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_vibrate",
+      "top": 120,
+      "left": 540,
+      "attrs": {
+        "color": "green",
+        "label": "Vibracao"
+      }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot_volume",
+      "top": 360,
+      "left": -100,
+      "attrs": {
+        "value": "512"
+      }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot_battery",
+      "top": 360,
+      "left": 40,
+      "attrs": {
+        "value": "800"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_dfplayer",
+      "top": 400,
+      "left": 520,
+      "rotate": 90,
+      "attrs": {
+        "value": "1000"
+      }
+    }
+  ],
+  "connections": [
+    ["uno:2", "btn_cat_up:1.r", "red", ["v-30", "h-180"]],
+    ["btn_cat_up:2.r", "uno:GND.1", "black", ["v30", "h100"]],
+
+    ["uno:3", "btn_cat_down:1.r", "#CCCC00", ["v-30", "h-120"]],
+    ["btn_cat_down:2.r", "uno:GND.1", "black", ["v30", "h60"]],
+
+    ["uno:4", "btn_word_up:1.r", "green", ["v-30", "h-60"]],
+    ["btn_word_up:2.r", "uno:GND.1", "black", ["v30", "h20"]],
+
+    ["uno:5", "btn_word_down:1.r", "blue", ["v-30", "h0"]],
+    ["btn_word_down:2.r", "uno:GND.1", "black", ["v30", "h-20"]],
+
+    ["uno:6", "btn_speak:1.r", "gray", ["v-30", "h40"]],
+    ["btn_speak:2.r", "uno:GND.1", "black", ["v30", "h-60"]],
+
+    ["lcd:GND", "uno:GND.2", "black", ["v0"]],
+    ["lcd:VCC", "uno:5V", "red", ["v0"]],
+    ["lcd:SDA", "uno:A4", "green", ["v0"]],
+    ["lcd:SCL", "uno:A5", "orange", ["v0"]],
+
+    ["uno:9", "buzzer:1", "brown", ["v0"]],
+    ["buzzer:2", "uno:GND.3", "black", ["v0"]],
+
+    ["uno:7", "led_vibrate:A", "green", ["v0"]],
+    ["led_vibrate:C", "uno:GND.3", "black", ["v0"]],
+
+    ["pot_volume:SIG", "uno:A0", "purple", ["v0"]],
+    ["pot_volume:VCC", "uno:5V", "red", ["v0"]],
+    ["pot_volume:GND", "uno:GND.1", "black", ["v0"]],
+
+    ["pot_battery:SIG", "uno:A1", "orange", ["v0"]],
+    ["pot_battery:VCC", "uno:5V", "red", ["v0"]],
+    ["pot_battery:GND", "uno:GND.1", "black", ["v0"]],
+
+    ["uno:11", "r_dfplayer:1", "cyan", ["v0"]],
+    ["r_dfplayer:2", "uno:GND.3", "black", ["v0"]]
+  ]
+}

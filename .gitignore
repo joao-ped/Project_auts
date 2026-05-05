@@ -1,0 +1,23 @@
+# Build
+*.o
+*.elf
+*.hex
+*.bin
+
+# IDE
+.vscode/
+*.code-workspace
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# STL exports (regenerate from .scad)
+*.stl
+
+# Temp
+*.tmp
+*.bak
+~$*

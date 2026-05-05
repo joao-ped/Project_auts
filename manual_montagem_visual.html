@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Montagem v2.0 - Voz Autista</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+        :root {
+            --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;
+            --accent:#f59e0b;--accent-light:#fef3c7;
+            --success:#10b981;--success-light:#d1fae5;
+            --danger:#ef4444;--danger-light:#fee2e2;
+            --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;
+            --g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;--g900:#111827;
+            --shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);
+            --shadow-lg:0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -4px rgba(0,0,0,.04);
+            --radius:16px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:linear-gradient(180deg,#f0f4ff,#fafbff 50%,#f8fafc);color:var(--g800);line-height:1.7}
+        .container{max-width:960px;margin:0 auto;padding:30px 20px}
+        header{background:linear-gradient(135deg,#1e3a5f,#2563eb 50%,#3b82f6);color:#fff;padding:55px 40px;text-align:center;border-radius:var(--radius);margin-bottom:40px;position:relative;overflow:hidden;box-shadow:0 20px 25px -5px rgba(0,0,0,.1)}
+        header::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 70%,rgba(255,255,255,.08) 0%,transparent 50%);pointer-events:none}
+        header h1{font-size:2.6em;font-weight:800;letter-spacing:-.02em;text-shadow:0 2px 4px rgba(0,0,0,.2)}
+        header .subtitle{font-size:1.25em;font-weight:300;opacity:.95;margin:6px 0}
+        header .badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:6px 16px;border-radius:20px;font-size:.85em;margin-top:10px;font-weight:500}
+        .step{background:#fff;border-radius:var(--radius);padding:36px;margin-bottom:32px;box-shadow:var(--shadow-md);border:1px solid var(--g200);transition:box-shadow .2s}
+        .step:hover{box-shadow:var(--shadow-lg)}
+        .step-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+        .step-number{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4em;font-weight:700;flex-shrink:0;box-shadow:0 4px 12px rgba(37,99,235,.3)}
+        .step-number.gold{background:linear-gradient(135deg,var(--accent),#d97706)}
+        .step-title{font-size:1.5em;font-weight:700;color:var(--g900)}
+        .step-desc{margin-bottom:24px;color:var(--g600);font-size:1.05em}
+        .diagram-container{background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:24px;margin:20px 0;text-align:center;overflow-x:auto}
+        .diagram-container p{font-weight:600;margin-bottom:12px;color:var(--g700)}
+        .tip{background:var(--accent-light);border-left:4px solid var(--accent);padding:16px 20px;margin:20px 0;border-radius:0 12px 12px 0;font-size:.95em}
+        .tip strong{color:#92400e}
+        .warning{background:var(--danger-light);border-left:4px solid var(--danger);padding:16px 20px;margin:20px 0;border-radius:0 12px 12px 0;font-size:.95em}
+        .warning strong{color:#991b1b}
+        .info{background:var(--primary-light);border-left:4px solid var(--primary);padding:16px 20px;margin:20px 0;border-radius:0 12px 12px 0;font-size:.95em}
+        .info strong{color:#1e40af}
+        .materials-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:20px 0}
+        .material-item{background:var(--g50);padding:12px 16px;border-radius:10px;border:1px solid var(--g200);display:flex;align-items:center;gap:10px;font-size:.92em;transition:background .15s}
+        .material-item:hover{background:var(--primary-light)}
+        .material-item .qty{background:var(--primary);color:#fff;min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8em;font-weight:700;flex-shrink:0}
+        .material-item.new{border-color:#10b981;background:#ecfdf5}
+        .material-item.new .qty{background:#10b981}
+        .pin-table{width:100%;border-collapse:separate;border-spacing:0;margin:20px 0;border-radius:12px;overflow:hidden;border:1px solid var(--g200);font-size:.9em}
+        .pin-table th{background:var(--g800);color:#fff;padding:12px 14px;text-align:left;font-weight:600;font-size:.85em;text-transform:uppercase;letter-spacing:.03em}
+        .pin-table td{padding:10px 14px;border-bottom:1px solid var(--g100)}
+        .pin-table tr:nth-child(even) td{background:var(--g50)}
+        .pin-table tr:hover td{background:var(--primary-light)}
+        .pin-table tr.new-row td{background:#ecfdf5}
+        .color-dot{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:6px;vertical-align:middle;border:2px solid rgba(0,0,0,.1)}
+        .checklist{list-style:none;margin:16px 0}
+        .checklist li{padding:10px 16px;margin:6px 0;background:var(--success-light);border-radius:8px;border:1px solid #a7f3d0;font-size:.95em;display:flex;align-items:center;gap:10px}
+        .checklist li::before{content:'✓';background:var(--success);color:#fff;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8em;font-weight:700;flex-shrink:0}
+        .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+        .troubleshoot-item{padding:14px 18px;margin:8px 0;background:var(--accent-light);border-radius:10px;border:1px solid #fde68a}
+        .troubleshoot-item .problem{font-weight:600;color:#92400e;margin-bottom:4px}
+        .troubleshoot-item .solution{font-size:.9em;color:#78350f}
+        .new-badge{background:#10b981;color:#fff;font-size:.7em;padding:2px 8px;border-radius:6px;font-weight:700;margin-left:8px;vertical-align:middle}
+        svg{max-width:100%;height:auto}
+        svg text{font-family:'Inter',sans-serif}
+        footer{text-align:center;padding:40px 20px;color:var(--g500);font-size:.9em}
+        footer a{color:var(--primary);text-decoration:none;font-weight:500}
+        @media(max-width:768px){.container{padding:15px}header{padding:35px 20px}header h1{font-size:1.8em}.step{padding:22px}.step-title{font-size:1.15em}.materials-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}}
+        @media print{.step{break-inside:avoid}body{background:#fff}}
+    </style>
+</head>
+<body>
+<div class="container">
+
+<header>
+    <h1>Manual de Montagem v2.0</h1>
+    <p class="subtitle">Voz Autista &mdash; Comunicador Assistivo</p>
+    <span class="badge">7 Categorias &bull; 35 Palavras &bull; Frases Compostas &bull; Bateria</span>
+</header>
+
+<!-- ==================== MATERIAIS ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">0</div>
+        <div class="step-title">Lista de Materiais</div>
+    </div>
+    <p class="step-desc">Componentes originais + novos para a v2.0 (marcados em verde).</p>
+    <div class="materials-grid">
+        <div class="material-item"><span class="qty">1x</span>Arduino Uno R3</div>
+        <div class="material-item"><span class="qty">1x</span>LCD 16x2 com I2C</div>
+        <div class="material-item"><span class="qty">1x</span>DFPlayer Mini MP3</div>
+        <div class="material-item"><span class="qty">1x</span>Alto-falante 8&#8486; 2W 40mm</div>
+        <div class="material-item"><span class="qty">5x</span>Botoes 12mm (5 cores)</div>
+        <div class="material-item"><span class="qty">1x</span>Resistor 1k&#8486; (DFPlayer)</div>
+        <div class="material-item"><span class="qty">1x</span>Cartao microSD FAT32</div>
+        <div class="material-item"><span class="qty">~</span>Fios jumper variados</div>
+        <div class="material-item"><span class="qty">4x</span>Parafusos M2.5 + M3</div>
+        <div class="material-item"><span class="qty">1x</span>Case 3D (base + tampa)</div>
+        <div class="material-item new"><span class="qty">1x</span>Potenciometro 10k&#8486; linear <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Motor vibracao coin 10mm <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Transistor NPN 2N2222 <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Diodo 1N4148 <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Resistor 1k&#8486; (transistor) <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">2x</span>Resistor 10k&#8486; (bateria) <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Bateria 18650 3.7V <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Modulo TP4056 carregador <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Chave deslizante on/off <span class="new-badge">NOVO</span></div>
+    </div>
+
+    <div class="diagram-container">
+        <svg width="840" height="360" viewBox="0 0 840 360">
+            <defs>
+                <filter id="sh" x="-8%" y="-8%" width="120%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".12"/></filter>
+                <linearGradient id="brd" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0369a1"/></linearGradient>
+                <linearGradient id="dfp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
+                <linearGradient id="lcd" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#166534"/><stop offset="100%" stop-color="#14532d"/></linearGradient>
+                <radialGradient id="spk" cx="40%" cy="40%"><stop offset="0%" stop-color="#525252"/><stop offset="100%" stop-color="#1c1917"/></radialGradient>
+                <linearGradient id="mtl" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#e5e7eb"/><stop offset="50%" stop-color="#d1d5db"/><stop offset="100%" stop-color="#9ca3af"/></linearGradient>
+                <linearGradient id="bat" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
+                <linearGradient id="tp4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#5b21b6"/></linearGradient>
+            </defs>
+            <!-- Arduino -->
+            <g filter="url(#sh)"><rect x="20" y="25" width="120" height="95" rx="5" fill="url(#brd)"/><rect x="17" y="50" width="14" height="22" rx="3" fill="url(#mtl)" stroke="#9ca3af" stroke-width="1"/></g>
+            <text x="80" y="145" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">Arduino Uno</text>
+            <!-- LCD -->
+            <g filter="url(#sh)"><rect x="170" y="25" width="130" height="65" rx="4" fill="url(#lcd)"/><rect x="180" y="33" width="110" height="40" rx="2" fill="#0f172a"/><text x="235" y="55" text-anchor="middle" fill="#4ade80" font-size="8" font-family="'JetBrains Mono'">Voz Autista</text></g>
+            <text x="235" y="110" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">LCD 16x2 I2C</text>
+            <!-- DFPlayer -->
+            <g filter="url(#sh)"><rect x="330" y="30" width="55" height="55" rx="3" fill="url(#dfp)"/><rect x="340" y="65" width="35" height="14" rx="2" fill="#292524"/></g>
+            <text x="358" y="110" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">DFPlayer</text>
+            <!-- Speaker -->
+            <g filter="url(#sh)"><circle cx="440" cy="57" r="30" fill="url(#spk)"/><circle cx="440" cy="57" r="20" fill="none" stroke="#404040" stroke-width="1"/><circle cx="440" cy="57" r="7" fill="#292524"/></g>
+            <text x="440" y="105" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">Speaker 40mm</text>
+            <!-- Botoes -->
+            <g transform="translate(20,160)">
+                <g filter="url(#sh)"><rect x="0" y="0" width="28" height="28" rx="6" fill="#ef4444"/><circle cx="14" cy="14" r="8" fill="#dc2626"/></g>
+                <g filter="url(#sh)"><rect x="40" y="0" width="28" height="28" rx="6" fill="#eab308"/><circle cx="54" cy="14" r="8" fill="#ca8a04"/></g>
+                <g filter="url(#sh)"><rect x="80" y="0" width="28" height="28" rx="6" fill="#22c55e"/><circle cx="94" cy="14" r="8" fill="#16a34a"/></g>
+                <g filter="url(#sh)"><rect x="120" y="0" width="28" height="28" rx="6" fill="#3b82f6"/><circle cx="134" cy="14" r="8" fill="#2563eb"/></g>
+                <g filter="url(#sh)"><rect x="160" y="0" width="28" height="28" rx="6" fill="#374151"/><circle cx="174" cy="14" r="8" fill="#1f2937"/></g>
+            </g>
+            <text x="114" y="210" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">5 Botoes (12mm)</text>
+            <!-- Resistor -->
+            <g filter="url(#sh)" transform="translate(520,30)"><rect x="5" y="5" width="50" height="16" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/><rect x="14" y="5" width="6" height="16" rx="1" fill="#92400e"/><rect x="24" y="5" width="6" height="16" rx="1" fill="#1c1917"/><rect x="34" y="5" width="6" height="16" rx="1" fill="#dc2626"/></g>
+            <text x="550" y="70" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">Resistor 1k&#8486;</text>
+
+            <!-- === NOVOS COMPONENTES (v2.0) === -->
+            <!-- Potenciometro -->
+            <g filter="url(#sh)" transform="translate(510,100)">
+                <circle cx="25" cy="25" r="22" fill="var(--g200)" stroke="var(--g400)" stroke-width="2"/>
+                <circle cx="25" cy="25" r="14" fill="var(--g300)"/>
+                <line x1="25" y1="25" x2="25" y2="8" stroke="var(--g800)" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <text x="535" y="165" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">Pot. Volume</text>
+            <text x="535" y="177" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
+
+            <!-- Bateria 18650 -->
+            <g filter="url(#sh)" transform="translate(620,20)">
+                <rect x="0" y="0" width="75" height="24" rx="12" fill="url(#bat)"/>
+                <rect x="75" y="5" width="5" height="14" rx="2" fill="#93c5fd"/>
+                <text x="38" y="16" text-anchor="middle" fill="#fff" font-size="8" font-weight="600">18650</text>
+            </g>
+            <text x="658" y="65" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">Bateria 3.7V</text>
+            <text x="658" y="77" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
+
+            <!-- TP4056 -->
+            <g filter="url(#sh)" transform="translate(625,90)">
+                <rect x="0" y="0" width="55" height="30" rx="3" fill="url(#tp4)"/>
+                <rect x="0" y="10" width="8" height="10" rx="2" fill="var(--g300)"/>
+                <text x="30" y="19" text-anchor="middle" fill="#fff" font-size="7" font-weight="600">TP4056</text>
+            </g>
+            <text x="653" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">Carregador</text>
+            <text x="653" y="152" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
+
+            <!-- Motor vibracao -->
+            <g filter="url(#sh)" transform="translate(625,165)">
+                <circle cx="18" cy="18" r="16" fill="var(--g400)" stroke="var(--g500)" stroke-width="2"/>
+                <circle cx="18" cy="18" r="6" fill="var(--g600)"/>
+                <rect x="14" y="14" width="8" height="8" rx="1" fill="var(--g300)" transform="rotate(45,18,18)"/>
+            </g>
+            <text x="643" y="215" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">Motor Vibra.</text>
+            <text x="643" y="227" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
+
+            <!-- Transistor -->
+            <g filter="url(#sh)" transform="translate(720,165)">
+                <path d="M15,0 L30,35 L0,35 Z" fill="#1e293b" stroke="#374151" stroke-width="1.5"/>
+                <text x="15" y="24" text-anchor="middle" fill="#fff" font-size="6">2N</text>
+            </g>
+            <text x="735" y="215" text-anchor="middle" fill="#10b981" font-size="9" font-weight="700">2N2222</text>
+            <text x="735" y="227" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
+
+            <!-- Chave -->
+            <g filter="url(#sh)" transform="translate(720,90)">
+                <rect x="0" y="0" width="35" height="16" rx="8" fill="var(--g300)" stroke="var(--g400)" stroke-width="1.5"/>
+                <circle cx="25" cy="8" r="6" fill="#10b981"/>
+            </g>
+            <text x="738" y="125" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">On/Off</text>
+            <text x="738" y="137" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
+
+            <!-- Div. tensao resistors -->
+            <g filter="url(#sh)" transform="translate(510,195)">
+                <rect x="0" y="0" width="40" height="14" rx="7" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+                <rect x="0" y="20" width="40" height="14" rx="7" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+            </g>
+            <text x="530" y="245" text-anchor="middle" fill="#10b981" font-size="9" font-weight="700">2x 10k&#8486;</text>
+            <text x="530" y="257" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
+
+            <!-- microSD -->
+            <g filter="url(#sh)" transform="translate(240,160)">
+                <rect x="5" y="0" width="28" height="20" rx="3" fill="#1e293b"/><rect x="0" y="8" width="38" height="24" rx="3" fill="#374151"/>
+            </g>
+            <text x="259" y="210" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">microSD</text>
+            <text x="259" y="222" text-anchor="middle" fill="var(--g500)" font-size="8">35 MP3s</text>
+
+            <!-- Jumpers -->
+            <g transform="translate(320,160)">
+                <line x1="5" y1="8" x2="55" y2="8" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                <line x1="5" y1="20" x2="55" y2="20" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+                <line x1="5" y1="32" x2="55" y2="32" stroke="#22c55e" stroke-width="3" stroke-linecap="round"/>
+                <line x1="5" y1="44" x2="55" y2="44" stroke="#a855f7" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <text x="350" y="222" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">Jumpers</text>
+
+            <!-- Cola + Diodo -->
+            <g filter="url(#sh)" transform="translate(420,165)">
+                <rect x="0" y="5" width="10" height="25" rx="2" fill="#f97316"/>
+                <polygon points="5,0 10,5 0,5" fill="#f97316"/>
+            </g>
+            <text x="425" y="210" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="600">Cola</text>
+
+            <g filter="url(#sh)" transform="translate(450,160)">
+                <polygon points="10,0 20,15 0,15" fill="#1e293b" stroke="#374151" stroke-width="1"/>
+                <line x1="0" y1="15" x2="20" y2="15" stroke="#374151" stroke-width="2"/>
+            </g>
+            <text x="460" y="195" text-anchor="middle" fill="#10b981" font-size="9" font-weight="700">1N4148</text>
+
+            <!-- Legenda -->
+            <rect x="20" y="270" width="800" height="70" rx="10" fill="#fff" stroke="var(--g200)" stroke-width="1"/>
+            <text x="40" y="295" fill="var(--g800)" font-size="11" font-weight="700">Novidades v2.0:</text>
+            <text x="40" y="320" fill="var(--g600)" font-size="10">Potenciometro (volume) + Bateria 18650 + TP4056 (carga) + Motor vibracao + Chave on/off + Divisor tensao + Transistor + Diodo</text>
+        </svg>
+    </div>
+</div>
+
+<!-- ==================== ETAPA 1: Arduino ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">1</div>
+        <div class="step-title">Fixar Arduino + TP4056 + Bateria na Base</div>
+    </div>
+    <p class="step-desc">Fixe o Arduino no canto inferior-esquerdo. Instale a bateria 18650 no centro e o modulo TP4056 ao lado do Arduino. Conecte a chave on/off.</p>
+    <div class="diagram-container">
+        <svg width="780" height="420" viewBox="0 0 780 420">
+            <defs><linearGradient id="case1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#bfdbfe"/><stop offset="100%" stop-color="#93c5fd"/></linearGradient></defs>
+            <text x="390" y="22" text-anchor="middle" fill="var(--g700)" font-size="14" font-weight="700">BASE DO CASE (vista de cima)</text>
+            <!-- Case -->
+            <rect x="50" y="40" width="680" height="350" rx="20" fill="url(#case1)" stroke="#60a5fa" stroke-width="2.5"/>
+            <rect x="63" y="53" width="654" height="324" rx="14" fill="#e0f2fe"/>
+            <!-- Aberturas -->
+            <rect x="46" y="130" width="20" height="40" rx="3" fill="#fff" stroke="#60a5fa" stroke-width="2"/>
+            <text x="34" y="155" text-anchor="end" fill="var(--g600)" font-size="9" font-weight="600">USB</text>
+            <rect x="46" y="200" width="20" height="35" rx="3" fill="#fff" stroke="#60a5fa" stroke-width="2"/>
+            <text x="34" y="222" text-anchor="end" fill="var(--g600)" font-size="9" font-weight="600">Carga</text>
+            <rect x="46" y="260" width="20" height="18" rx="3" fill="#fff" stroke="#10b981" stroke-width="2"/>
+            <text x="34" y="273" text-anchor="end" fill="#10b981" font-size="9" font-weight="600">On/Off</text>
+            <rect x="714" y="130" width="20" height="35" rx="3" fill="#fff" stroke="#60a5fa" stroke-width="2"/>
+            <text x="748" y="152" fill="var(--g600)" font-size="9" font-weight="600">SD</text>
+            <rect x="714" y="200" width="20" height="24" rx="3" fill="#fff" stroke="#10b981" stroke-width="2"/>
+            <text x="748" y="216" fill="#10b981" font-size="9" font-weight="600">Vol</text>
+
+            <!-- Arduino -->
+            <g filter="url(#sh)">
+                <rect x="85" y="75" width="170" height="200" rx="6" fill="url(#brd)" opacity=".9"/>
+                <rect x="81" y="140" width="18" height="28" rx="3" fill="url(#mtl)"/>
+                <rect x="81" y="210" width="16" height="22" rx="4" fill="#1e293b"/>
+            </g>
+            <text x="170" y="175" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">ARDUINO</text>
+            <text x="170" y="193" text-anchor="middle" fill="#fff" font-size="11">UNO R3</text>
+
+            <!-- TP4056 -->
+            <g filter="url(#sh)">
+                <rect x="85" y="290" width="70" height="40" rx="4" fill="url(#tp4)"/>
+                <rect x="81" y="302" width="8" height="14" rx="2" fill="var(--g300)"/>
+            </g>
+            <text x="120" y="315" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">TP4056</text>
+            <text x="120" y="348" text-anchor="middle" fill="#10b981" font-size="10" font-weight="600">Carregador</text>
+
+            <!-- Bateria 18650 -->
+            <g filter="url(#sh)">
+                <rect x="280" y="140" width="190" height="55" rx="27" fill="url(#bat)"/>
+                <rect x="470" y="152" width="10" height="31" rx="4" fill="#93c5fd"/>
+                <text x="375" y="172" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">BATERIA 18650</text>
+            </g>
+            <text x="375" y="215" text-anchor="middle" fill="#10b981" font-size="10" font-weight="600">3.7V - Centro da base</text>
+
+            <!-- Chave on/off -->
+            <g filter="url(#sh)">
+                <rect x="175" y="296" width="50" height="22" rx="11" fill="var(--g300)" stroke="var(--g400)" stroke-width="1.5"/>
+                <circle cx="210" cy="307" r="8" fill="#10b981"/>
+            </g>
+            <text x="200" y="335" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600">ON/OFF</text>
+
+            <!-- Circuito alimentacao -->
+            <g transform="translate(280, 240)">
+                <rect x="0" y="0" width="320" height="120" rx="10" fill="#fff" stroke="var(--g200)" stroke-width="1.5" filter="url(#sh)"/>
+                <text x="160" y="20" text-anchor="middle" fill="var(--g700)" font-size="11" font-weight="700">Circuito de alimentacao:</text>
+                <text x="20" y="42" fill="var(--g700)" font-size="9" font-family="'JetBrains Mono'">TP4056 OUT+ → Chave ON/OFF → Arduino VIN</text>
+                <text x="20" y="60" fill="var(--g700)" font-size="9" font-family="'JetBrains Mono'">TP4056 OUT- → Arduino GND</text>
+                <text x="20" y="78" fill="var(--g700)" font-size="9" font-family="'JetBrains Mono'">TP4056 B+  → Bateria (+)</text>
+                <text x="20" y="96" fill="var(--g700)" font-size="9" font-family="'JetBrains Mono'">TP4056 B-  → Bateria (-)</text>
+                <text x="20" y="114" fill="var(--g500)" font-size="8">USB do TP4056 = porta de carga (lateral do case)</text>
+            </g>
+
+            <!-- DFPlayer placeholder -->
+            <rect x="540" y="85" width="85" height="85" rx="5" fill="url(#dfp)" opacity=".3" stroke="#7f1d1d" stroke-width="1" stroke-dasharray="5,3"/>
+            <text x="583" y="135" text-anchor="middle" fill="#991b1b" font-size="10" opacity=".6">DFPlayer</text>
+            <text x="583" y="150" text-anchor="middle" fill="var(--g500)" font-size="8">(Etapa 2)</text>
+        </svg>
+    </div>
+    <div class="warning">
+        <strong>Aten&ccedil;ao:</strong> Respeite a polaridade da bateria 18650. Inversao de polaridade danifica o TP4056 e o Arduino permanentemente.
+    </div>
+</div>
+
+<!-- ==================== ETAPA 2: DFPlayer + Vibra&ccedil;ao ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">2</div>
+        <div class="step-title">DFPlayer Mini + Motor de Vibra&ccedil;ao</div>
+    </div>
+    <p class="step-desc">Instale o DFPlayer no lado direito. Conecte o motor de vibra&ccedil;ao via transistor NPN. O motor fornece feedback tatil nos botoes.</p>
+    <div class="diagram-container">
+        <p>Circuito do motor de vibra&ccedil;ao (NOVO v2.0)</p>
+        <svg width="600" height="180" viewBox="0 0 600 180">
+            <!-- Arduino pin D7 -->
+            <rect x="20" y="65" width="70" height="35" rx="8" fill="url(#brd)"/>
+            <text x="55" y="87" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">D7</text>
+            <text x="55" y="55" text-anchor="middle" fill="#0369a1" font-size="9" font-weight="600">Arduino</text>
+            <!-- Wire -->
+            <line x1="90" y1="82" x2="130" y2="82" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/>
+            <!-- Resistor 1k base -->
+            <rect x="130" y="70" width="55" height="24" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="157" y="86" text-anchor="middle" fill="#92400e" font-size="9" font-weight="700">1k&#8486;</text>
+            <!-- Wire to transistor -->
+            <line x1="185" y1="82" x2="230" y2="82" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/>
+            <!-- Transistor 2N2222 -->
+            <g transform="translate(230,55)">
+                <circle cx="25" cy="27" r="22" fill="none" stroke="var(--g400)" stroke-width="1.5"/>
+                <rect x="0" y="12" width="5" height="30" fill="var(--g700)"/>
+                <line x1="5" y1="15" x2="25" y2="5" stroke="var(--g700)" stroke-width="2"/>
+                <line x1="5" y1="39" x2="25" y2="49" stroke="var(--g700)" stroke-width="2"/>
+                <line x1="5" y1="27" x2="25" y2="27" stroke="var(--g700)" stroke-width="2"/>
+                <!-- Arrow -->
+                <polygon points="20,46 25,49 22,43" fill="var(--g700)"/>
+                <text x="25" y="70" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="600">2N2222</text>
+            </g>
+            <text x="242" y="50" fill="var(--g500)" font-size="8">B</text>
+            <text x="265" y="50" fill="var(--g500)" font-size="8">C</text>
+            <text x="265" y="118" fill="var(--g500)" font-size="8">E</text>
+            <!-- Collector to motor -->
+            <line x1="255" y1="60" x2="255" y2="35" stroke="var(--g700)" stroke-width="2"/>
+            <line x1="255" y1="35" x2="330" y2="35" stroke="var(--g700)" stroke-width="2"/>
+            <!-- Motor -->
+            <circle cx="370" cy="35" r="22" fill="var(--g300)" stroke="var(--g500)" stroke-width="2"/>
+            <circle cx="370" cy="35" r="8" fill="var(--g500)"/>
+            <text x="370" y="39" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">M</text>
+            <text x="370" y="70" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="600">Motor</text>
+            <!-- Motor to 5V -->
+            <line x1="392" y1="35" x2="450" y2="35" stroke="#ef4444" stroke-width="2"/>
+            <rect x="450" y="22" width="40" height="26" rx="6" fill="#ef4444"/>
+            <text x="470" y="39" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">5V</text>
+            <!-- Diodo flyback -->
+            <line x1="330" y1="35" x2="330" y2="10" stroke="var(--g500)" stroke-width="1.5"/>
+            <line x1="392" y1="35" x2="392" y2="10" stroke="var(--g500)" stroke-width="1.5"/>
+            <polygon points="330,10 392,10 361,0" fill="none" stroke="var(--g500)" stroke-width="1.5"/>
+            <line x1="330" y1="0" x2="392" y2="0" stroke="var(--g500)" stroke-width="2"/>
+            <text x="361" y="-5" text-anchor="middle" fill="#10b981" font-size="8" font-weight="600">1N4148 (flyback)</text>
+            <!-- Emitter to GND -->
+            <line x1="255" y1="104" x2="255" y2="140" stroke="var(--g700)" stroke-width="2"/>
+            <rect x="235" y="140" width="40" height="22" rx="6" fill="var(--g800)"/>
+            <text x="255" y="155" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">GND</text>
+        </svg>
+    </div>
+    <div class="diagram-container">
+        <p>Conexao DFPlayer Mini (mesmo da v1.0)</p>
+        <svg width="520" height="90" viewBox="0 0 520 90">
+            <rect x="20" y="25" width="80" height="35" rx="8" fill="url(#brd)"/>
+            <text x="60" y="47" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">D11</text>
+            <line x1="100" y1="42" x2="145" y2="42" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/>
+            <rect x="145" y="30" width="70" height="24" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+            <text x="180" y="46" text-anchor="middle" fill="#92400e" font-size="9" font-weight="700">1k&#8486;</text>
+            <line x1="215" y1="42" x2="270" y2="42" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/>
+            <rect x="270" y="25" width="80" height="35" rx="8" fill="url(#dfp)"/>
+            <text x="310" y="47" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">RX</text>
+            <text x="60" y="18" text-anchor="middle" fill="#0369a1" font-size="9" font-weight="600">Arduino</text>
+            <text x="310" y="18" text-anchor="middle" fill="#991b1b" font-size="9" font-weight="600">DFPlayer</text>
+            <text x="430" y="42" fill="var(--g500)" font-size="9">D10 &#8592; DFPlayer TX</text>
+            <text x="430" y="58" fill="var(--g500)" font-size="9">SPK1/SPK2 &#8594; Speaker</text>
+        </svg>
+    </div>
+    <div class="tip">
+        <strong>Dica:</strong> O diodo 1N4148 protege o transistor contra picos de tensao do motor. Catodo (faixa) voltado para o 5V, anodo para o coletor.
+    </div>
+</div>
+
+<!-- ==================== ETAPA 3: Potenciometro + Bateria ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">3</div>
+        <div class="step-title">Potenciometro de Volume + Monitor de Bateria <span class="new-badge">NOVO</span></div>
+    </div>
+    <p class="step-desc">Instale o potenciometro na lateral do case. Monte o divisor de tensao para monitorar a bateria.</p>
+    <div class="diagram-container">
+        <p>Potenciometro de volume (A0)</p>
+        <svg width="520" height="120" viewBox="0 0 520 120">
+            <rect x="20" y="35" width="70" height="35" rx="8" fill="url(#brd)"/>
+            <text x="55" y="57" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">A0</text>
+            <line x1="90" y1="52" x2="160" y2="52" stroke="#f97316" stroke-width="3" stroke-linecap="round"/>
+            <!-- Pot -->
+            <circle cx="200" cy="52" r="30" fill="var(--g100)" stroke="var(--g400)" stroke-width="2.5"/>
+            <circle cx="200" cy="52" r="18" fill="var(--g200)" stroke="var(--g300)" stroke-width="1.5"/>
+            <line x1="200" y1="52" x2="200" y2="28" stroke="var(--g800)" stroke-width="4" stroke-linecap="round"/>
+            <text x="200" y="100" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">10k&#8486; Linear</text>
+            <!-- Legs -->
+            <line x1="175" y1="82" x2="175" y2="105" stroke="#ef4444" stroke-width="2"/>
+            <text x="175" y="115" text-anchor="middle" fill="#ef4444" font-size="8" font-weight="600">5V</text>
+            <line x1="225" y1="82" x2="225" y2="105" stroke="var(--g700)" stroke-width="2"/>
+            <text x="225" y="115" text-anchor="middle" fill="var(--g700)" font-size="8" font-weight="600">GND</text>
+            <!-- Info -->
+            <text x="320" y="45" fill="var(--g600)" font-size="10">Pino central (wiper) → A0</text>
+            <text x="320" y="62" fill="var(--g600)" font-size="10">Pino esquerdo → 5V</text>
+            <text x="320" y="79" fill="var(--g600)" font-size="10">Pino direito → GND</text>
+        </svg>
+    </div>
+    <div class="diagram-container">
+        <p>Divisor de tensao para bateria (A1)</p>
+        <svg width="400" height="180" viewBox="0 0 400 180">
+            <!-- Battery -->
+            <rect x="30" y="30" width="60" height="22" rx="11" fill="url(#bat)"/>
+            <text x="60" y="45" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">BAT+</text>
+            <!-- Wire down -->
+            <line x1="60" y1="52" x2="60" y2="70" stroke="#ef4444" stroke-width="2"/>
+            <!-- R1 10k -->
+            <rect x="38" y="70" width="44" height="20" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="60" y="84" text-anchor="middle" fill="#92400e" font-size="8" font-weight="700">10k&#8486;</text>
+            <!-- Junction -->
+            <line x1="60" y1="90" x2="60" y2="100" stroke="var(--g700)" stroke-width="2"/>
+            <circle cx="60" cy="100" r="4" fill="var(--g700)"/>
+            <!-- Wire to A1 -->
+            <line x1="64" y1="100" x2="180" y2="100" stroke="#f97316" stroke-width="3" stroke-linecap="round"/>
+            <rect x="180" y="85" width="60" height="30" rx="8" fill="url(#brd)"/>
+            <text x="210" y="104" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">A1</text>
+            <text x="210" y="78" text-anchor="middle" fill="#0369a1" font-size="9" font-weight="600">Arduino</text>
+            <!-- R2 10k -->
+            <line x1="60" y1="104" x2="60" y2="115" stroke="var(--g700)" stroke-width="2"/>
+            <rect x="38" y="115" width="44" height="20" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="60" y="129" text-anchor="middle" fill="#92400e" font-size="8" font-weight="700">10k&#8486;</text>
+            <!-- GND -->
+            <line x1="60" y1="135" x2="60" y2="155" stroke="var(--g700)" stroke-width="2"/>
+            <rect x="40" y="155" width="40" height="18" rx="5" fill="var(--g800)"/>
+            <text x="60" y="168" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">GND</text>
+            <!-- Formula -->
+            <text x="290" y="50" fill="var(--g700)" font-size="11" font-weight="600">V(A1) = V(bat) / 2</text>
+            <text x="290" y="72" fill="var(--g600)" font-size="10">4.2V cheio → 2.1V → ADC 430</text>
+            <text x="290" y="90" fill="var(--g600)" font-size="10">3.0V vazio → 1.5V → ADC 307</text>
+            <text x="290" y="115" fill="var(--g600)" font-size="10">Icone no LCD (pos 15,0):</text>
+            <text x="305" y="135" fill="var(--g600)" font-size="10">&#9608;&#9608; cheio / &#9608; meio / &#9601; baixo</text>
+        </svg>
+    </div>
+</div>
+
+<!-- ==================== ETAPA 4: Botoes ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">4</div>
+        <div class="step-title">Botoes + LCD na Tampa</div>
+    </div>
+    <p class="step-desc">Instale os 5 botoes e o LCD na tampa. Mesmo esquema da v1.0 (INPUT_PULLUP, sem resistor externo).</p>
+    <div class="diagram-container">
+        <svg width="780" height="300" viewBox="0 0 780 300">
+            <rect x="40" y="35" width="700" height="170" rx="18" fill="#bae6fd" stroke="#38bdf8" stroke-width="2.5"/>
+            <text x="390" y="22" text-anchor="middle" fill="var(--g700)" font-size="14" font-weight="700">TAMPA (vista por dentro)</text>
+            <!-- LCD -->
+            <rect x="160" y="55" width="200" height="70" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+            <text x="260" y="85" text-anchor="middle" fill="#4ade80" font-size="10" font-family="'JetBrains Mono'">Cat:Comidas</text>
+            <text x="260" y="105" text-anchor="middle" fill="#4ade80" font-size="10" font-family="'JetBrains Mono'">&#9654; Suco       &#9829;2</text>
+            <text x="352" y="100" fill="#4ade80" font-size="8">bat&#9608;</text>
+            <!-- Speaker grille -->
+            <circle cx="620" cy="90" r="42" fill="#7dd3fc" stroke="#38bdf8" stroke-width="2"/>
+            <g fill="#bae6fd"><circle cx="605" cy="78" r="3"/><circle cx="618" cy="78" r="3"/><circle cx="631" cy="78" r="3"/><circle cx="598" cy="90" r="3"/><circle cx="611" cy="90" r="3"/><circle cx="624" cy="90" r="3"/><circle cx="637" cy="90" r="3"/><circle cx="605" cy="102" r="3"/><circle cx="618" cy="102" r="3"/><circle cx="631" cy="102" r="3"/></g>
+            <!-- Botoes -->
+            <g transform="translate(80,145)">
+                <g><circle cx="25" cy="25" r="22" fill="#fff" stroke="var(--g300)" stroke-width="2"/><circle cx="25" cy="25" r="16" fill="#ef4444"/><circle cx="21" cy="20" r="5" fill="#fff" opacity=".15"/><text x="25" y="62" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">Cat+ D2</text></g>
+                <g transform="translate(110,0)"><circle cx="25" cy="25" r="22" fill="#fff" stroke="var(--g300)" stroke-width="2"/><circle cx="25" cy="25" r="16" fill="#eab308"/><circle cx="21" cy="20" r="5" fill="#fff" opacity=".15"/><text x="25" y="62" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">Cat- D3</text></g>
+                <g transform="translate(220,0)"><circle cx="25" cy="25" r="22" fill="#fff" stroke="var(--g300)" stroke-width="2"/><circle cx="25" cy="25" r="16" fill="#22c55e"/><circle cx="21" cy="20" r="5" fill="#fff" opacity=".15"/><text x="25" y="62" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">Pal+ D4</text></g>
+                <g transform="translate(330,0)"><circle cx="25" cy="25" r="22" fill="#fff" stroke="var(--g300)" stroke-width="2"/><circle cx="25" cy="25" r="16" fill="#3b82f6"/><circle cx="21" cy="20" r="5" fill="#fff" opacity=".15"/><text x="25" y="62" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">Pal- D5</text></g>
+                <g transform="translate(440,0)"><circle cx="25" cy="25" r="22" fill="#fff" stroke="var(--g300)" stroke-width="2"/><circle cx="25" cy="25" r="16" fill="#374151"/><circle cx="21" cy="20" r="5" fill="#fff" opacity=".08"/><text x="25" y="62" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">FALAR D6</text></g>
+            </g>
+        </svg>
+    </div>
+    <div class="info">
+        <strong>Novo na v2.0 &mdash; Botao FALAR com dois modos:</strong><br>
+        Press curto (&lt;0.8s) = fala a palavra imediatamente<br>
+        Press longo (&gt;0.8s) = adiciona a palavra a uma frase (ate 5 palavras)<br>
+        Cat+ e Cat- juntos = fala a frase inteira<br>
+        Pal+ e Pal- juntos = limpa a frase
+    </div>
+</div>
+
+<!-- ==================== ETAPA 5: Diagrama completo ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">5</div>
+        <div class="step-title">Diagrama Esquematico Completo v2.0</div>
+    </div>
+    <p class="step-desc">Todas as conexoes do circuito. Componentes novos marcados com &#9733;.</p>
+
+    <table class="pin-table">
+        <tr><th>Pino</th><th>Conecta a</th><th>Cor</th><th>Fun&ccedil;ao</th></tr>
+        <tr><td><strong>D2</strong></td><td>Botao Vermelho → GND</td><td><span class="color-dot" style="background:#ef4444"></span>Vermelho</td><td>Categoria +</td></tr>
+        <tr><td><strong>D3</strong></td><td>Botao Amarelo → GND</td><td><span class="color-dot" style="background:#eab308"></span>Amarelo</td><td>Categoria -</td></tr>
+        <tr><td><strong>D4</strong></td><td>Botao Verde → GND</td><td><span class="color-dot" style="background:#22c55e"></span>Verde</td><td>Palavra +</td></tr>
+        <tr><td><strong>D5</strong></td><td>Botao Azul → GND</td><td><span class="color-dot" style="background:#3b82f6"></span>Azul</td><td>Palavra -</td></tr>
+        <tr><td><strong>D6</strong></td><td>Botao Preto → GND</td><td><span class="color-dot" style="background:#6b7280"></span>Cinza</td><td>FALAR (curto/longo)</td></tr>
+        <tr class="new-row"><td><strong>D7 &#9733;</strong></td><td>1k&#8486; → 2N2222 base</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>Motor vibra&ccedil;ao</td></tr>
+        <tr><td><strong>D10</strong></td><td>DFPlayer TX</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>Receber dados audio</td></tr>
+        <tr><td><strong>D11</strong></td><td>1k&#8486; → DFPlayer RX</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>Enviar comandos audio</td></tr>
+        <tr class="new-row"><td><strong>A0 &#9733;</strong></td><td>Pot. 10k&#8486; (wiper)</td><td><span class="color-dot" style="background:#f97316"></span>Laranja</td><td>Volume</td></tr>
+        <tr class="new-row"><td><strong>A1 &#9733;</strong></td><td>Divisor tensao 10k+10k</td><td><span class="color-dot" style="background:#f97316"></span>Laranja</td><td>Monitor bateria</td></tr>
+        <tr><td><strong>A4</strong></td><td>LCD SDA</td><td><span class="color-dot" style="background:#a855f7"></span>Roxo</td><td>I2C dados</td></tr>
+        <tr><td><strong>A5</strong></td><td>LCD SCL</td><td><span class="color-dot" style="background:#f97316"></span>Laranja</td><td>I2C clock</td></tr>
+        <tr><td><strong>5V</strong></td><td>LCD, DFPlayer, Pot, Motor</td><td><span class="color-dot" style="background:#ef4444"></span>Vermelho</td><td>Alimenta&ccedil;ao</td></tr>
+        <tr><td><strong>GND</strong></td><td>Todos os componentes</td><td><span class="color-dot" style="background:#1e293b"></span>Preto</td><td>Terra comum</td></tr>
+    </table>
+</div>
+
+<!-- ==================== ETAPA 6: Produto final ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">6</div>
+        <div class="step-title">Montagem Final + Vista 3D</div>
+    </div>
+    <p class="step-desc">Organize os fios, teste o circuito e feche o case com os 4 parafusos M3.</p>
+
+    <div class="diagram-container">
+        <svg width="820" height="420" viewBox="0 0 820 420">
+            <text x="410" y="22" text-anchor="middle" fill="var(--g800)" font-size="16" font-weight="800">PRODUTO FINAL v2.0</text>
+            <!-- 3D Case -->
+            <polygon points="150,95 610,60 700,135 240,170" fill="#7dd3fc" stroke="#38bdf8" stroke-width="2.5"/>
+            <polygon points="150,95 150,200 240,270 240,170" fill="#38bdf8" stroke="#0ea5e9" stroke-width="2"/>
+            <polygon points="240,170 240,270 700,230 700,135" fill="#bae6fd" stroke="#38bdf8" stroke-width="2"/>
+            <polygon points="150,95 610,60 615,62 155,97" fill="#fff" opacity=".3"/>
+            <!-- LCD -->
+            <polygon points="280,78 490,68 502,95 292,105" fill="#0f172a" stroke="#1e293b" stroke-width="2"/>
+            <text x="392" y="85" text-anchor="middle" fill="#4ade80" font-size="8" font-family="'JetBrains Mono'">Cat:Comidas</text>
+            <text x="392" y="97" text-anchor="middle" fill="#4ade80" font-size="7" font-family="'JetBrains Mono'">&#9654; Suco</text>
+            <!-- Buttons -->
+            <ellipse cx="258" cy="135" rx="10" ry="7" fill="#ef4444" stroke="#dc2626" stroke-width="1.5"/>
+            <ellipse cx="305" cy="131" rx="10" ry="7" fill="#eab308" stroke="#ca8a04" stroke-width="1.5"/>
+            <ellipse cx="352" cy="127" rx="10" ry="7" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+            <ellipse cx="399" cy="123" rx="10" ry="7" fill="#3b82f6" stroke="#2563eb" stroke-width="1.5"/>
+            <ellipse cx="446" cy="119" rx="10" ry="7" fill="#374151" stroke="#1f2937" stroke-width="1.5"/>
+            <!-- Speaker grille -->
+            <ellipse cx="610" cy="100" rx="28" ry="20" fill="#38bdf8" stroke="#0ea5e9" stroke-width="1.5"/>
+            <g fill="#7dd3fc" opacity=".8"><ellipse cx="600" cy="94" rx="2" ry="1.5"/><ellipse cx="610" cy="94" rx="2" ry="1.5"/><ellipse cx="620" cy="94" rx="2" ry="1.5"/><ellipse cx="595" cy="103" rx="2" ry="1.5"/><ellipse cx="605" cy="103" rx="2" ry="1.5"/><ellipse cx="615" cy="103" rx="2" ry="1.5"/><ellipse cx="625" cy="103" rx="2" ry="1.5"/></g>
+            <!-- Screws -->
+            <circle cx="193" cy="112" r="4" fill="url(#mtl)" stroke="var(--g400)" stroke-width="1"/>
+            <circle cx="218" cy="155" r="4" fill="url(#mtl)" stroke="var(--g400)" stroke-width="1"/>
+            <circle cx="645" cy="80" r="4" fill="url(#mtl)" stroke="var(--g400)" stroke-width="1"/>
+            <circle cx="668" cy="125" r="4" fill="url(#mtl)" stroke="var(--g400)" stroke-width="1"/>
+            <!-- Side openings -->
+            <rect x="148" y="133" width="5" height="22" rx="1.5" fill="#0f172a"/><text x="130" y="148" text-anchor="end" fill="var(--g600)" font-size="8" font-weight="500">USB</text>
+            <rect x="148" y="163" width="5" height="18" rx="1.5" fill="#0f172a"/><text x="130" y="175" text-anchor="end" fill="#10b981" font-size="8" font-weight="500">Carga</text>
+            <rect x="148" y="188" width="5" height="10" rx="1" fill="#0f172a"/><text x="130" y="196" text-anchor="end" fill="#10b981" font-size="8" font-weight="500">On/Off</text>
+            <rect x="664" y="155" width="5" height="10" rx="1" fill="#0f172a"/><text x="682" y="164" fill="var(--g600)" font-size="8">SD</text>
+            <!-- Volume knob -->
+            <circle cx="672" cy="180" r="8" fill="var(--g300)" stroke="var(--g400)" stroke-width="1.5"/>
+            <line x1="672" y1="180" x2="672" y2="174" stroke="var(--g700)" stroke-width="2" stroke-linecap="round"/>
+            <text x="693" y="184" fill="#10b981" font-size="8" font-weight="500">Vol</text>
+            <!-- Dimensions -->
+            <g stroke="var(--g400)" stroke-width="1" stroke-dasharray="4,3" fill="var(--g500)" font-size="10" font-weight="500">
+                <line x1="240" y1="285" x2="700" y2="245"/><text x="460" y="275" text-anchor="middle">170 mm</text>
+                <line x1="150" y1="215" x2="240" y2="285"/><text x="177" y="260" transform="rotate(50,177,260)">110 mm</text>
+                <line x1="710" y1="135" x2="710" y2="235"/><text x="730" y="185">42 mm</text>
+            </g>
+
+            <!-- Exploded view -->
+            <text x="410" y="320" text-anchor="middle" fill="var(--g800)" font-size="13" font-weight="700">VISTA EXPLODIDA</text>
+            <!-- Lid -->
+            <rect x="130" y="340" width="560" height="14" rx="7" fill="#7dd3fc" stroke="#38bdf8" stroke-width="2"/>
+            <text x="700" y="351" fill="#0284c7" font-size="9" font-weight="600">Tampa</text>
+            <rect x="210" y="354" width="80" height="10" rx="2" fill="url(#lcd)"/>
+            <circle cx="350" cy="359" r="5" fill="#ef4444"/><circle cx="368" cy="359" r="5" fill="#eab308"/><circle cx="386" cy="359" r="5" fill="#22c55e"/><circle cx="404" cy="359" r="5" fill="#3b82f6"/><circle cx="422" cy="359" r="5" fill="#374151"/>
+            <circle cx="550" cy="359" r="12" fill="url(#spk)" stroke="#292524" stroke-width="1"/>
+            <!-- Base -->
+            <rect x="130" y="385" width="560" height="35" rx="7" fill="url(#case1)" stroke="#60a5fa" stroke-width="2"/>
+            <text x="700" y="407" fill="#2563eb" font-size="9" font-weight="600">Base</text>
+            <rect x="150" y="392" width="95" height="22" rx="4" fill="url(#brd)"/><text x="197" y="407" text-anchor="middle" fill="#fff" font-size="8" font-weight="600">Arduino</text>
+            <rect x="260" y="395" width="55" height="16" rx="3" fill="url(#dfp)"/><text x="287" y="407" text-anchor="middle" fill="#fff" font-size="7" font-weight="600">DFPlayer</text>
+            <rect x="340" y="393" width="120" height="20" rx="10" fill="url(#bat)"/><text x="400" y="407" text-anchor="middle" fill="#fff" font-size="7" font-weight="600">Bateria 18650</text>
+            <rect x="480" y="396" width="40" height="14" rx="3" fill="url(#tp4)"/><text x="500" y="407" text-anchor="middle" fill="#fff" font-size="6" font-weight="600">TP4056</text>
+        </svg>
+    </div>
+
+    <ul class="checklist">
+        <li>Bateria 18650 conectada ao TP4056 (polaridade correta!)</li>
+        <li>Chave on/off entre TP4056 OUT+ e Arduino VIN</li>
+        <li>Cartao SD com 35 MP3s em 7 pastas (/01/ a /07/)</li>
+        <li>Potenciometro montado na lateral (furo 7mm)</li>
+        <li>Motor vibracao colado perto do speaker</li>
+        <li>Todos os fios sem curto-circuito</li>
+        <li>Testar ANTES de fechar o case</li>
+        <li>Parafusos M3 nos 4 cantos</li>
+    </ul>
+</div>
+
+<!-- ==================== ETAPA 7: Teste ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">7</div>
+        <div class="step-title">Teste e Verifica&ccedil;ao</div>
+    </div>
+    <div class="two-col">
+        <div>
+            <h4 style="margin-bottom:12px;color:var(--g700)">Checklist de testes:</h4>
+            <ul class="checklist">
+                <li>LCD acende com "Voz Autista v2.0"</li>
+                <li>Navega 7 categorias com botoes</li>
+                <li>Navega 5 palavras por categoria</li>
+                <li>FALAR curto reproduz audio</li>
+                <li>FALAR longo adiciona a frase</li>
+                <li>Cat+Cat- juntos fala frase</li>
+                <li>Potenciometro ajusta volume</li>
+                <li>Icone bateria aparece no LCD</li>
+                <li>Vibracao funciona ao pressionar</li>
+                <li>Sleep apos 2 min de inatividade</li>
+                <li>Botao acorda do sleep</li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="margin-bottom:12px;color:var(--g700)">Problemas comuns:</h4>
+            <div class="troubleshoot-item"><div class="problem">LCD nao acende</div><div class="solution">Auto-detect tenta 0x27, 0x3F, 0x20, 0x38. Veja Serial Monitor.</div></div>
+            <div class="troubleshoot-item"><div class="problem">Sem audio</div><div class="solution">SD FAT32? Pastas /01/ a /07/ com 001-005.mp3? Resistor 1k no D11?</div></div>
+            <div class="troubleshoot-item"><div class="problem">Sem vibracao</div><div class="solution">Cheque transistor 2N2222 (BCE), resistor 1k na base, diodo 1N4148.</div></div>
+            <div class="troubleshoot-item"><div class="problem">Volume nao muda</div><div class="solution">Pot conectado? Wiper no A0? Outros pinos em 5V e GND?</div></div>
+            <div class="troubleshoot-item"><div class="problem">Bateria mostra 0%</div><div class="solution">Divisor 10k+10k conectado? Bateria carregada? A1 lendo?</div></div>
+            <div class="troubleshoot-item"><div class="problem">Frase nao funciona</div><div class="solution">Segure FALAR &gt;0.8s para adicionar. Max 5 palavras.</div></div>
+            <div class="troubleshoot-item"><div class="problem">Nao carrega bateria</div><div class="solution">TP4056 micro-USB conectado? LED vermelho = carregando, azul = cheio.</div></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SD Card ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number gold">+</div>
+        <div class="step-title">Cartao microSD &mdash; 7 Categorias, 35 Arquivos</div>
+    </div>
+    <p class="step-desc">Formate em FAT32. Crie 7 pastas. Copie os MP3s UM POR UM em ordem numerica.</p>
+    <div class="diagram-container">
+        <svg width="700" height="380" viewBox="0 0 700 380">
+            <g font-family="'JetBrains Mono',monospace" font-size="11">
+                <!-- Cat 1 -->
+                <rect x="10" y="5" width="220" height="120" rx="8" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1"/>
+                <text x="120" y="25" text-anchor="middle" fill="var(--primary)" font-weight="700" font-family="Inter">&#128193; /01/ Necessidades</text>
+                <text x="25" y="45" fill="var(--g700)">001.mp3 → Eu quero</text>
+                <text x="25" y="62" fill="var(--g700)">002.mp3 → Comer</text>
+                <text x="25" y="79" fill="var(--g700)">003.mp3 → Beber</text>
+                <text x="25" y="96" fill="var(--g700)">004.mp3 → Banheiro</text>
+                <text x="25" y="113" fill="var(--g700)">005.mp3 → Dormir</text>
+                <!-- Cat 2 -->
+                <rect x="240" y="5" width="220" height="120" rx="8" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
+                <text x="350" y="25" text-anchor="middle" fill="#92400e" font-weight="700" font-family="Inter">&#128193; /02/ Sentimentos</text>
+                <text x="255" y="45" fill="var(--g700)">001.mp3 → Feliz</text>
+                <text x="255" y="62" fill="var(--g700)">002.mp3 → Triste</text>
+                <text x="255" y="79" fill="var(--g700)">003.mp3 → Bravo</text>
+                <text x="255" y="96" fill="var(--g700)">004.mp3 → Calmo</text>
+                <text x="255" y="113" fill="var(--g700)">005.mp3 → Medo</text>
+                <!-- Cat 3 -->
+                <rect x="470" y="5" width="220" height="120" rx="8" fill="var(--success-light)" stroke="var(--success)" stroke-width="1"/>
+                <text x="580" y="25" text-anchor="middle" fill="#065f46" font-weight="700" font-family="Inter">&#128193; /03/ Acoes</text>
+                <text x="485" y="45" fill="var(--g700)">001.mp3 → Brincar</text>
+                <text x="485" y="62" fill="var(--g700)">002.mp3 → Ajuda</text>
+                <text x="485" y="79" fill="var(--g700)">003.mp3 → Sair</text>
+                <text x="485" y="96" fill="var(--g700)">004.mp3 → Parar</text>
+                <text x="485" y="113" fill="var(--g700)">005.mp3 → Ir</text>
+                <!-- Cat 4 -->
+                <rect x="10" y="135" width="220" height="120" rx="8" fill="#fce7f3" stroke="#ec4899" stroke-width="1"/>
+                <text x="120" y="155" text-anchor="middle" fill="#9d174d" font-weight="700" font-family="Inter">&#128193; /04/ Comidas</text>
+                <text x="25" y="175" fill="var(--g700)">001.mp3 → Agua</text>
+                <text x="25" y="192" fill="var(--g700)">002.mp3 → Suco</text>
+                <text x="25" y="209" fill="var(--g700)">003.mp3 → Leite</text>
+                <text x="25" y="226" fill="var(--g700)">004.mp3 → Pao</text>
+                <text x="25" y="243" fill="var(--g700)">005.mp3 → Fruta</text>
+                <!-- Cat 5 -->
+                <rect x="240" y="135" width="220" height="120" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1"/>
+                <text x="350" y="155" text-anchor="middle" fill="#5b21b6" font-weight="700" font-family="Inter">&#128193; /05/ Lugares</text>
+                <text x="255" y="175" fill="var(--g700)">001.mp3 → Casa</text>
+                <text x="255" y="192" fill="var(--g700)">002.mp3 → Escola</text>
+                <text x="255" y="209" fill="var(--g700)">003.mp3 → Parque</text>
+                <text x="255" y="226" fill="var(--g700)">004.mp3 → Medico</text>
+                <text x="255" y="243" fill="var(--g700)">005.mp3 → Banho</text>
+                <!-- Cat 6 -->
+                <rect x="470" y="135" width="220" height="120" rx="8" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+                <text x="580" y="155" text-anchor="middle" fill="#713f12" font-weight="700" font-family="Inter">&#128193; /06/ Pessoas</text>
+                <text x="485" y="175" fill="var(--g700)">001.mp3 → Mamae</text>
+                <text x="485" y="192" fill="var(--g700)">002.mp3 → Papai</text>
+                <text x="485" y="209" fill="var(--g700)">003.mp3 → Vovo</text>
+                <text x="485" y="226" fill="var(--g700)">004.mp3 → Professor</text>
+                <text x="485" y="243" fill="var(--g700)">005.mp3 → Amigo</text>
+                <!-- Cat 7 -->
+                <rect x="10" y="265" width="220" height="120" rx="8" fill="var(--danger-light)" stroke="var(--danger)" stroke-width="1"/>
+                <text x="120" y="285" text-anchor="middle" fill="#991b1b" font-weight="700" font-family="Inter">&#128193; /07/ Saude</text>
+                <text x="25" y="305" fill="var(--g700)">001.mp3 → Doi</text>
+                <text x="25" y="322" fill="var(--g700)">002.mp3 → Enjoo</text>
+                <text x="25" y="339" fill="var(--g700)">003.mp3 → Frio</text>
+                <text x="25" y="356" fill="var(--g700)">004.mp3 → Calor</text>
+                <text x="25" y="373" fill="var(--g700)">005.mp3 → Cansado</text>
+            </g>
+            <!-- Config info -->
+            <g transform="translate(250, 275)">
+                <rect x="0" y="0" width="440" height="100" rx="10" fill="#fff" stroke="var(--g200)" stroke-width="1.5"/>
+                <text x="220" y="22" text-anchor="middle" fill="var(--g800)" font-size="12" font-weight="700" font-family="Inter">Personalizar categorias:</text>
+                <text x="15" y="45" fill="var(--g600)" font-size="10" font-family="Inter">1. Edite o array categories[] no arquivo .ino</text>
+                <text x="15" y="63" fill="var(--g600)" font-size="10" font-family="Inter">2. Crie a pasta /0X/ correspondente no SD</text>
+                <text x="15" y="81" fill="var(--g600)" font-size="10" font-family="Inter">3. Grave os MP3s como 001.mp3 a 005.mp3</text>
+                <text x="15" y="96" fill="var(--g500)" font-size="9" font-family="Inter">Copie UM POR UM em ordem! O DFPlayer usa ordem de gravacao.</text>
+            </g>
+        </svg>
+    </div>
+</div>
+
+<footer>
+    <p style="font-weight:600;color:var(--g700);margin-bottom:8px">Manual de Montagem v2.0 &mdash; Voz Autista</p>
+    <p>Comunicador Assistivo &bull; 7 Categorias &bull; 35 Palavras &bull; Frases Compostas &bull; Bateria Recarregavel</p>
+    <p style="margin-top:12px">Simule em <a href="https://wokwi.com">wokwi.com</a> com os arquivos da pasta <code style="background:var(--g100);padding:2px 6px;border-radius:4px">wokwi_simulacao/</code></p>
+</footer>
+
+</div>
+</body>
+</html>
