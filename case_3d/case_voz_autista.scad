@@ -158,7 +158,7 @@ module rounded_box(w, d, h, r) {
 }
 
 // --- Grade de ventilação para o alto-falante ---
-module speaker_grille(diameter, hole_d=2.5, spacing=5) {
+module speaker_grille(diameter, hole_d=3, spacing=6) {
     r = diameter / 2;
     num = floor(diameter / spacing);
     for (ix = [-num/2 : num/2]) {
@@ -189,62 +189,60 @@ module snap_tab(length=10, depth=1.5) {
 }
 
 // --- Berço para bateria 18650 (v2.0) ---
+// Simplificado: meia-lua com paredes laterais, sem geometria non-manifold
 module battery_cradle() {
-    cradle_h = bat_diameter / 2 + bat_cradle_wall; // Meia-lua + parede
-    cradle_len = bat_length + 2;  // Folga de 1mm em cada ponta
+    cradle_h = bat_diameter / 2 + bat_cradle_wall;
+    cradle_len = bat_length + 2;
 
+    // Corpo principal: meia-lua por intersecao
     difference() {
-        // Corpo externo do berço (bloco)
-        translate([- cradle_len/2, - (bat_diameter/2 + bat_cradle_wall), 0])
+        // Bloco externo limitado a meia-altura
+        translate([-cradle_len/2, -(bat_diameter/2 + bat_cradle_wall), 0])
         cube([cradle_len, bat_diameter + 2*bat_cradle_wall, cradle_h]);
 
-        // Cavidade cilíndrica para a bateria
-        translate([-cradle_len/2 - 0.5, 0, bat_diameter/2 + bat_cradle_wall])
+        // Cavidade cilindrica (offset 0.01 para evitar z-fighting)
+        translate([-cradle_len/2 - 1, 0, cradle_h])
         rotate([0, 90, 0])
-        cylinder(h=cradle_len + 1, d=bat_diameter + 0.5, $fn=48);
+        cylinder(h=cradle_len + 2, d=bat_diameter + 0.5, $fn=48);
 
-        // Recorte superior para facilitar inserção/remoção (abertura de 120 graus)
-        translate([-cradle_len/2 - 0.5, -(bat_diameter/2 + 2), cradle_h - 0.1])
-        cube([cradle_len + 1, bat_diameter + 4, bat_diameter]);
+        // Abertura superior (corta acima do centro do cilindro)
+        translate([-cradle_len/2 - 1, -(bat_diameter/2 + bat_cradle_wall + 1), cradle_h])
+        cube([cradle_len + 2, bat_diameter + 2*bat_cradle_wall + 2, bat_diameter]);
     }
 
-    // Abas de retenção nas pontas
+    // Paredes laterais de retencao (simples, sem overhang)
     for (end = [-1, 1]) {
-        translate([end * (cradle_len/2 - 1.5), 0, bat_diameter/2 + bat_cradle_wall])
-        rotate([0, 90, 0])
+        translate([end * (cradle_len/2 + 1), 0, 0])
         difference() {
-            cylinder(h=1.5, d=bat_diameter + 2*bat_cradle_wall, $fn=48);
+            cylinder(h=cradle_h, d=bat_diameter + 2*bat_cradle_wall + 1, $fn=48);
+            // Furo para a bateria (um pouco menor para reter)
             translate([0, 0, -0.1])
-            cylinder(h=1.7, d=bat_diameter + 0.5, $fn=48);
-            // Cortar a parte de cima para manter a abertura
-            translate([0, -(bat_diameter/2 + bat_cradle_wall + 1), 0])
-            cube([bat_diameter + 2*bat_cradle_wall, bat_diameter + 2*bat_cradle_wall + 2, 2], center=false);
+            cylinder(h=cradle_h + 0.2, d=bat_diameter + 1, $fn=48);
+            // Cortar metade de cima
+            translate([-(bat_diameter/2 + bat_cradle_wall + 1), -(bat_diameter/2 + bat_cradle_wall + 1), cradle_h * 0.7])
+            cube([bat_diameter + 2*bat_cradle_wall + 2, bat_diameter + 2*bat_cradle_wall + 2, cradle_h]);
+            // Cortar metade traseira (so manter arco frontal)
+            translate([-(bat_diameter/2 + bat_cradle_wall + 1), 0, -0.1])
+            cube([bat_diameter + 2*bat_cradle_wall + 2, bat_diameter/2 + bat_cradle_wall + 1, cradle_h + 1]);
         }
     }
 }
 
 // --- Suporte para motor de vibração coin (v2.0) ---
+// Simplificado: anel aberto sem overhang, motor encaixa por cima
 module vibration_motor_mount() {
-    mount_h = vib_thickness + 1;   // Altura do suporte
-    outer_d = vib_diameter + 3;    // Diâmetro externo do anel
+    mount_h = vib_thickness + 1;
+    outer_d = vib_diameter + 3;
 
     difference() {
         // Anel externo
         cylinder(h=mount_h, d=outer_d, $fn=32);
-        // Cavidade para o motor
+        // Cavidade para o motor (fundo de 1mm)
         translate([0, 0, 1])
-        cylinder(h=mount_h, d=vib_diameter + 0.5, $fn=32);
-    }
-    // Pequena aba de retenção (arco parcial)
-    difference() {
-        cylinder(h=mount_h + 0.5, d=outer_d, $fn=32);
-        translate([0, 0, -0.1])
-        cylinder(h=mount_h + 0.7, d=vib_diameter + 0.3, $fn=32);
-        // Remover 270 graus, deixar só 90 graus de aba
-        translate([-outer_d, -outer_d, -0.1])
-        cube([outer_d, outer_d*2, mount_h + 1]);
-        translate([0, 0, -0.1])
-        cube([outer_d, outer_d, mount_h + 1]);
+        cylinder(h=mount_h + 0.1, d=vib_diameter + 0.5, $fn=32);
+        // Abertura lateral para passar o fio (corte em cunha)
+        translate([0, -1.5, 0.5])
+        cube([outer_d, 3, mount_h + 1]);
     }
 }
 
@@ -286,6 +284,34 @@ module base() {
         // --- (v2.0) Abertura chave slide on/off (lateral esquerda) ---
         translate([-0.1, wall + sw_y, wall + sw_z])
         cube([wall + 0.2, sw_w, sw_h]);
+
+        // --- Recesses para pés de borracha (fundo da base, 4 cantos) ---
+        foot_inset = 15;    // distância da borda
+        foot_d = 10;        // diâmetro do rebaixo
+        foot_depth = 1.2;   // profundidade do rebaixo
+        foot_positions = [
+            [foot_inset,              foot_inset],
+            [total_w - foot_inset,    foot_inset],
+            [foot_inset,              total_d - foot_inset],
+            [total_w - foot_inset,    total_d - foot_inset]
+        ];
+        for (fp = foot_positions) {
+            translate([fp[0], fp[1], -0.1])
+            cylinder(h=foot_depth + 0.1, d=foot_d, $fn=24);
+        }
+
+        // --- Furos de ventilação no fundo (para TP4056 e Arduino) ---
+        vent_hole_d = 2.5;
+        vent_spacing = 6;
+        // Grade de ventilação na área do Arduino/TP4056
+        for (vx = [0:5]) {
+            for (vy = [0:3]) {
+                translate([wall + 20 + vx * vent_spacing,
+                           wall + 20 + vy * vent_spacing,
+                           -0.1])
+                cylinder(h=wall + 0.2, d=vent_hole_d, $fn=12);
+            }
+        }
     }
 
     // --- Pilares de montagem nos cantos ---
@@ -323,12 +349,23 @@ module base() {
     translate([wall + vib_x, wall + vib_y, wall])
     vibration_motor_mount();
 
-    // --- Borda de encaixe para a tampa ---
+    // --- Borda de encaixe para a tampa (reforçada) ---
+    rim_t = 2;   // espessura do rim
+    rim_h = 3;   // altura do rim
     translate([wall + tolerance, wall + tolerance, total_h - 0.1])
     difference() {
-        rounded_box(case_width - 2*tolerance, case_depth - 2*tolerance, 2, corner_r - wall);
-        translate([1.5, 1.5, -0.1])
-        rounded_box(case_width - 2*tolerance - 3, case_depth - 2*tolerance - 3, 2.3, corner_r - wall - 1);
+        rounded_box(case_width - 2*tolerance, case_depth - 2*tolerance, rim_h, corner_r - wall);
+        translate([rim_t, rim_t, -0.1])
+        rounded_box(case_width - 2*tolerance - 2*rim_t, case_depth - 2*tolerance - 2*rim_t, rim_h + 0.2, corner_r - wall - 1);
+    }
+    // Abas de clique (4 bumps nos lados longos para prender a tampa)
+    for (side = [0, 1]) {
+        for (pos = [0.3, 0.7]) {
+            bx = wall + tolerance + pos * (case_width - 2*tolerance);
+            by = wall + tolerance + side * (case_depth - 2*tolerance);
+            translate([bx, by, total_h + 1])
+            sphere(r=0.8, $fn=12);
+        }
     }
 }
 
@@ -367,15 +404,14 @@ module lid() {
         speaker_grille(spk_diameter);
     }
 
-    // --- (v2.0) Labels em relevo nos botões - profundidade aumentada + anéis ---
-    btn_labels = ["CAT<", "CAT>", "PAL<", "PAL>", "VOZ"];
-    btn_colors_comment = ["Verm", "Amar", "Verde", "Azul", "Preto"];
+    // --- (v2.0) Labels em relevo nos botões com texto real ---
+    btn_labels = ["CAT+", "CAT-", "PAL+", "PAL-", "VOZ"];
 
     for (i = [0:4]) {
         bx = wall + btn_start_x + i * btn_spacing;
         by = wall + btn_y;
 
-        // --- Anel em relevo ao redor do botão (v2.0: 2mm largura, 0.5mm altura) ---
+        // Anel em relevo ao redor do botão
         translate([bx, by, total_h])
         difference() {
             cylinder(h=btn_ring_height, d=btn_diameter + 2*btn_ring_width + 2, $fn=32);
@@ -383,13 +419,10 @@ module lid() {
             cylinder(h=btn_ring_height + 0.2, d=btn_diameter + 2, $fn=32);
         }
 
-        // --- Indicador de profundidade (label gravado) ---
-        translate([bx, by, total_h - 0.1])
-        difference() {
-            cylinder(h=label_depth + 0.1, d=btn_diameter + 2*btn_ring_width + 2 + 4, $fn=32);
-            translate([0, 0, -0.1])
-            cylinder(h=label_depth + 0.3, d=btn_diameter + 2*btn_ring_width + 2 + 1, $fn=32);
-        }
+        // Texto gravado acima do botão (em relevo, legível)
+        translate([bx, by + btn_diameter/2 + 5, total_h])
+        linear_extrude(height=0.6)
+        text(btn_labels[i], size=4, halign="center", valign="center", font="Liberation Sans:style=Bold");
     }
 
     // --- Suporte interno para o LCD ---

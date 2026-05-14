@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Voz Autista — Case 3D Interativo</title>
+<title>Voz Autista — Case 3D Interativo v2.0</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:#1a1a2e;font-family:'Segoe UI',Arial,sans-serif;overflow:hidden;user-select:none}
@@ -20,9 +20,10 @@
   .cs{width:24px;height:24px;border-radius:5px;cursor:pointer;border:2px solid transparent}
   .cs.sel{border-color:#fff}
   #info{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(20,20,40,.8);color:#777;padding:6px 16px;border-radius:8px;font-size:10px}
-  #dims{position:fixed;top:16px;right:16px;background:rgba(20,20,40,.92);border:1px solid #444;border-radius:12px;padding:12px 16px;color:#ccc;font-size:11px;z-index:10}
+  #dims{position:fixed;top:16px;right:16px;background:rgba(20,20,40,.92);border:1px solid #444;border-radius:12px;padding:12px 16px;color:#ccc;font-size:11px;z-index:10;max-width:220px}
   #dims h3{color:#7eb8ff;font-size:12px;margin-bottom:6px}
   #dims b{color:#fff}
+  #dims .new{color:#4ade80;font-size:10px}
 </style>
 </head>
 <body>
@@ -36,11 +37,13 @@
   </div>
   <button id="bExp" onclick="tog('explode')">Vista Explodida</button>
   <button id="bWire" onclick="tog('wire')">Wireframe</button>
+  <button id="bInt" onclick="tog('internals')">Componentes Internos</button>
+  <button id="bCut" onclick="tog('cutaway')">Corte (ver interior)</button>
   <div class="sep"></div>
   <label>Cor do Case:</label>
   <div class="colors" id="clrs"></div>
   <label>Opacidade: <span id="opV">90%</span></label>
-  <input type="range" id="opR" min="30" max="100" value="90" oninput="opacity=this.value/100;document.getElementById('opV').textContent=this.value+'%'">
+  <input type="range" id="opR" min="20" max="100" value="90" oninput="opacity=this.value/100;document.getElementById('opV').textContent=this.value+'%'">
   <div class="sep"></div>
   <button onclick="resetCam()">Resetar Camera</button>
 </div>
@@ -52,25 +55,33 @@
   <div>Parede: <b>2.5mm</b></div>
   <div>LCD: <b>72 x 25mm</b></div>
   <div>Botoes: <b>14mm</b> x5</div>
-  <div>Speaker: <b>40mm</b></div>
+  <div>Speaker: <b>40mm</b> (furos 3mm)</div>
+  <div style="margin-top:6px" class="new">--- Novidades v2.0 ---</div>
+  <div class="new">Bateria 18650 (berco)</div>
+  <div class="new">TP4056 (micro-USB carga)</div>
+  <div class="new">Chave on/off</div>
+  <div class="new">Potenciometro volume</div>
+  <div class="new">Motor vibracao (suporte)</div>
+  <div class="new">4x Pes de borracha</div>
+  <div class="new">24x Furos ventilacao</div>
+  <div class="new">Snap-fit com clique</div>
+  <div class="new">Labels texto real</div>
 </div>
 
 <div id="info">Arraste para rotacionar | Scroll para zoom | Clique direito para mover</div>
 
 <script>
-// ============ ENGINE 3D PURO (Canvas 2D) ============
 var canvas = document.getElementById('c');
 var ctx = canvas.getContext('2d');
 
-// Estado
 var rotX = -0.45, rotY = 0.6, zoom = 2.8, panX = 0, panY = -10;
 var dragging = false, panning = false, lastMX = 0, lastMY = 0;
 var showBase = true, showLid = true, exploded = false, wireMode = false;
+var showInternals = false, cutaway = false;
 var opacity = 0.9;
-var caseColor = [91, 155, 213]; // azul
+var caseColor = [91, 155, 213];
 var explodeOffset = 0, explodeTarget = 0;
 
-// Cores disponiveis
 var colorOptions = [
   [91,155,213,'#5b9bd5'],[232,232,232,'#e8e8e8'],[102,187,106,'#66bb6a'],
   [239,83,80,'#ef5350'],[255,183,77,'#ffb74d'],[60,60,60,'#3c3c3c']
@@ -78,398 +89,441 @@ var colorOptions = [
 
 // ============ MATH 3D ============
 function rotatePoint(x, y, z) {
-  // Rotate Y
   var cosY = Math.cos(rotY), sinY = Math.sin(rotY);
-  var x1 = x * cosY - z * sinY;
-  var z1 = x * sinY + z * cosY;
-  // Rotate X
+  var x1 = x * cosY - z * sinY, z1 = x * sinY + z * cosY;
   var cosX = Math.cos(rotX), sinX = Math.sin(rotX);
-  var y1 = y * cosX - z1 * sinX;
-  var z2 = y * sinX + z1 * cosX;
+  var y1 = y * cosX - z1 * sinX, z2 = y * sinX + z1 * cosX;
   return [x1, y1, z2];
 }
 
 function project(x, y, z) {
   var p = rotatePoint(x, y, z);
-  var d = 600;
-  var scale = d / (d + p[2]) * zoom;
-  return [canvas.width/2 + (p[0] + panX) * scale, canvas.height/2 + (p[1] + panY) * scale, p[2]];
+  var d = 600, scale = d / (d + p[2]) * zoom;
+  return [canvas.width/2 + (p[0]+panX)*scale, canvas.height/2 + (p[1]+panY)*scale, p[2]];
 }
 
 function faceNormal(verts) {
-  var a = verts[0], b = verts[1], c = verts[2];
-  var ux = b[0]-a[0], uy = b[1]-a[1], uz = b[2]-a[2];
-  var vx = c[0]-a[0], vy = c[1]-a[1], vz = c[2]-a[2];
-  return [uy*vz-uz*vy, uz*vx-ux*vz, ux*vy-uy*vx];
+  var a=verts[0], b=verts[1], c=verts[2];
+  return [
+    (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1]),
+    (b[2]-a[2])*(c[0]-a[0])-(b[0]-a[0])*(c[2]-a[2]),
+    (b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0])
+  ];
 }
 
-function avgZ(projected) {
-  var s = 0;
-  for (var i = 0; i < projected.length; i++) s += projected[i][2];
-  return s / projected.length;
+function avgZ(pts) {
+  var s=0; for(var i=0;i<pts.length;i++) s+=pts[i][2]; return s/pts.length;
 }
 
-// ============ GEOMETRIA ============
-var faces = []; // {verts:[[x,y,z],...], color:[r,g,b], alpha:1, group:'base'|'lid', type:'case'|'detail'}
+// ============ GEOMETRY HELPERS ============
+var faces = [];
+var W=175, D=115, H_BASE=32.5, H_LID=14.5, WALL=2.5;
+var iW=W-2*WALL, iD=D-2*WALL;
 
-// Parametros do case (em mm, centrado na origem)
-var W = 175, D = 115, H_BASE = 32.5, H_LID = 14.5;
-var WALL = 2.5;
-var iW = W - 2*WALL, iD = D - 2*WALL;
+function addFace(verts, color, alpha, group, type) {
+  faces.push({verts:verts, color:color, alpha:alpha, group:group, type:type||'case'});
+}
 
 function addBox(cx, cy, cz, w, h, d, color, alpha, group, type) {
-  var x0 = cx-w/2, x1 = cx+w/2;
-  var y0 = cy-h/2, y1 = cy+h/2;
-  var z0 = cz-d/2, z1 = cz+d/2;
-  var v = [
-    [x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0], // front
-    [x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1], // back
-  ];
-  // 6 faces
-  var f = [
-    [v[0],v[1],v[2],v[3]], // front
-    [v[5],v[4],v[7],v[6]], // back
-    [v[4],v[0],v[3],v[7]], // left
-    [v[1],v[5],v[6],v[2]], // right
-    [v[4],v[5],v[1],v[0]], // bottom
-    [v[3],v[2],v[6],v[7]], // top
-  ];
-  for (var i = 0; i < 6; i++) {
-    faces.push({verts:f[i], color:color, alpha:alpha, group:group, type:type||'case'});
-  }
+  var x0=cx-w/2,x1=cx+w/2, y0=cy-h/2,y1=cy+h/2, z0=cz-d/2,z1=cz+d/2;
+  var v=[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],
+         [x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]];
+  var ff=[[v[0],v[1],v[2],v[3]],[v[5],v[4],v[7],v[6]],
+          [v[4],v[0],v[3],v[7]],[v[1],v[5],v[6],v[2]],
+          [v[4],v[5],v[1],v[0]],[v[3],v[2],v[6],v[7]]];
+  for(var i=0;i<6;i++) addFace(ff[i],color,alpha,group,type);
 }
 
 function addCylinder(cx, cy, cz, r, h, segs, color, alpha, group, type) {
-  var top = [], bot = [];
-  for (var i = 0; i < segs; i++) {
-    var a = (i/segs)*Math.PI*2;
-    var x = cx + Math.cos(a)*r;
-    var z = cz + Math.sin(a)*r;
-    top.push([x, cy - h/2, z]);
-    bot.push([x, cy + h/2, z]);
+  var top=[], bot=[];
+  for(var i=0;i<segs;i++){
+    var a=(i/segs)*Math.PI*2;
+    top.push([cx+Math.cos(a)*r, cy-h/2, cz+Math.sin(a)*r]);
+    bot.push([cx+Math.cos(a)*r, cy+h/2, cz+Math.sin(a)*r]);
   }
-  // Side faces (quads)
-  for (var i = 0; i < segs; i++) {
-    var j = (i+1) % segs;
-    faces.push({verts:[bot[i],bot[j],top[j],top[i]], color:color, alpha:alpha, group:group, type:type||'detail'});
+  for(var i=0;i<segs;i++){
+    var j=(i+1)%segs;
+    addFace([bot[i],bot[j],top[j],top[i]], color, alpha, group, type);
   }
-  // Top and bottom caps
-  faces.push({verts:top.slice(), color:color, alpha:alpha, group:group, type:type||'detail'});
-  faces.push({verts:bot.slice().reverse(), color:color, alpha:alpha, group:group, type:type||'detail'});
+  addFace(top.slice(), color, alpha, group, type);
+  addFace(bot.slice().reverse(), color, alpha, group, type);
 }
+
+
 
 function buildModel() {
   faces = [];
   var cc = caseColor;
-  var dark = [50,50,55];
-  var darker = [35,35,40];
-  var copper = [200,140,60];
-  var screen = [30,80,30];
-  var spk = [30,30,30];
+  var dark=[50,50,55], darker=[35,35,40], copper=[200,140,60];
+  var screen=[30,80,30], spk=[30,30,30];
+  var batBlue=[59,130,246], batCap=[147,197,253];
+  var tp4Purple=[124,58,237], switchGreen=[16,185,129];
+  var pcbGreen=[0,120,60], silver=[180,180,185];
 
-  // ===== BASE =====
-  var by = H_BASE/2; // center Y of base
+  // ===== BASE SHELL =====
+  // Bottom plate
+  addBox(0, H_BASE, 0, W, WALL, D, cc, 1, 'base', 'case');
+  // Walls
+  addBox(0, H_BASE/2, -D/2+WALL/2, W, H_BASE, WALL, cc, 1, 'base', 'case');   // front
+  if(!cutaway)
+  addBox(0, H_BASE/2, D/2-WALL/2, W, H_BASE, WALL, cc, 1, 'base', 'case');    // back
+  addBox(-W/2+WALL/2, H_BASE/2, 0, WALL, H_BASE, D-2*WALL, cc, 1, 'base', 'case'); // left
+  if(!cutaway)
+  addBox(W/2-WALL/2, H_BASE/2, 0, WALL, H_BASE, D-2*WALL, cc, 1, 'base', 'case');  // right
 
-  // Outer shell (bottom plate)
-  addBox(0, H_BASE, 0, W, WALL, D, cc, 1, 'base');
-  // Front wall
-  addBox(0, by, -D/2+WALL/2, W, H_BASE, WALL, cc, 1, 'base');
-  // Back wall
-  addBox(0, by, D/2-WALL/2, W, H_BASE, WALL, cc, 1, 'base');
-  // Left wall (with USB/Jack cutouts shown as dark overlays)
-  addBox(-W/2+WALL/2, by, 0, WALL, H_BASE, D-2*WALL, cc, 1, 'base');
-  // Right wall
-  addBox(W/2-WALL/2, by, 0, WALL, H_BASE, D-2*WALL, cc, 1, 'base');
-
-  // USB port hole (dark rectangle on left wall)
-  addBox(-W/2+WALL/2, H_BASE - 8 - 6, -D/2 + 22, WALL+1, 12, 14, dark, 1, 'base', 'detail');
-  // Power Jack hole
-  addBox(-W/2+WALL/2, H_BASE - 6 - 5.5, -D/2 + 42, WALL+1, 11, 12, dark, 1, 'base', 'detail');
-  // SD card slot (right wall)
-  addBox(W/2-WALL/2, H_BASE - 10 - 2, -D/2 + 20, WALL+1, 4, 14, dark, 1, 'base', 'detail');
+  // Port holes on walls
+  addBox(-W/2+WALL/2, H_BASE-8-6, -D/2+22, WALL+1, 12, 14, dark, 1, 'base', 'detail');      // USB
+  addBox(-W/2+WALL/2, H_BASE-6-5.5, -D/2+42, WALL+1, 11, 12, dark, 1, 'base', 'detail');    // Jack
+  if(!cutaway) {
+    addBox(W/2-WALL/2, H_BASE-10-2, -D/2+20, WALL+1, 4, 14, dark, 1, 'base', 'detail');     // SD
+    addCylinder(W/2-WALL/2, H_BASE-17.5, -D/2+72.5, 3.5, WALL+1, 12, dark, 1, 'base', 'detail'); // Pot
+  }
+  addBox(-W/2+WALL/2, H_BASE-8-2, -D/2+69, WALL+1, 4, 10, tp4Purple, 1, 'base', 'detail');   // TP4056 USB
+  addBox(-W/2+WALL/2, H_BASE-22-2.5, -D/2+88, WALL+1, 5, 13, switchGreen, 1, 'base', 'detail'); // Switch
 
   // Mounting pillars (4 corners)
-  var pi = 10; // inset
-  var pR = 4, pH = 5;
-  var pillarPos = [[-iW/2+pi, -iD/2+pi],[iW/2-pi, -iD/2+pi],[-iW/2+pi, iD/2-pi],[iW/2-pi, iD/2-pi]];
-  for (var i = 0; i < pillarPos.length; i++) {
-    addCylinder(pillarPos[i][0], H_BASE - WALL - pH/2, pillarPos[i][1], pR, pH, 12, cc, 1, 'base', 'detail');
-    addCylinder(pillarPos[i][0], H_BASE - WALL - pH/2, pillarPos[i][1], 1.6, pH+1, 8, darker, 1, 'base', 'detail');
+  var pi=10, pR=4, pH=5;
+  var pp=[[-iW/2+pi,-iD/2+pi],[iW/2-pi,-iD/2+pi],[-iW/2+pi,iD/2-pi],[iW/2-pi,iD/2-pi]];
+  for(var i=0;i<pp.length;i++){
+    addCylinder(pp[i][0], H_BASE-WALL-pH/2, pp[i][1], pR, pH, 12, cc, 0.9, 'base', 'detail');
+    addCylinder(pp[i][0], H_BASE-WALL-pH/2, pp[i][1], 1.6, pH+1, 8, darker, 1, 'base', 'detail');
   }
 
-  // Arduino support pillars
-  var ax = -iW/2 + 8, az = -iD/2 + 8;
-  var ardH = [[14,2.5],[66,7.6],[66,35.6],[15.2,50.8]];
-  for (var i = 0; i < ardH.length; i++) {
-    addCylinder(ax+ardH[i][0], H_BASE - WALL - 3, az+ardH[i][1], 3, 6, 10, copper, 1, 'base', 'detail');
+  // Arduino mounting pillars
+  var ax=-iW/2+8, az=-iD/2+8;
+  var ah=[[14,2.5],[66,7.6],[66,35.6],[15.2,50.8]];
+  for(var i=0;i<ah.length;i++)
+    addCylinder(ax+ah[i][0], H_BASE-WALL-3, az+ah[i][1], 3, 6, 10, copper, 0.9, 'base', 'detail');
+
+  // Rubber feet (bottom)
+  var fi=15;
+  var fp=[[-W/2+fi,-D/2+fi],[W/2-fi,-D/2+fi],[-W/2+fi,D/2-fi],[W/2-fi,D/2-fi]];
+  for(var i=0;i<fp.length;i++)
+    addCylinder(fp[i][0], H_BASE+0.3, fp[i][1], 5, 1.2, 14, [40,40,40], 1, 'base', 'detail');
+
+  // Ventilation holes (bottom)
+  for(var vx=0;vx<6;vx++)
+    for(var vy=0;vy<4;vy++)
+      addCylinder(-W/2+22.5+vx*6, H_BASE+0.2, -D/2+22.5+vy*6, 1.3, 0.8, 8, darker, 0.9, 'base', 'detail');
+
+  // Snap-fit rim
+  addBox(0, -1.5, 0, iW-4, 3, iD-4, cc, 0.5, 'base', 'detail');
+  // Snap bumps
+  for(var s=0;s<2;s++) for(var p=0;p<2;p++){
+    var bpx=-iW/2+4+(0.3+p*0.4)*(iW-8);
+    var bpz=-iD/2+2+s*(iD-4);
+    addCylinder(bpx, -1, bpz, 1, 2, 8, [(cc[0]*1.15)|0,(cc[1]*1.15)|0,(cc[2]*1.15)|0], 0.9, 'base', 'detail');
   }
 
-  // Rim (encaixe)
-  var rimH = 2, rimT = 1.5;
-  addBox(0, -rimH/2, 0, iW-2, rimH, iD-2, cc, 0.7, 'base', 'detail');
+  // ===== INTERNAL COMPONENTS =====
+  // All components use addBox only (no buggy cylinders for internals).
+  // OpenSCAD coord -> viewer: X stays X, Y(depth) -> Z, Z(height) -> Y
+  // Origin: internal (0,0) = bottom-left corner of case interior
+  // Viewer: (-W/2+WALL, -D/2+WALL) = bottom-left, FLOOR=top of base floor
+  var FL = H_BASE - WALL;  // Floor Y (top surface = 30)
 
-  // ===== TAMPA (LID) =====
-  var lidBot = 0; // tampa comeca em y=0, vai pra cima (y negativo)
+  // --- Arduino Uno: x=5, y=5, w=69, d=54, on 6mm pillars ---
+  addBox(-W/2+WALL+5+34.5, FL-7, -D/2+WALL+5+27, 69, 2, 54, pcbGreen, 1, 'base', 'internal');
+  addBox(-W/2+WALL+5+35,   FL-9, -D/2+WALL+5+27, 14, 2, 14, [20,20,20], 1, 'base', 'internal');   // ATmega
+  addBox(-W/2+WALL+5+2,    FL-10,-D/2+WALL+5+17, 12, 6, 12, silver, 1, 'base', 'internal');         // USB-B
+  addBox(-W/2+WALL+5+2,    FL-10,-D/2+WALL+5+40, 9, 7, 9, [30,30,30], 1, 'base', 'internal');      // Barrel
+
+  // --- DFPlayer Mini: x=80, y=10, w=21, d=21 ---
+  addBox(-W/2+WALL+80+10.5, FL-3, -D/2+WALL+10+10.5, 21, 2, 21, [160,30,30], 1, 'base', 'internal');
+  addBox(-W/2+WALL+80+19,   FL-3, -D/2+WALL+10+5,    8, 2, 12, [60,60,60], 1, 'base', 'internal');  // SD
+
+  // --- Battery 18650: center at x=55,y=55, len=65, dia=18 ---
+  // Cradle (box around battery)
+  addBox(-W/2+WALL+55, FL-6, -D/2+WALL+55, 68, 11, 21,
+    [(cc[0]*0.45)|0,(cc[1]*0.45)|0,(cc[2]*0.45)|0], 0.8, 'base', 'internal');
+  // Battery body (box approximation of cylinder: 65 x 16 x 16)
+  addBox(-W/2+WALL+55, FL-6, -D/2+WALL+55, 65, 16, 16, batBlue, 1, 'base', 'internal');
+  // Positive terminal
+  addBox(-W/2+WALL+55+34, FL-6, -D/2+WALL+55, 3, 8, 8, batCap, 1, 'base', 'internal');
+
+  // --- TP4056: x=5, y=62, w=25, d=19 ---
+  addBox(-W/2+WALL+5+12.5, FL-2, -D/2+WALL+62+9.5, 25, 2, 19, tp4Purple, 1, 'base', 'internal');
+  addBox(-W/2+WALL+2,      FL-2.5,-D/2+WALL+62+9.5, 4, 3, 8, silver, 1, 'base', 'internal');      // USB
+  addBox(-W/2+WALL+5+18,   FL-3.5,-D/2+WALL+62+4,  2, 1, 1.5,[255,40,40], 1, 'base', 'internal'); // LED
+
+  // --- Motor vibracao: x=135, y=35, dia=10 ---
+  addCylinder(-W/2+WALL+135, FL-2.5, -D/2+WALL+35, 6.5, 4, 14, copper, 1, 'base', 'internal');
+  addCylinder(-W/2+WALL+135, FL-3,   -D/2+WALL+35, 5, 3, 12, [110,110,110], 1, 'base', 'internal');
+
+  // --- Chave on/off: left wall area, sw_y=85 ---
+  addBox(-W/2+WALL+3, FL-10, -D/2+WALL+85+6.5, 8, 5, 13, switchGreen, 1, 'base', 'internal');
+
+  // --- Potentiometer: right wall, pot_y=70 ---
+  addCylinder(W/2-WALL-5, FL-13, -D/2+WALL+70, 7, 5, 12, [170,170,170], 1, 'base', 'internal');
+
+  // ===== LID (TAMPA) =====
   var lidTop = -H_LID;
 
-  // Top plate
-  addBox(0, lidTop, 0, W, WALL, D, cc, 1, 'lid');
-  // Front wall
-  addBox(0, lidTop + H_LID/2, -D/2+WALL/2, W, H_LID-WALL, WALL, cc, 1, 'lid');
-  // Back wall
-  addBox(0, lidTop + H_LID/2, D/2-WALL/2, W, H_LID-WALL, WALL, cc, 1, 'lid');
-  // Left wall
-  addBox(-W/2+WALL/2, lidTop + H_LID/2, 0, WALL, H_LID-WALL, D-2*WALL, cc, 1, 'lid');
-  // Right wall
-  addBox(W/2-WALL/2, lidTop + H_LID/2, 0, WALL, H_LID-WALL, D-2*WALL, cc, 1, 'lid');
+  // Lid shell
+  addBox(0, lidTop, 0, W, WALL, D, cc, 1, 'lid', 'case');
+  addBox(0, lidTop+H_LID/2, -D/2+WALL/2, W, H_LID-WALL, WALL, cc, 1, 'lid', 'case');
+  if(!cutaway)
+  addBox(0, lidTop+H_LID/2, D/2-WALL/2, W, H_LID-WALL, WALL, cc, 1, 'lid', 'case');
+  addBox(-W/2+WALL/2, lidTop+H_LID/2, 0, WALL, H_LID-WALL, D-2*WALL, cc, 1, 'lid', 'case');
+  if(!cutaway)
+  addBox(W/2-WALL/2, lidTop+H_LID/2, 0, WALL, H_LID-WALL, D-2*WALL, cc, 1, 'lid', 'case');
 
-  // LCD window (dark rectangle on top)
-  var lcdX = -W/2 + WALL + 45 + 36;
-  var lcdZ = -D/2 + WALL + 20 + 12.5;
-  addBox(lcdX, lidTop - 0.5, lcdZ, 72, 1, 25, darker, 1, 'lid', 'detail');
-  // LCD screen (green)
-  addBox(lcdX, lidTop - 1, lcdZ, 68, 0.5, 21, screen, 1, 'lid', 'detail');
-
-  // 5 Button holes with colored caps
-  var btnColors = [[229,57,53],[249,168,37],[67,160,71],[21,101,192],[55,55,55]];
-  var btnLabels = ['CAT<','CAT>','PAL<','PAL>','FALAR'];
-  for (var i = 0; i < 5; i++) {
-    var bx = -W/2 + WALL + 15 + i * 28;
-    var bz = -D/2 + WALL + 80;
-    // Hole ring (dark)
-    addCylinder(bx, lidTop - 0.3, bz, 8, 1, 16, darker, 1, 'lid', 'detail');
-    // Button cap
-    addCylinder(bx, lidTop - 2.5, bz, 5.5, 4, 16, btnColors[i], 1, 'lid', 'detail');
-  }
-
-  // Speaker grille area (dark circle)
-  var spkX = -W/2 + WALL + 135;
-  var spkZ = -D/2 + WALL + 55;
-  addCylinder(spkX, lidTop - 0.3, spkZ, 20, 1, 24, darker, 1, 'lid', 'detail');
-  // Speaker grille holes (small dots)
-  var gs = 7;
-  for (var ix = -3; ix <= 3; ix++) {
-    for (var iz = -3; iz <= 3; iz++) {
-      var gx = ix * gs, gz = iz * gs;
-      if (Math.sqrt(gx*gx+gz*gz) < 17) {
-        addCylinder(spkX+gx, lidTop - 0.5, spkZ+gz, 1.8, 1.5, 8, spk, 1, 'lid', 'detail');
-      }
-    }
-  }
-
-  // Speaker body (under the grille)
-  addCylinder(spkX, lidTop + 3, spkZ, 18, 4, 20, [25,25,25], 1, 'lid', 'detail');
+  // LCD window + screen
+  var lcdX=-W/2+WALL+45+36, lcdZ=-D/2+WALL+20+12.5;
+  addBox(lcdX, lidTop-0.5, lcdZ, 72, 1, 25, darker, 1, 'lid', 'detail');
+  addBox(lcdX, lidTop-1, lcdZ, 68, 0.5, 21, screen, 1, 'lid', 'detail');
 
   // LCD support brackets
-  addBox(lcdX - 42, lidTop + (H_LID-WALL)/2, lcdZ, 2, H_LID - 4, 38, cc, 0.8, 'lid', 'detail');
-  addBox(lcdX + 42, lidTop + (H_LID-WALL)/2, lcdZ, 2, H_LID - 4, 38, cc, 0.8, 'lid', 'detail');
+  addBox(lcdX-42, lidTop+(H_LID-WALL)/2, lcdZ, 2, H_LID-4, 38, cc, 0.7, 'lid', 'detail');
+  addBox(lcdX+42, lidTop+(H_LID-WALL)/2, lcdZ, 2, H_LID-4, 38, cc, 0.7, 'lid', 'detail');
+
+  // 5 Buttons with rings and caps
+  var btnC=[[229,57,53],[249,168,37],[67,160,71],[21,101,192],[55,55,55]];
+  for(var i=0;i<5;i++){
+    var bx=-W/2+WALL+15+i*28, bz=-D/2+WALL+80;
+    // Relief ring
+    addCylinder(bx, lidTop-0.15, bz, 10, 0.6, 20,
+      [(cc[0]*0.7)|0,(cc[1]*0.7)|0,(cc[2]*0.7)|0], 0.9, 'lid', 'detail');
+    // Hole (dark)
+    addCylinder(bx, lidTop-0.3, bz, 8, 1, 16, darker, 1, 'lid', 'detail');
+    // Cap (colored)
+    addCylinder(bx, lidTop-2.5, bz, 5.5, 4, 16, btnC[i], 1, 'lid', 'detail');
+  }
+
+  // Speaker grille (3mm holes, 6mm spacing)
+  var spkX=-W/2+WALL+135, spkZ=-D/2+WALL+55;
+  addCylinder(spkX, lidTop-0.3, spkZ, 21, 1, 24, darker, 1, 'lid', 'detail');
+  for(var ix=-2;ix<=2;ix++) for(var iz=-2;iz<=2;iz++){
+    var gx=ix*8, gz=iz*8;
+    if(Math.sqrt(gx*gx+gz*gz)<18)
+      addCylinder(spkX+gx, lidTop-0.5, spkZ+gz, 2, 1.5, 8, spk, 1, 'lid', 'detail');
+  }
+  // Speaker body under grille
+  addCylinder(spkX, lidTop+3, spkZ, 18, 4, 20, [25,25,25], 1, 'lid', 'detail');
+  addCylinder(spkX, lidTop+2.5, spkZ, 14, 1, 16, [50,50,50], 0.7, 'lid', 'detail');
 }
 
-// ============ RENDER ============
+// ============ RENDER (single-pass, lid hidden when internals shown) ============
 function render() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   ctx.fillStyle = '#1a1a2e';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Draw grid
-  ctx.save();
-  ctx.globalAlpha = 0.15;
-  ctx.strokeStyle = '#445';
-  ctx.lineWidth = 0.5;
-  for (var gx = -200; gx <= 200; gx += 20) {
-    var p1 = project(gx, H_BASE, -200);
-    var p2 = project(gx, H_BASE, 200);
-    ctx.beginPath(); ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p2[0],p2[1]); ctx.stroke();
+  // Grid
+  ctx.save(); ctx.globalAlpha=0.15; ctx.strokeStyle='#445'; ctx.lineWidth=0.5;
+  for(var gx=-200;gx<=200;gx+=20){
+    var p1=project(gx,H_BASE,-200), p2=project(gx,H_BASE,200);
+    ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
   }
-  for (var gz = -200; gz <= 200; gz += 20) {
-    var p1 = project(-200, H_BASE, gz);
-    var p2 = project(200, H_BASE, gz);
-    ctx.beginPath(); ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p2[0],p2[1]); ctx.stroke();
+  for(var gz=-200;gz<=200;gz+=20){
+    var p1=project(-200,H_BASE,gz), p2=project(200,H_BASE,gz);
+    ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
   }
   ctx.restore();
 
-  // Smooth explode animation
   explodeOffset += (explodeTarget - explodeOffset) * 0.12;
 
-  // Collect visible faces
+  var caseAlpha = opacity;
+
   var drawList = [];
-  for (var i = 0; i < faces.length; i++) {
-    var f = faces[i];
-    if (f.group === 'base' && !showBase) continue;
-    if (f.group === 'lid' && !showLid) continue;
+  for(var i=0;i<faces.length;i++){
+    var f=faces[i];
+    // Visibility filters
+    if(f.group==='base' && !showBase) continue;
+    if(f.group==='lid' && !showLid) continue;
+    if(f.type==='internal' && !showInternals) continue;
+    if(showInternals && f.group==='lid') continue; // always hide lid when internals on
 
-    // Apply explode offset to lid
-    var offsetY = 0;
-    if (f.group === 'lid') offsetY = -explodeOffset;
-
-    // Project vertices
-    var projected = [];
-    var rotated = [];
-    for (var j = 0; j < f.verts.length; j++) {
-      var v = f.verts[j];
-      projected.push(project(v[0], v[1] + offsetY, v[2]));
-      rotated.push(rotatePoint(v[0], v[1] + offsetY, v[2]));
+    var offsetY = f.group==='lid' ? -explodeOffset : 0;
+    var projected=[], rotated=[];
+    for(var j=0;j<f.verts.length;j++){
+      var v=f.verts[j];
+      projected.push(project(v[0], v[1]+offsetY, v[2]));
+      rotated.push(rotatePoint(v[0], v[1]+offsetY, v[2]));
     }
 
-    // Backface culling (for polygons with 3+ verts)
-    if (projected.length >= 3) {
-      var n = faceNormal(rotated);
-      // Camera looks in +Z direction after rotation
-      if (n[2] > 0 && !wireMode) continue;
+    // Backface culling
+    if(projected.length>=3 && !wireMode){
+      var n=faceNormal(rotated);
+      if(n[2]>0) continue;
     }
 
-    // Lighting (simple directional)
-    var n2 = faceNormal(rotated);
-    var len = Math.sqrt(n2[0]*n2[0]+n2[1]*n2[1]+n2[2]*n2[2]) || 1;
-    n2 = [n2[0]/len, n2[1]/len, n2[2]/len];
-    // Light from top-left-front
-    var light = Math.max(0, -(n2[0]*0.3 + n2[1]*-0.7 + n2[2]*-0.5));
-    light = 0.35 + light * 0.65;
+    // Lighting
+    var n2=faceNormal(rotated);
+    var len=Math.sqrt(n2[0]*n2[0]+n2[1]*n2[1]+n2[2]*n2[2])||1;
+    n2=[n2[0]/len,n2[1]/len,n2[2]/len];
+    var light=Math.max(0, -(n2[0]*0.3+n2[1]*-0.7+n2[2]*-0.5));
+    light=0.3+light*0.7;
+
+    // Alpha: when internals on, make case/detail very transparent
+    var fAlpha = f.alpha;
+    if(showInternals && f.type==='case') fAlpha = 0.15;
+    else if(showInternals && f.type==='detail') fAlpha = 0.1;
 
     drawList.push({
-      projected: projected,
+      projected:projected,
       z: avgZ(projected),
-      color: f.type === 'case' ? caseColor : f.color,
-      alpha: f.alpha * (f.type === 'case' ? opacity : Math.min(1, opacity + 0.1)),
-      light: light,
-      isCase: f.type === 'case'
+      color: f.type==='case' ? caseColor : f.color,
+      alpha: fAlpha,
+      light: light
     });
   }
 
-  // Sort back-to-front (painter's algorithm)
-  drawList.sort(function(a, b) { return b.z - a.z; });
+  // Sort back-to-front
+  drawList.sort(function(a,b){return b.z-a.z;});
 
-  // Draw faces
-  for (var i = 0; i < drawList.length; i++) {
-    var d = drawList[i];
-    var p = d.projected;
-    var r = Math.round(d.color[0] * d.light);
-    var g = Math.round(d.color[1] * d.light);
-    var b = Math.round(d.color[2] * d.light);
-
+  // Draw all faces
+  for(var i=0;i<drawList.length;i++){
+    var d=drawList[i], p=d.projected;
+    var r=Math.round(Math.min(255,d.color[0]*d.light));
+    var g=Math.round(Math.min(255,d.color[1]*d.light));
+    var b=Math.round(Math.min(255,d.color[2]*d.light));
     ctx.beginPath();
-    ctx.moveTo(p[0][0], p[0][1]);
-    for (var j = 1; j < p.length; j++) {
-      ctx.lineTo(p[j][0], p[j][1]);
-    }
+    ctx.moveTo(p[0][0],p[0][1]);
+    for(var j=1;j<p.length;j++) ctx.lineTo(p[j][0],p[j][1]);
     ctx.closePath();
-
-    if (wireMode) {
-      ctx.strokeStyle = 'rgba('+r+','+g+','+b+','+d.alpha+')';
-      ctx.lineWidth = 1;
-      ctx.stroke();
+    if(wireMode){
+      ctx.strokeStyle='rgba('+r+','+g+','+b+','+d.alpha+')';
+      ctx.lineWidth=1; ctx.stroke();
     } else {
-      ctx.fillStyle = 'rgba('+r+','+g+','+b+','+d.alpha+')';
+      ctx.fillStyle='rgba('+r+','+g+','+b+','+d.alpha+')';
       ctx.fill();
-      // Edge lines for definition
-      ctx.strokeStyle = 'rgba('+(r*0.5|0)+','+(g*0.5|0)+','+(b*0.5|0)+','+d.alpha*0.4+')';
-      ctx.lineWidth = 0.5;
-      ctx.stroke();
+      ctx.strokeStyle='rgba('+(r*0.4|0)+','+(g*0.4|0)+','+(b*0.4|0)+','+Math.max(0.1,d.alpha*0.4)+')';
+      ctx.lineWidth=0.5; ctx.stroke();
     }
   }
 
-  // Button labels
-  if (showLid && !wireMode) {
-    var btnLabels = ['CAT <','CAT >','PAL <','PAL >','FALAR'];
-    ctx.font = 'bold 10px Segoe UI, Arial';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#fff';
-    ctx.globalAlpha = 0.9;
-    for (var i = 0; i < 5; i++) {
-      var bx = -W/2 + WALL + 15 + i * 28;
-      var bz = -D/2 + WALL + 80;
-      var lp = project(bx, -H_LID - 6 - explodeOffset, bz);
+  // ===== TEXT OVERLAYS =====
+  if(showLid && !wireMode){
+    var btnLabels=['CAT+','CAT-','PAL+','PAL-','VOZ'];
+    ctx.font='bold 10px Segoe UI,Arial';
+    ctx.textAlign='center';
+    ctx.fillStyle='#fff'; ctx.globalAlpha=0.9;
+    for(var i=0;i<5;i++){
+      var bx=-W/2+WALL+15+i*28, bz=-D/2+WALL+80;
+      var lp=project(bx, -H_LID-5-explodeOffset, bz+12);
       ctx.fillText(btnLabels[i], lp[0], lp[1]);
     }
+
     // LCD text
-    var lcdX = -W/2 + WALL + 45 + 36;
-    var lcdZ = -D/2 + WALL + 20 + 12.5;
-    ctx.font = '9px Consolas, monospace';
-    ctx.fillStyle = '#5f5';
-    var tp = project(lcdX, -H_LID - 1.5 - explodeOffset, lcdZ - 4);
-    ctx.fillText('Cat: Necessidades', tp[0], tp[1]);
-    var tp2 = project(lcdX, -H_LID - 1.5 - explodeOffset, lcdZ + 4);
-    ctx.fillText('> Eu quero', tp2[0], tp2[1]);
-    ctx.globalAlpha = 1;
+    var lx=-W/2+WALL+45+36, lz=-D/2+WALL+20+12.5;
+    ctx.font='9px Consolas,monospace'; ctx.fillStyle='#5f5';
+    var t1=project(lx,-H_LID-1.5-explodeOffset,lz-4);
+    ctx.fillText('Necessidades',t1[0],t1[1]);
+    var t2=project(lx,-H_LID-1.5-explodeOffset,lz+4);
+    ctx.fillText('> Eu quero',t2[0],t2[1]);
+    ctx.font='7px Consolas';
+    var t3=project(lx+30,-H_LID-1.5-explodeOffset,lz-4);
+    ctx.fillText('[|||]',t3[0],t3[1]);
+    ctx.globalAlpha=1;
+  }
+
+  // Internal labels
+  if(showInternals && showBase && !wireMode){
+    ctx.font='bold 10px Segoe UI'; ctx.textAlign='center'; ctx.globalAlpha=1;
+    var F=H_BASE-WALL; // floor
+    function lx(x){return -W/2+WALL+x;} function lz(y){return -D/2+WALL+y;}
+
+    ctx.fillStyle='#4ade80';
+    var a=project(lx(39.5), F-14, lz(32)); ctx.fillText('Arduino Uno',a[0],a[1]);
+
+    ctx.fillStyle='#ef4444';
+    var d=project(lx(90.5), F-7, lz(20.5)); ctx.fillText('DFPlayer',d[0],d[1]);
+
+    ctx.fillStyle='#60a5fa';
+    var b=project(lx(55), F-18, lz(55)); ctx.fillText('18650 3.7V',b[0],b[1]);
+
+    ctx.fillStyle='#a78bfa';
+    var t=project(lx(17.5), F-6, lz(71.5)); ctx.fillText('TP4056',t[0],t[1]);
+
+    ctx.fillStyle='#fbbf24';
+    var m=project(lx(135), F-7, lz(35)); ctx.fillText('Motor',m[0],m[1]);
+
+    ctx.fillStyle='#34d399';
+    var s=project(lx(7), F-17, lz(91.5)); ctx.fillText('On/Off',s[0],s[1]);
+
+    ctx.fillStyle='#ddd';
+    var p=project(lx(162), F-20, lz(70)); ctx.fillText('Volume',p[0],p[1]);
+
+    ctx.globalAlpha=1;
+  }
+
+  // Port labels (when exploded)
+  if(exploded && showBase && !wireMode){
+    ctx.font='9px Segoe UI'; ctx.globalAlpha=0.8;
+
+    ctx.textAlign='right'; ctx.fillStyle='#aaa';
+    var u=project(-W/2-12,H_BASE-14,-D/2+22); ctx.fillText('USB',u[0],u[1]);
+    var jk=project(-W/2-12,H_BASE-12,-D/2+42); ctx.fillText('Jack',jk[0],jk[1]);
+    ctx.fillStyle='#4ade80';
+    var tp=project(-W/2-12,H_BASE-10,-D/2+69); ctx.fillText('Carga USB',tp[0],tp[1]);
+    var sw=project(-W/2-12,H_BASE-25,-D/2+88); ctx.fillText('On/Off',sw[0],sw[1]);
+
+    ctx.textAlign='left'; ctx.fillStyle='#aaa';
+    var sd=project(W/2+12,H_BASE-12,-D/2+20); ctx.fillText('SD Card',sd[0],sd[1]);
+    ctx.fillStyle='#4ade80';
+    var po=project(W/2+12,H_BASE-18,-D/2+72.5); ctx.fillText('Volume',po[0],po[1]);
+
+    ctx.globalAlpha=1;
   }
 
   requestAnimationFrame(render);
 }
 
-// ============ CONTROLES ============
-canvas.addEventListener('mousedown', function(e) {
-  if (e.button === 2) { panning = true; }
-  else { dragging = true; }
-  lastMX = e.clientX; lastMY = e.clientY;
+// ============ CONTROLS ============
+canvas.addEventListener('mousedown',function(e){
+  if(e.button===2) panning=true; else dragging=true;
+  lastMX=e.clientX; lastMY=e.clientY;
 });
-canvas.addEventListener('mousemove', function(e) {
-  if (dragging) {
-    rotY += (e.clientX - lastMX) * 0.008;
-    rotX += (e.clientY - lastMY) * 0.008;
-    rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
-  }
-  if (panning) {
-    panX += (e.clientX - lastMX) / zoom;
-    panY += (e.clientY - lastMY) / zoom;
-  }
-  lastMX = e.clientX; lastMY = e.clientY;
+canvas.addEventListener('mousemove',function(e){
+  if(dragging){rotY+=(e.clientX-lastMX)*0.008;rotX+=(e.clientY-lastMY)*0.008;rotX=Math.max(-Math.PI/2,Math.min(Math.PI/2,rotX));}
+  if(panning){panX+=(e.clientX-lastMX)/zoom;panY+=(e.clientY-lastMY)/zoom;}
+  lastMX=e.clientX;lastMY=e.clientY;
 });
-canvas.addEventListener('mouseup', function() { dragging = false; panning = false; });
-canvas.addEventListener('mouseleave', function() { dragging = false; panning = false; });
-canvas.addEventListener('wheel', function(e) {
-  e.preventDefault();
-  zoom *= e.deltaY > 0 ? 0.92 : 1.08;
-  zoom = Math.max(0.5, Math.min(8, zoom));
-}, {passive: false});
-canvas.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+canvas.addEventListener('mouseup',function(){dragging=false;panning=false;});
+canvas.addEventListener('mouseleave',function(){dragging=false;panning=false;});
+canvas.addEventListener('wheel',function(e){e.preventDefault();zoom*=e.deltaY>0?0.92:1.08;zoom=Math.max(0.5,Math.min(8,zoom));},{passive:false});
+canvas.addEventListener('contextmenu',function(e){e.preventDefault();});
 
-// Touch support
-canvas.addEventListener('touchstart', function(e) {
-  e.preventDefault();
-  var t = e.touches[0];
-  dragging = true; lastMX = t.clientX; lastMY = t.clientY;
-}, {passive:false});
-canvas.addEventListener('touchmove', function(e) {
-  e.preventDefault();
-  var t = e.touches[0];
-  if (dragging) {
-    rotY += (t.clientX - lastMX) * 0.008;
-    rotX += (t.clientY - lastMY) * 0.008;
-    rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+canvas.addEventListener('touchstart',function(e){e.preventDefault();var t=e.touches[0];dragging=true;lastMX=t.clientX;lastMY=t.clientY;},{passive:false});
+canvas.addEventListener('touchmove',function(e){e.preventDefault();var t=e.touches[0];if(dragging){rotY+=(t.clientX-lastMX)*0.008;rotX+=(t.clientY-lastMY)*0.008;rotX=Math.max(-Math.PI/2,Math.min(Math.PI/2,rotX));}lastMX=t.clientX;lastMY=t.clientY;},{passive:false});
+canvas.addEventListener('touchend',function(){dragging=false;});
+
+window.tog=function(w){
+  if(w==='base'){showBase=!showBase;document.getElementById('bBase').classList.toggle('on',showBase);}
+  if(w==='lid'){showLid=!showLid;document.getElementById('bLid').classList.toggle('on',showLid);}
+  if(w==='explode'){exploded=!exploded;explodeTarget=exploded?50:0;document.getElementById('bExp').classList.toggle('on',exploded);}
+  if(w==='wire'){wireMode=!wireMode;document.getElementById('bWire').classList.toggle('on',wireMode);}
+  if(w==='internals'){
+    showInternals=!showInternals;
+    document.getElementById('bInt').classList.toggle('on',showInternals);
+    // Auto-hide lid when showing internals (lid covers the components)
+    if(showInternals){ showLid=false; document.getElementById('bLid').classList.remove('on'); }
+    else { showLid=true; document.getElementById('bLid').classList.add('on'); }
+    buildModel();
   }
-  lastMX = t.clientX; lastMY = t.clientY;
-}, {passive:false});
-canvas.addEventListener('touchend', function() { dragging = false; });
-
-// Buttons
-window.tog = function(what) {
-  if (what === 'base') { showBase = !showBase; document.getElementById('bBase').classList.toggle('on', showBase); }
-  if (what === 'lid') { showLid = !showLid; document.getElementById('bLid').classList.toggle('on', showLid); }
-  if (what === 'explode') { exploded = !exploded; explodeTarget = exploded ? 50 : 0; document.getElementById('bExp').classList.toggle('on', exploded); }
-  if (what === 'wire') { wireMode = !wireMode; document.getElementById('bWire').classList.toggle('on', wireMode); }
+  if(w==='cutaway'){cutaway=!cutaway;document.getElementById('bCut').classList.toggle('on',cutaway);buildModel();}
 };
-window.resetCam = function() { rotX = -0.45; rotY = 0.6; zoom = 2.8; panX = 0; panY = -10; };
+window.resetCam=function(){rotX=-0.45;rotY=0.6;zoom=2.8;panX=0;panY=-10;};
 
-// Color swatches
-var clrDiv = document.getElementById('clrs');
-for (var i = 0; i < colorOptions.length; i++) {
-  var co = colorOptions[i];
-  var d = document.createElement('div');
-  d.className = 'cs' + (i === 0 ? ' sel' : '');
-  d.style.background = co[3];
-  d.setAttribute('data-i', i);
-  d.onclick = function() {
+var clrDiv=document.getElementById('clrs');
+for(var i=0;i<colorOptions.length;i++){
+  var co=colorOptions[i];
+  var d=document.createElement('div');
+  d.className='cs'+(i===0?' sel':'');
+  d.style.background=co[3];
+  d.setAttribute('data-i',i);
+  d.onclick=function(){
     document.querySelectorAll('.cs').forEach(function(e){e.classList.remove('sel')});
     this.classList.add('sel');
-    var ci = parseInt(this.getAttribute('data-i'));
-    caseColor = [colorOptions[ci][0], colorOptions[ci][1], colorOptions[ci][2]];
+    var ci=parseInt(this.getAttribute('data-i'));
+    caseColor=[colorOptions[ci][0],colorOptions[ci][1],colorOptions[ci][2]];
     buildModel();
   };
   clrDiv.appendChild(d);
 }
 
-// ============ INIT ============
 buildModel();
 render();
 </script>
