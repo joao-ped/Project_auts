@@ -440,35 +440,46 @@ tr.tot td{background:rgba(59,130,246,.15);font-weight:700;color:#fff;font-size:1
   </div>
 </div>
 
-<!-- ========== SLIDE 9: CUSTO ========== -->
+<!-- ========== SLIDE 9: CUSTO DETALHADO ========== -->
 <div class="s">
   <div class="bg bg-solution"></div>
   <div class="content">
     <span class="label label-green anim">Investimento</span>
-    <h2 class="anim">Bill of Materials &mdash; <span class="green">~R$128</span></h2>
-    <div class="row anim2" style="margin-top:24px">
+    <h2 class="anim">Orcamento Detalhado &mdash; <span class="green">~R$128</span></h2>
+    <div class="row anim2" style="margin-top:16px">
       <div class="col">
-        <table>
-          <tr><th>Componente</th><th style="text-align:right">Custo</th></tr>
-          <tr><td>Arduino Uno R3</td><td style="text-align:right">R$ 35</td></tr>
-          <tr><td>DFPlayer Mini + microSD</td><td style="text-align:right">R$ 18</td></tr>
-          <tr><td>LCD 16x2 I2C</td><td style="text-align:right">R$ 15</td></tr>
-          <tr><td>Bateria 18650 + TP4056</td><td style="text-align:right">R$ 22</td></tr>
-          <tr><td>Alto-falante 8&#8486; 2W</td><td style="text-align:right">R$ 5</td></tr>
-          <tr><td>Botoes + fios + resistores</td><td style="text-align:right">R$ 10</td></tr>
-          <tr><td>Pot. + motor + transistor + diodo</td><td style="text-align:right">R$ 8</td></tr>
-          <tr><td>Impressao 3D (PLA)</td><td style="text-align:right">R$ 15</td></tr>
-          <tr class="tot"><td>TOTAL</td><td style="text-align:right">~R$ 128</td></tr>
+        <table style="font-size:.82em">
+          <tr><th>Qtd</th><th>Componente</th><th>Especificacao</th><th style="text-align:right">Unit.</th><th style="text-align:right">Total</th></tr>
+          <tr><td>1x</td><td>Arduino Uno R3</td><td>ATmega328P, USB-B</td><td style="text-align:right">R$35</td><td style="text-align:right">R$35</td></tr>
+          <tr><td>1x</td><td>DFPlayer Mini</td><td>MP3, slot microSD</td><td style="text-align:right">R$12</td><td style="text-align:right">R$12</td></tr>
+          <tr><td>1x</td><td>Cartao microSD</td><td>8GB FAT32, classe 10</td><td style="text-align:right">R$6</td><td style="text-align:right">R$6</td></tr>
+          <tr><td>1x</td><td>LCD 16x2 I2C</td><td>PCF8574, 0x27/0x3F</td><td style="text-align:right">R$15</td><td style="text-align:right">R$15</td></tr>
+          <tr><td>1x</td><td>Bateria 18650</td><td>3.7V 2600mAh Li-Ion</td><td style="text-align:right">R$15</td><td style="text-align:right">R$15</td></tr>
+          <tr><td>1x</td><td>Modulo TP4056</td><td>Carregador micro-USB</td><td style="text-align:right">R$7</td><td style="text-align:right">R$7</td></tr>
+          <tr><td>1x</td><td>Alto-falante</td><td>8&#8486; 2W, 40mm</td><td style="text-align:right">R$5</td><td style="text-align:right">R$5</td></tr>
+          <tr><td>5x</td><td>Botao 12mm</td><td>Push, 5 cores</td><td style="text-align:right">R$1</td><td style="text-align:right">R$5</td></tr>
+          <tr><td>1x</td><td>Potenciometro</td><td>10k&#8486; linear, eixo 6mm</td><td style="text-align:right">R$3</td><td style="text-align:right">R$3</td></tr>
+          <tr><td>1x</td><td>Motor vibracao</td><td>Coin 10mm 3V</td><td style="text-align:right">R$4</td><td style="text-align:right">R$4</td></tr>
+          <tr><td>1x</td><td>Transistor 2N2222</td><td>NPN TO-92</td><td style="text-align:right">R$0,50</td><td style="text-align:right">R$0,50</td></tr>
+          <tr><td>1x</td><td>Diodo 1N4148</td><td>Flyback motor</td><td style="text-align:right">R$0,30</td><td style="text-align:right">R$0,30</td></tr>
+          <tr><td>1x</td><td>Chave deslizante</td><td>On/Off SS12D00G3</td><td style="text-align:right">R$1</td><td style="text-align:right">R$1</td></tr>
+          <tr><td>3x</td><td>Resistor</td><td>1k&#8486;(2) + 10k&#8486;(2)</td><td style="text-align:right">R$0,20</td><td style="text-align:right">R$0,80</td></tr>
+          <tr><td>~20</td><td>Fios jumper</td><td>M-M, M-F variados</td><td style="text-align:right">R$0,20</td><td style="text-align:right">R$3,40</td></tr>
+          <tr><td>1x</td><td>Impressao 3D</td><td>PLA ~65g, base+tampa</td><td style="text-align:right">R$15</td><td style="text-align:right">R$15</td></tr>
+          <tr class="tot"><td colspan="4">TOTAL ESTIMADO</td><td style="text-align:right">~R$128</td></tr>
         </table>
       </div>
-      <div class="col anim3" style="max-width:300px;display:flex;flex-direction:column;gap:16px">
-        <div class="card stat" style="border-color:rgba(52,211,153,.3)">
-          <div class="num green" style="font-size:4em">95%</div>
+      <div class="col anim3" style="max-width:260px;display:flex;flex-direction:column;gap:14px">
+        <div class="card stat" style="border-color:rgba(52,211,153,.3);padding:22px 16px">
+          <div class="num green" style="font-size:3.5em">95%</div>
           <div class="lbl">mais barato que comercial</div>
         </div>
-        <div class="card stat" style="border-color:rgba(96,165,250,.3)">
-          <div class="num blue" style="font-size:4em">~30h</div>
+        <div class="card stat" style="border-color:rgba(96,165,250,.3);padding:22px 16px">
+          <div class="num blue" style="font-size:3.5em">~30h</div>
           <div class="lbl">autonomia (18650 2600mAh)</div>
+        </div>
+        <div class="card" style="border-color:rgba(251,191,36,.3);padding:16px;text-align:center">
+          <p style="font-size:.82em;color:rgba(255,255,255,.6)">Precos referencia: Mercado Livre / AliExpress (mai/2026)</p>
         </div>
       </div>
     </div>
