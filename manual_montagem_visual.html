@@ -118,6 +118,7 @@
                 <linearGradient id="mtl" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#e5e7eb"/><stop offset="50%" stop-color="#d1d5db"/><stop offset="100%" stop-color="#9ca3af"/></linearGradient>
                 <linearGradient id="bat" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
                 <linearGradient id="tp4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#5b21b6"/></linearGradient>
+                <marker id="arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0,6 2,0 4" fill="#f97316"/></marker>
             </defs>
             <!-- Arduino -->
             <g filter="url(#sh)"><rect x="20" y="25" width="120" height="95" rx="5" fill="url(#brd)"/><rect x="17" y="50" width="14" height="22" rx="3" fill="url(#mtl)" stroke="#9ca3af" stroke-width="1"/></g>
@@ -205,12 +206,14 @@
             <text x="530" y="245" text-anchor="middle" fill="#10b981" font-size="9" font-weight="700">2x 10k&#8486;</text>
             <text x="530" y="257" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
 
-            <!-- microSD -->
+            <!-- microSD (insere no DFPlayer) -->
             <g filter="url(#sh)" transform="translate(240,160)">
                 <rect x="5" y="0" width="28" height="20" rx="3" fill="#1e293b"/><rect x="0" y="8" width="38" height="24" rx="3" fill="#374151"/>
             </g>
             <text x="259" y="210" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">microSD</text>
             <text x="259" y="222" text-anchor="middle" fill="var(--g500)" font-size="8">35 MP3s</text>
+            <path d="M268,185 Q310,185 310,140 L350,140" stroke="#f97316" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+            <text x="310" y="130" text-anchor="middle" fill="#f97316" font-size="8" font-weight="600">Insere no DFPlayer</text>
 
             <!-- Jumpers -->
             <g transform="translate(320,160)">
@@ -264,7 +267,7 @@
             <rect x="46" y="260" width="20" height="18" rx="3" fill="#fff" stroke="#10b981" stroke-width="2"/>
             <text x="34" y="273" text-anchor="end" fill="#10b981" font-size="9" font-weight="600">On/Off</text>
             <rect x="714" y="130" width="20" height="35" rx="3" fill="#fff" stroke="#60a5fa" stroke-width="2"/>
-            <text x="748" y="152" fill="var(--g600)" font-size="9" font-weight="600">SD</text>
+            <text x="748" y="152" fill="var(--g600)" font-size="9" font-weight="600">Speaker</text>
             <rect x="714" y="200" width="20" height="24" rx="3" fill="#fff" stroke="#10b981" stroke-width="2"/>
             <text x="748" y="216" fill="#10b981" font-size="9" font-weight="600">Vol</text>
 
@@ -525,9 +528,9 @@
         <tr class="new-row"><td><strong>D7 &#9733;</strong></td><td>1k&#8486; → 2N2222 base</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>Motor vibra&ccedil;ao</td></tr>
         <tr><td><strong>D10</strong></td><td>DFPlayer TX</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>Receber dados audio</td></tr>
         <tr><td><strong>D11</strong></td><td>1k&#8486; → DFPlayer RX</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>Enviar comandos audio</td></tr>
-        <tr class="new-row"><td><strong>A0 &#9733;</strong></td><td>Pot. 10k&#8486; (wiper)</td><td><span class="color-dot" style="background:#f97316"></span>Laranja</td><td>Volume</td></tr>
+        <tr class="new-row"><td><strong>A0 &#9733;</strong></td><td>Pot. 10k&#8486; (wiper)</td><td><span class="color-dot" style="background:#a855f7"></span>Roxo</td><td>Volume</td></tr>
         <tr class="new-row"><td><strong>A1 &#9733;</strong></td><td>Divisor tensao 10k+10k</td><td><span class="color-dot" style="background:#f97316"></span>Laranja</td><td>Monitor bateria</td></tr>
-        <tr><td><strong>A4</strong></td><td>LCD SDA</td><td><span class="color-dot" style="background:#a855f7"></span>Roxo</td><td>I2C dados</td></tr>
+        <tr><td><strong>A4</strong></td><td>LCD SDA</td><td><span class="color-dot" style="background:#22c55e"></span>Verde</td><td>I2C dados</td></tr>
         <tr><td><strong>A5</strong></td><td>LCD SCL</td><td><span class="color-dot" style="background:#f97316"></span>Laranja</td><td>I2C clock</td></tr>
         <tr><td><strong>5V</strong></td><td>LCD, DFPlayer, Pot, Motor</td><td><span class="color-dot" style="background:#ef4444"></span>Vermelho</td><td>Alimenta&ccedil;ao</td></tr>
         <tr><td><strong>GND</strong></td><td>Todos os componentes</td><td><span class="color-dot" style="background:#1e293b"></span>Preto</td><td>Terra comum</td></tr>
@@ -826,7 +829,7 @@
     </div>
 
     <div class="info">
-        <strong>Este diagrama replica exatamente a simulacao Wokwi</strong> (pasta <code style="background:var(--g100);padding:2px 6px;border-radius:4px">wokwi_simulacao/</code>). Na simulacao, o DFPlayer e substituido por um buzzer (D9) e o motor por um LED (D7), mas a pinagem e identica ao hardware real.
+        <strong>Este diagrama mostra o circuito real do hardware.</strong> A simulacao Wokwi (pasta <code style="background:var(--g100);padding:2px 6px;border-radius:4px">wokwi_simulacao/</code>) usa componentes substitutos: buzzer em D9 (no lugar do DFPlayer Mini), LED em D7 (no lugar do motor+transistor) e nao inclui o circuito de bateria. A pinagem dos botoes (D2-D6), LCD I2C (A4/A5) e potenciometro (A0) e identica em ambos.
     </div>
 
     <table class="pin-table" style="margin-top:20px">
@@ -855,7 +858,6 @@
     <div class="step-header">
         <div class="step-number">7</div>
         <div class="step-title">Montagem Final + Vista 3D</div>
-        <!-- renumbered from 6 -->
     </div>
     <p class="step-desc">Organize os fios, teste o circuito e feche o case com os 4 parafusos M3.</p>
 
@@ -889,7 +891,7 @@
             <rect x="148" y="133" width="5" height="22" rx="1.5" fill="#0f172a"/><text x="130" y="148" text-anchor="end" fill="var(--g600)" font-size="8" font-weight="500">USB</text>
             <rect x="148" y="163" width="5" height="18" rx="1.5" fill="#0f172a"/><text x="130" y="175" text-anchor="end" fill="#10b981" font-size="8" font-weight="500">Carga</text>
             <rect x="148" y="188" width="5" height="10" rx="1" fill="#0f172a"/><text x="130" y="196" text-anchor="end" fill="#10b981" font-size="8" font-weight="500">On/Off</text>
-            <rect x="664" y="155" width="5" height="10" rx="1" fill="#0f172a"/><text x="682" y="164" fill="var(--g600)" font-size="8">SD</text>
+            <rect x="664" y="155" width="5" height="10" rx="1" fill="#0f172a"/><text x="682" y="164" fill="var(--g600)" font-size="8">Speaker</text>
             <!-- Volume knob -->
             <circle cx="672" cy="180" r="8" fill="var(--g300)" stroke="var(--g400)" stroke-width="1.5"/>
             <line x1="672" y1="180" x2="672" y2="174" stroke="var(--g700)" stroke-width="2" stroke-linecap="round"/>
@@ -922,7 +924,7 @@
     <ul class="checklist">
         <li>Bateria 18650 conectada ao TP4056 (polaridade correta!)</li>
         <li>Chave on/off entre TP4056 OUT+ e Arduino VIN</li>
-        <li>Cartao SD com 35 MP3s em 7 pastas (/01/ a /07/)</li>
+        <li>Inserir cartao microSD no DFPlayer Mini com 35 MP3s em 7 pastas (/01/ a /07/)</li>
         <li>Potenciometro montado na lateral (furo 7mm)</li>
         <li>Motor vibracao colado perto do speaker</li>
         <li>Todos os fios sem curto-circuito</li>
