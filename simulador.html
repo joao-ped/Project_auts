@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador | Voz Autista v2.0</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0a14;color:#e0e0e0;min-height:100vh;overflow-x:hidden}
+a{color:#4ade80}
+
+/* ─── Header ─── */
+.header{text-align:center;padding:24px 16px 12px;background:linear-gradient(180deg,#12122a 0%,#0a0a14 100%)}
+.header h1{font-size:1.6rem;font-weight:700;background:linear-gradient(135deg,#4ade80,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header p{font-size:.85rem;color:#888;margin-top:2px}
+
+/* ─── Layout ─── */
+.container{display:flex;gap:24px;max-width:960px;margin:0 auto;padding:16px;align-items:flex-start}
+.device-col{flex:0 0 380px}
+.panel-col{flex:1;min-width:280px;display:flex;flex-direction:column;gap:14px}
+
+/* ─── Device Frame ─── */
+.device-body{background:linear-gradient(145deg,#3a3a4e,#2d2d3d);border-radius:20px;padding:24px 20px;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08);position:relative;transition:transform .05s}
+.device-body.vibrating{animation:shake .12s linear 2}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.device-label{text-align:center;margin-top:10px;font-size:.7rem;color:#555;letter-spacing:2px;text-transform:uppercase}
+
+/* ─── LCD ─── */
+.lcd-frame{background:#2a4a12;border-radius:6px;padding:6px;box-shadow:inset 0 2px 6px rgba(0,0,0,.4);position:relative;overflow:hidden;transition:box-shadow .5s}
+.lcd-frame.glow{box-shadow:inset 0 2px 6px rgba(0,0,0,.4),0 0 24px rgba(74,222,128,.12)}
+.lcd-frame.off{background:#111}
+#lcdCanvas{display:block;width:100%;border-radius:3px}
+.lcd-scanlines{position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;border-radius:3px}
+
+/* ─── Buttons ─── */
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:20px}
+.hw-btn{width:62px;height:62px;border-radius:50%;border:none;cursor:pointer;font-size:.7rem;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);box-shadow:0 4px 8px rgba(0,0,0,.3),inset 0 2px 0 rgba(255,255,255,.2),inset 0 -2px 0 rgba(0,0,0,.2);transition:all .08s;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;user-select:none;-webkit-user-select:none;outline:none;-webkit-tap-highlight-color:transparent}
+.hw-btn:active,.hw-btn.pressed{transform:translateY(3px);box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 2px 4px rgba(0,0,0,.3)}
+.hw-btn .key-hint{font-size:.55rem;opacity:.6;font-weight:400}
+.btn-red{background:linear-gradient(180deg,#ef4444,#dc2626)}
+.btn-yellow{background:linear-gradient(180deg,#eab308,#ca8a04);color:#1a1a00}
+.btn-green{background:linear-gradient(180deg,#22c55e,#16a34a)}
+.btn-blue{background:linear-gradient(180deg,#3b82f6,#2563eb)}
+
+/* FALAR button */
+.speak-row{margin-top:14px;padding:0 8px}
+.btn-speak{width:100%;height:52px;border-radius:14px;border:none;cursor:pointer;font-size:.9rem;font-weight:700;color:#fff;background:linear-gradient(180deg,#4b5563,#374151);box-shadow:0 4px 8px rgba(0,0,0,.3),inset 0 2px 0 rgba(255,255,255,.1),inset 0 -2px 0 rgba(0,0,0,.2);transition:all .08s;position:relative;overflow:hidden;user-select:none;-webkit-user-select:none;outline:none;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
+.btn-speak:active,.btn-speak.pressed{transform:translateY(3px);box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 2px 4px rgba(0,0,0,.3)}
+.btn-speak .hold-bar{position:absolute;left:0;bottom:0;height:4px;background:#4ade80;width:0;transition:none;border-radius:0 0 14px 14px}
+.btn-speak .key-hint{font-size:.65rem;opacity:.5;font-weight:400}
+
+/* ─── Status LEDs ─── */
+.led-row{display:flex;gap:20px;justify-content:center;margin-top:16px}
+.led-item{display:flex;align-items:center;gap:6px;font-size:.7rem;color:#666}
+.led-dot{width:10px;height:10px;border-radius:50%;background:#1a1a1a;border:1px solid #333;transition:all .15s}
+.led-dot.on-green{background:#4ade80;box-shadow:0 0 8px #4ade80}
+.led-dot.on-amber{background:#f59e0b;box-shadow:0 0 8px #f59e0b;animation:pulse-led 2s ease-in-out infinite}
+@keyframes pulse-led{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ─── Speech Bubble ─── */
+.speech-bubble{position:absolute;top:-12px;left:50%;transform:translateX(-50%) translateY(-100%) scale(0);background:linear-gradient(135deg,#4ade80,#22c55e);color:#0a0a14;padding:10px 22px;border-radius:24px;font-weight:700;font-size:.95rem;white-space:nowrap;opacity:0;transition:all .3s cubic-bezier(.175,.885,.32,1.275);z-index:10;box-shadow:0 4px 20px rgba(74,222,128,.3);max-width:92%;text-align:center}
+.speech-bubble.show{transform:translateX(-50%) translateY(-100%) scale(1);opacity:1}
+.speech-bubble::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-top-color:#22c55e;border-bottom:0}
+
+/* ─── TTS Status ─── */
+.tts-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 12px;border-radius:12px;font-size:.68rem;font-weight:600;margin-top:6px}
+.tts-badge.ok{color:#4ade80;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2)}
+.tts-badge.warn{color:#f59e0b;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)}
+.tts-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* ─── Speaking Waveform ─── */
+.wave-container{display:flex;align-items:center;justify-content:center;gap:3px;height:24px;margin-top:10px;opacity:0;transition:opacity .3s}
+.wave-container.active{opacity:1}
+.wave-bar{width:4px;border-radius:2px;background:#4ade80;animation:none;height:6px}
+.wave-container.active .wave-bar{animation:waveAnim .6s ease-in-out infinite alternate}
+.wave-bar:nth-child(1){animation-delay:0s}
+.wave-bar:nth-child(2){animation-delay:.1s}
+.wave-bar:nth-child(3){animation-delay:.2s}
+.wave-bar:nth-child(4){animation-delay:.3s}
+.wave-bar:nth-child(5){animation-delay:.1s}
+.wave-bar:nth-child(6){animation-delay:.25s}
+.wave-bar:nth-child(7){animation-delay:.05s}
+@keyframes waveAnim{0%{height:6px}100%{height:22px}}
+
+/* ─── Panel Cards ─── */
+.card{background:#14142a;border:1px solid #1e1e3a;border-radius:12px;padding:14px}
+.card h3{font-size:.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#888;margin-bottom:10px}
+
+/* Sliders */
+.slider-group{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.slider-group label{font-size:.8rem;min-width:70px;color:#aaa}
+.slider-group input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:#1e1e3a;outline:none}
+.slider-group input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#4ade80;cursor:pointer;box-shadow:0 2px 6px rgba(74,222,128,.3)}
+.slider-group input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#4ade80;cursor:pointer;border:none}
+.slider-group .val{font-size:.8rem;min-width:36px;text-align:right;color:#4ade80;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* Phrase */
+.phrase-words{display:flex;flex-wrap:wrap;gap:6px;min-height:32px;align-items:center}
+.phrase-chip{background:#1e3a1e;color:#4ade80;padding:4px 10px;border-radius:20px;font-size:.78rem;font-weight:500;border:1px solid #2a5a2a;animation:chipIn .2s ease}
+@keyframes chipIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.phrase-empty{color:#444;font-size:.78rem;font-style:italic}
+.phrase-hint{font-size:.65rem;color:#555;margin-top:8px;line-height:1.4}
+
+/* Serial Monitor */
+.serial-wrap{display:flex;flex-direction:column;max-height:220px}
+.serial-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.serial-head h3{margin:0}
+.serial-clear{background:none;border:1px solid #333;color:#888;padding:2px 10px;border-radius:6px;cursor:pointer;font-size:.7rem}
+.serial-clear:hover{border-color:#666;color:#ccc}
+.serial-out{flex:1;overflow-y:auto;background:#0a0a14;border-radius:8px;padding:8px;font-family:'Consolas','Courier New',monospace;font-size:.72rem;line-height:1.5;color:#22d3ee;max-height:180px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.serial-out::-webkit-scrollbar{width:4px}
+.serial-out::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+.serial-line{white-space:pre-wrap;word-break:break-all}
+
+/* Shortcuts */
+.shortcut-grid{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:4px 8px;align-items:center;font-size:.72rem}
+kbd{background:#1e1e3a;padding:2px 7px;border-radius:4px;font-size:.68rem;font-family:'Consolas',monospace;border:1px solid #333;color:#ccc;white-space:nowrap}
+
+/* ─── Responsive ─── */
+@media(max-width:780px){
+  .container{flex-direction:column;align-items:center}
+  .device-col{flex:none;width:100%;max-width:400px}
+  .panel-col{width:100%;max-width:400px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Voz Autista v2.0</h1>
+  <p>Simulador Interativo &mdash; Comunicador Assistivo</p>
+</div>
+
+<div class="container">
+  <!-- ─── Device ─── -->
+  <div class="device-col">
+    <div class="device-body" id="deviceBody">
+      <div class="speech-bubble" id="speechBubble"></div>
+      <div class="lcd-frame glow" id="lcdFrame">
+        <canvas id="lcdCanvas" height="100"></canvas>
+        <div class="lcd-scanlines"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="hw-btn btn-red" data-btn="catUp">Cat+<span class="key-hint">1</span></button>
+        <button class="hw-btn btn-yellow" data-btn="catDown">Cat-<span class="key-hint">2</span></button>
+        <button class="hw-btn btn-green" data-btn="wordUp">Pal+<span class="key-hint">3</span></button>
+        <button class="hw-btn btn-blue" data-btn="wordDown">Pal-<span class="key-hint">4</span></button>
+      </div>
+
+      <div class="speak-row">
+        <button class="btn-speak" id="btnSpeak">
+          <span>&#x1f50a; FALAR</span>
+          <span class="key-hint">(Espa&ccedil;o)</span>
+          <div class="hold-bar" id="holdBar"></div>
+        </button>
+      </div>
+
+      <div class="wave-container" id="waveform">
+        <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+        <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+      </div>
+
+      <div class="led-row">
+        <div class="led-item"><div class="led-dot" id="ledVib"></div> Vibra&ccedil;&atilde;o</div>
+        <div class="led-item"><div class="led-dot" id="ledSleep"></div> Sleep</div>
+        <div class="led-item"><div class="led-dot" id="ledTTS"></div> TTS</div>
+      </div>
+    </div>
+    <div class="device-label">Prot&oacute;tipo Virtual &bull; Arduino Uno</div>
+    <div style="text-align:center"><span class="tts-badge warn" id="ttsBadge"><span class="dot"></span> Verificando TTS...</span></div>
+  </div>
+
+  <!-- ─── Panel ─── -->
+  <div class="panel-col">
+    <!-- Controls -->
+    <div class="card">
+      <h3>Controles</h3>
+      <div class="slider-group">
+        <label>&#x1f509; Volume</label>
+        <input type="range" id="sliderVol" min="0" max="30" value="20">
+        <span class="val" id="valVol">20</span>
+      </div>
+      <div class="slider-group">
+        <label>&#x1f50b; Bateria</label>
+        <input type="range" id="sliderBat" min="0" max="100" value="100">
+        <span class="val" id="valBat">100%</span>
+      </div>
+    </div>
+
+    <!-- Phrase -->
+    <div class="card">
+      <h3>Frase Composta</h3>
+      <div class="phrase-words" id="phraseWords">
+        <span class="phrase-empty">Nenhuma palavra adicionada</span>
+      </div>
+      <p class="phrase-hint">Segure FALAR (ou tecle F) para adicionar &bull; Cat+ &amp; Cat- juntos para falar a frase &bull; Pal+ &amp; Pal- juntos para limpar</p>
+    </div>
+
+    <!-- Serial -->
+    <div class="card serial-wrap">
+      <div class="serial-head">
+        <h3>Monitor Serial</h3>
+        <button class="serial-clear" id="serialClear">Limpar</button>
+      </div>
+      <div class="serial-out" id="serialOut"></div>
+    </div>
+
+    <!-- Shortcuts -->
+    <div class="card">
+      <h3>Atalhos do Teclado</h3>
+      <div class="shortcut-grid">
+        <kbd>1</kbd><span>Cat +</span>
+        <kbd>2</kbd><span>Cat &minus;</span>
+        <kbd>3</kbd><span>Pal +</span>
+        <kbd>4</kbd><span>Pal &minus;</span>
+        <kbd>Espa&ccedil;o</kbd><span>FALAR (curto)</span>
+        <kbd>F</kbd><span>FALAR (longo)</span>
+        <kbd>1+2</kbd><span>Falar frase</span>
+        <kbd>3+4</kbd><span>Limpar frase</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+//  VOZ AUTISTA v2.0 — SIMULADOR INTERATIVO
+//  Replica a lógica completa do firmware Arduino em JavaScript
+// ================================================================
+
+// ──────────── DATA ────────────
+const CATEGORIES = [
+  {name:"Necessidades", words:["Eu quero","Comer","Beber","Banheiro","Dormir"]},
+  {name:"Sentimentos",  words:["Feliz","Triste","Bravo","Calmo","Medo"]},
+  {name:"Acoes",        words:["Brincar","Ajuda","Sair","Parar","Ir"]},
+  {name:"Comidas",      words:["Agua","Suco","Leite","Pao","Fruta"]},
+  {name:"Lugares",      words:["Casa","Escola","Parque","Medico","Banho"]},
+  {name:"Pessoas",      words:["Mamae","Papai","Vovo","Professor","Amigo"]},
+  {name:"Saude",        words:["Doi","Enjoo","Frio","Calor","Cansado"]}
+];
+
+const TONES = [
+  262,294,330,349,392, 440,494,523,587,659,
+  698,784,880,988,1047, 1100,1175,1250,1320,1400,
+  300,350,400,450,500, 550,600,650,700,750,
+  800,850,900,950,1000
+];
+
+const CUSTOM_CHARS = [
+  [0x00,0x04,0x06,0x1F,0x1F,0x06,0x04,0x00], // 0 arrow
+  [0x01,0x03,0x0F,0x0F,0x0F,0x03,0x01,0x00], // 1 speaker
+  [0x0E,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F], // 2 bat full
+  [0x0E,0x11,0x11,0x1F,0x1F,0x1F,0x1F,0x1F], // 3 bat mid
+  [0x0E,0x11,0x11,0x11,0x11,0x11,0x1F,0x1F], // 4 bat low
+  [0x00,0x0A,0x1F,0x1F,0x0E,0x04,0x00,0x00]  // 5 heart
+];
+
+const LONG_PRESS_MS = 800;
+const SLEEP_TIMEOUT_MS = 120000;
+const MAX_PHRASE = 5;
+
+// ──────────── STATE ────────────
+let catIndex = 0, wordIndex = 0;
+let volume = 20, battery = 100;
+let phraseBuffer = [];
+let isSleeping = false, busy = false;
+let lastActivity = Date.now();
+let sleepTimer = null;
+
+// ──────────── DOM ────────────
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+// ──────────── LCD SYSTEM ────────────
+const lcdBuf = [Array(16).fill(' '), Array(16).fill(' ')];
+let lcdCol = 0, lcdRow = 0, lcdBacklight = true;
+
+const lcd = {
+  clear(){ lcdBuf[0].fill(' '); lcdBuf[1].fill(' '); lcdCol=0; lcdRow=0; renderLCD(); },
+  setCursor(c,r){ lcdCol=c; lcdRow=r; },
+  print(t){
+    const s = String(t);
+    for(let i=0;i<s.length;i++){
+      if(lcdCol<16 && lcdRow<2){ lcdBuf[lcdRow][lcdCol]=s[i]; lcdCol++; }
+    }
+    renderLCD();
+  },
+  write(code){
+    if(lcdCol<16 && lcdRow<2){ lcdBuf[lcdRow][lcdCol]={custom:code}; lcdCol++; }
+    renderLCD();
+  },
+  backlight(){ lcdBacklight=true; $('#lcdFrame').classList.add('glow'); $('#lcdFrame').classList.remove('off'); renderLCD(); },
+  noBacklight(){ lcdBacklight=false; $('#lcdFrame').classList.remove('glow'); $('#lcdFrame').classList.add('off'); renderLCD(); }
+};
+
+function renderLCD(){
+  const canvas = $('#lcdCanvas');
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio||1;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  const W = rect.width, H = rect.height;
+
+  // Background
+  if(lcdBacklight){
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#5c9a28');
+    g.addColorStop(1,'#4a8a1a');
+    ctx.fillStyle = g;
+  } else {
+    ctx.fillStyle = '#111a08';
+  }
+  ctx.fillRect(0,0,W,H);
+
+  const pad = 10;
+  const cellW = (W - pad*2) / 16;
+  const cellH = (H - pad*2) / 2;
+  const pxSize = Math.floor(Math.min(cellW/6, cellH/10));
+
+  for(let r=0;r<2;r++){
+    for(let c=0;c<16;c++){
+      const x = pad + c*cellW;
+      const y = pad + r*cellH;
+      const ch = lcdBuf[r][c];
+
+      // Cell background
+      ctx.fillStyle = lcdBacklight ? 'rgba(0,0,0,0.05)' : 'rgba(0,0,0,0.08)';
+      ctx.fillRect(x+1, y+1, cellW-2, cellH-2);
+
+      const dark = lcdBacklight ? '#1a3a0a' : '#0a1208';
+
+      if(ch && typeof ch === 'object' && ch.custom !== undefined){
+        // Custom character — pixel rendering
+        const data = CUSTOM_CHARS[ch.custom];
+        if(!data) continue;
+        ctx.fillStyle = dark;
+        const ox = x + (cellW - pxSize*5)/2;
+        const oy = y + (cellH - pxSize*8)/2;
+        for(let pr=0;pr<8;pr++){
+          for(let pc=0;pc<5;pc++){
+            if(data[pr] & (1<<(4-pc))){
+              ctx.fillRect(ox+pc*pxSize, oy+pr*pxSize, pxSize-1, pxSize-1);
+            }
+          }
+        }
+      } else if(ch && ch !== ' '){
+        // Regular character
+        const fontSize = Math.floor(cellH * 0.7);
+        ctx.font = `bold ${fontSize}px "Consolas","Courier New",monospace`;
+        ctx.fillStyle = dark;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(ch, x+cellW/2, y+cellH/2 + 1);
+      }
+    }
+  }
+}
+
+// ──────────── AUDIO ────────────
+let audioCtx = null;
+function getAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playTone(freq, ms){
+  try{
+    const ctx = getAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    gain.gain.value = Math.min(volume/30 * 0.15, 0.15);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + ms/1000);
+    osc.stop(ctx.currentTime + ms/1000 + 0.05);
+  } catch(e){}
+}
+
+let ptVoice = null;
+let ttsAvailable = false;
+
+function initTTS(){
+  const badge = $('#ttsBadge');
+  if(!('speechSynthesis' in window)){
+    badge.textContent = 'TTS indisponivel';
+    badge.className = 'tts-badge warn';
+    serial('AVISO: speechSynthesis nao suportado neste navegador');
+    return;
+  }
+
+  function findVoice(){
+    const voices = speechSynthesis.getVoices();
+    if(voices.length === 0) return;
+
+    ptVoice = voices.find(v => v.lang === 'pt-BR')
+           || voices.find(v => v.lang.startsWith('pt'))
+           || voices.find(v => v.lang.startsWith('es'))
+           || null;
+
+    ttsAvailable = true;
+    if(ptVoice){
+      badge.innerHTML = '<span class="dot"></span> TTS: ' + ptVoice.lang + ' (' + ptVoice.name.substring(0,20) + ')';
+      badge.className = 'tts-badge ok';
+      serial('TTS: voz "'+ptVoice.name+'" ['+ptVoice.lang+']');
+    } else {
+      badge.innerHTML = '<span class="dot"></span> TTS: voz padrao';
+      badge.className = 'tts-badge ok';
+      serial('TTS: usando voz padrao (pt-BR nao encontrado)');
+    }
+  }
+
+  findVoice();
+  speechSynthesis.addEventListener('voiceschanged', findVoice);
+  setTimeout(findVoice, 500);
+  setTimeout(findVoice, 2000);
+}
+
+let speechBubbleTimer = null;
+function showSpeechBubble(text){
+  const bubble = $('#speechBubble');
+  bubble.textContent = '🔊 ' + text;
+  bubble.classList.add('show');
+  clearTimeout(speechBubbleTimer);
+}
+function hideSpeechBubble(){
+  const bubble = $('#speechBubble');
+  bubble.classList.remove('show');
+}
+
+function setWaveform(active){
+  const w = $('#waveform');
+  if(active) w.classList.add('active');
+  else w.classList.remove('active');
+}
+
+function speakTTS(text){
+  if(!('speechSynthesis' in window)){
+    serial('TTS: nao disponivel');
+    return;
+  }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'pt-BR';
+  u.rate = 0.85;
+  u.pitch = 1.05;
+  u.volume = Math.min(volume/30, 1);
+  if(ptVoice) u.voice = ptVoice;
+
+  const led = $('#ledTTS');
+
+  showSpeechBubble(text);
+  setWaveform(true);
+  led.classList.add('on-green');
+
+  serial('TTS: "'+text+'"');
+
+  u.onend = () => {
+    led.classList.remove('on-green');
+    setWaveform(false);
+    speechBubbleTimer = setTimeout(hideSpeechBubble, 600);
+  };
+  u.onerror = (e) => {
+    led.classList.remove('on-green');
+    setWaveform(false);
+    hideSpeechBubble();
+    serial('TTS erro: '+e.error);
+  };
+  speechSynthesis.speak(u);
+}
+
+// ──────────── SERIAL ────────────
+function serial(msg){
+  const out = $('#serialOut');
+  const d = document.createElement('div');
+  d.className = 'serial-line';
+  d.textContent = msg;
+  out.appendChild(d);
+  out.scrollTop = out.scrollHeight;
+}
+
+// ──────────── HELPERS ────────────
+function map(v,inMin,inMax,outMin,outMax){
+  return Math.round((v-inMin)*(outMax-outMin)/(inMax-inMin)+outMin);
+}
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function vibrate(){
+  const led = $('#ledVib');
+  const body = $('#deviceBody');
+  led.classList.add('on-green');
+  body.classList.add('vibrating');
+  setTimeout(()=>{ led.classList.remove('on-green'); body.classList.remove('vibrating'); }, 120);
+}
+
+function resetActivity(){
+  lastActivity = Date.now();
+  clearTimeout(sleepTimer);
+  sleepTimer = setTimeout(checkSleep, SLEEP_TIMEOUT_MS + 100);
+}
+
+function checkSleep(){
+  if(!isSleeping && Date.now()-lastActivity >= SLEEP_TIMEOUT_MS){
+    enterSleep();
+  }
+}
+
+// ──────────── DISPLAY ────────────
+function displaySelection(){
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(CATEGORIES[catIndex].name);
+  displayBattery();
+  lcd.setCursor(0,1);
+  lcd.write(0); // arrow
+  lcd.print(' '+CATEGORIES[catIndex].words[wordIndex]);
+  if(phraseBuffer.length>0){
+    lcd.setCursor(14,1);
+    lcd.write(5); // heart
+    lcd.print(String(phraseBuffer.length));
+  }
+  serial('['+CATEGORIES[catIndex].name+'] > '+CATEGORIES[catIndex].words[wordIndex]);
+}
+
+function displayBattery(){
+  lcd.setCursor(15,0);
+  if(battery>60) lcd.write(2);
+  else if(battery>20) lcd.write(3);
+  else lcd.write(4);
+}
+
+function updatePhraseUI(){
+  const el = $('#phraseWords');
+  if(phraseBuffer.length===0){
+    el.innerHTML = '<span class="phrase-empty">Nenhuma palavra adicionada</span>';
+  } else {
+    el.innerHTML = phraseBuffer.map((p,i)=>{
+      const w = CATEGORIES[p.cat].words[p.word];
+      return '<span class="phrase-chip">'+w+'</span>';
+    }).join('');
+  }
+}
+
+// ──────────── FIRMWARE LOGIC ────────────
+async function handleCatUp(){
+  if(busy||isSleeping) return;
+  busy=true; resetActivity();
+  catIndex = (catIndex+1) % CATEGORIES.length;
+  wordIndex = 0;
+  vibrate();
+  playTone(1200, 40);
+  displaySelection();
+  await sleep(200);
+  busy=false;
+}
+
+async function handleCatDown(){
+  if(busy||isSleeping) return;
+  busy=true; resetActivity();
+  catIndex = (catIndex-1+CATEGORIES.length) % CATEGORIES.length;
+  wordIndex = 0;
+  vibrate();
+  playTone(1000, 40);
+  displaySelection();
+  await sleep(200);
+  busy=false;
+}
+
+async function handleWordUp(){
+  if(busy||isSleeping) return;
+  busy=true; resetActivity();
+  const n = CATEGORIES[catIndex].words.length;
+  wordIndex = (wordIndex+1) % n;
+  vibrate();
+  playTone(800, 40);
+  displaySelection();
+  await sleep(200);
+  busy=false;
+}
+
+async function handleWordDown(){
+  if(busy||isSleeping) return;
+  busy=true; resetActivity();
+  const n = CATEGORIES[catIndex].words.length;
+  wordIndex = (wordIndex-1+n) % n;
+  vibrate();
+  playTone(600, 40);
+  displaySelection();
+  await sleep(200);
+  busy=false;
+}
+
+async function speakCurrentWord(){
+  if(busy) return;
+  busy=true; resetActivity();
+  const word = CATEGORIES[catIndex].words[wordIndex];
+  const ti = catIndex*5 + wordIndex;
+  vibrate();
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.write(1);
+  lcd.print(' Falando...');
+  lcd.setCursor(0,1);
+  lcd.print(word);
+
+  serial('>> FALAR: "'+word+'" [tom: '+TONES[ti]+' Hz]');
+
+  const dur = map(volume,0,30,50,300);
+  playTone(TONES[ti], dur);
+  await sleep(dur+50);
+  playTone(TONES[ti]+80, dur);
+  await sleep(dur+50);
+  playTone(TONES[ti], dur*2);
+
+  speakTTS(word);
+  await sleep(dur*2+400);
+
+  displaySelection();
+  busy=false;
+}
+
+async function addToPhrase(){
+  if(busy) return;
+  busy=true; resetActivity();
+
+  if(phraseBuffer.length>=MAX_PHRASE){
+    lcd.clear();
+    lcd.print('Frase cheia!');
+    lcd.setCursor(0,1);
+    lcd.print('Max '+MAX_PHRASE+' palavras');
+    vibrate(); await sleep(80); vibrate();
+    serial('Frase cheia! Max '+MAX_PHRASE);
+    await sleep(1000);
+    displaySelection();
+    busy=false;
+    return;
+  }
+
+  phraseBuffer.push({cat:catIndex, word:wordIndex});
+  vibrate();
+
+  const w = CATEGORIES[catIndex].words[wordIndex];
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print('+ '+w);
+  lcd.setCursor(0,1);
+  lcd.print('Frase: '+phraseBuffer.length+'/'+MAX_PHRASE);
+
+  serial('Frase +: '+w+' ('+phraseBuffer.length+' palavras)');
+  updatePhraseUI();
+
+  playTone(1500,50);
+  await sleep(80);
+  playTone(2000,50);
+  await sleep(600);
+
+  displaySelection();
+  busy=false;
+}
+
+async function speakPhrase(){
+  if(busy||phraseBuffer.length===0) return;
+  busy=true; resetActivity();
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.write(1);
+  lcd.print(' Frase ('+phraseBuffer.length+')...');
+
+  let full = '';
+  const dur = map(volume,0,30,50,300);
+
+  for(let i=0;i<phraseBuffer.length;i++){
+    const c=phraseBuffer[i].cat, w=phraseBuffer[i].word;
+    const word = CATEGORIES[c].words[w];
+    const ti = c*5+w;
+    full += word + (i<phraseBuffer.length-1?' + ':'');
+
+    lcd.setCursor(0,1);
+    lcd.print('                ');
+    lcd.setCursor(0,1);
+    lcd.print(word);
+
+    playTone(TONES[ti], dur);
+    await sleep(dur+50);
+    playTone(TONES[ti]+80, dur);
+    await sleep(dur+50);
+
+    if(i<phraseBuffer.length-1) await sleep(Math.max(200, 1300-dur*2-100));
+  }
+
+  serial('Frase completa: '+full);
+  speakTTS(phraseBuffer.map(p=>CATEGORIES[p.cat].words[p.word]).join(', '));
+
+  await sleep(800);
+  phraseBuffer = [];
+  updatePhraseUI();
+  displaySelection();
+  busy=false;
+}
+
+async function clearPhrase(){
+  if(busy||phraseBuffer.length===0) return;
+  busy=true; resetActivity();
+  phraseBuffer = [];
+  vibrate();
+  lcd.clear();
+  lcd.print('Frase limpa');
+  serial('Frase limpa');
+  updatePhraseUI();
+
+  playTone(800,80);
+  await sleep(100);
+  playTone(400,80);
+  await sleep(700);
+
+  displaySelection();
+  busy=false;
+}
+
+function enterSleep(){
+  if(isSleeping) return;
+  isSleeping = true;
+  lcd.noBacklight();
+  $('#ledSleep').classList.add('on-amber');
+  serial('Sleep (2 min inatividade)');
+}
+
+function wakeUp(){
+  if(!isSleeping) return;
+  isSleeping = false;
+  lcd.backlight();
+  $('#ledSleep').classList.remove('on-amber');
+  resetActivity();
+  displaySelection();
+  serial('Wake up!');
+}
+
+// ──────────── UI HANDLERS ────────────
+const btnActions = {
+  catUp: handleCatUp,
+  catDown: handleCatDown,
+  wordUp: handleWordUp,
+  wordDown: handleWordDown
+};
+
+// Nav buttons
+$$('[data-btn]').forEach(el=>{
+  const action = el.dataset.btn;
+  el.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    if(isSleeping){ wakeUp(); return; }
+    el.classList.add('pressed');
+    btnActions[action]();
+  });
+  el.addEventListener('pointerup', ()=> el.classList.remove('pressed'));
+  el.addEventListener('pointerleave', ()=> el.classList.remove('pressed'));
+});
+
+// FALAR button (long press)
+let speakStart=0, speakHolding=false, holdAnim=null;
+const btnSpeak = $('#btnSpeak');
+const holdBar = $('#holdBar');
+
+function startHold(){
+  if(busy) return;
+  if(isSleeping){ wakeUp(); return; }
+  speakStart = Date.now();
+  speakHolding = true;
+  btnSpeak.classList.add('pressed');
+  holdBar.style.transition = 'none';
+  holdBar.style.width = '0%';
+
+  // Animate hold bar
+  cancelAnimationFrame(holdAnim);
+  (function tick(){
+    if(!speakHolding) return;
+    const pct = Math.min((Date.now()-speakStart)/LONG_PRESS_MS*100, 100);
+    holdBar.style.width = pct+'%';
+    if(pct<100) holdAnim = requestAnimationFrame(tick);
+  })();
+}
+
+function endHold(){
+  if(!speakHolding) return;
+  speakHolding = false;
+  btnSpeak.classList.remove('pressed');
+  cancelAnimationFrame(holdAnim);
+  holdBar.style.transition = 'width .2s';
+  holdBar.style.width = '0%';
+
+  const hold = Date.now()-speakStart;
+  resetActivity();
+  if(hold >= LONG_PRESS_MS){
+    addToPhrase();
+  } else {
+    speakCurrentWord();
+  }
+}
+
+btnSpeak.addEventListener('pointerdown', e=>{ e.preventDefault(); startHold(); });
+btnSpeak.addEventListener('pointerup', endHold);
+btnSpeak.addEventListener('pointerleave', ()=>{
+  if(speakHolding){ speakHolding=false; btnSpeak.classList.remove('pressed'); cancelAnimationFrame(holdAnim); holdBar.style.width='0%'; }
+});
+
+// Keyboard
+const keysDown = new Set();
+
+document.addEventListener('keydown', e=>{
+  if(e.repeat) return;
+  const k = e.key.toLowerCase();
+  keysDown.add(k);
+
+  if(isSleeping){ wakeUp(); return; }
+
+  // Combos
+  if(keysDown.has('1')&&keysDown.has('2')){ speakPhrase(); return; }
+  if(keysDown.has('3')&&keysDown.has('4')){ clearPhrase(); return; }
+
+  switch(k){
+    case '1': handleCatUp(); break;
+    case '2': handleCatDown(); break;
+    case '3': handleWordUp(); break;
+    case '4': handleWordDown(); break;
+    case ' ': e.preventDefault(); startHold(); break;
+    case 'f': startHold(); speakHolding&&setTimeout(endHold, LONG_PRESS_MS+10); break;
+  }
+});
+
+document.addEventListener('keyup', e=>{
+  const k = e.key.toLowerCase();
+  keysDown.delete(k);
+  if(k===' ') endHold();
+});
+
+// Sliders
+$('#sliderVol').addEventListener('input', e=>{
+  volume = parseInt(e.target.value);
+  $('#valVol').textContent = volume;
+  serial('Volume: '+volume);
+});
+
+$('#sliderBat').addEventListener('input', e=>{
+  battery = parseInt(e.target.value);
+  $('#valBat').textContent = battery+'%';
+  if(!busy && !isSleeping) displayBattery();
+  renderLCD();
+});
+
+$('#serialClear').addEventListener('click', ()=>{ $('#serialOut').innerHTML=''; });
+
+// ──────────── BOOT ────────────
+async function boot(){
+  serial('=== Voz Autista v2.0 - Simulador ===');
+  serial('Inicializando Text-to-Speech...');
+  initTTS();
+  serial('');
+
+  lcd.clear();
+  lcd.setCursor(2,0);
+  lcd.print('Voz Autista');
+  lcd.setCursor(4,1);
+  lcd.print('v2.0');
+
+  playTone(523,100);
+  await sleep(150);
+  playTone(659,100);
+  await sleep(150);
+  playTone(784,200);
+  await sleep(300);
+
+  volume = parseInt($('#sliderVol').value);
+  battery = parseInt($('#sliderBat').value);
+
+  serial('Categorias: '+CATEGORIES.length);
+  serial('Volume: '+volume);
+  serial('Bateria: '+battery+'%');
+  serial('');
+  serial('Botoes: Cat+ Cat- Pal+ Pal- FALAR');
+  serial('FALAR curto = fala palavra');
+  serial('FALAR longo = adiciona a frase');
+  serial('Cat+ & Cat- juntos = fala frase');
+  serial('Pal+ & Pal- juntos = limpa frase');
+  serial('');
+
+  await sleep(1500);
+  lcd.clear();
+  displaySelection();
+  resetActivity();
+}
+
+window.addEventListener('resize', ()=>{ if(!busy) renderLCD(); });
+boot();
+</script>
+</body>
+</html>

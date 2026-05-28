@@ -5,562 +5,612 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Voz Autista v2.0 - Apresentacao</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#2563eb;--primary-dark:#1e40af;--accent:#f59e0b;--success:#10b981;--danger:#ef4444;--bg:#0f172a;--surface:#1e293b;--text:#f1f5f9;--muted:#94a3b8}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:#000;color:#fff}
 
-/* Slide container */
-.slides{position:relative;width:100vw;height:100vh}
-.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;padding:60px 80px;opacity:0;transform:translateX(40px);transition:opacity .5s,transform .5s;pointer-events:none}
-.slide.active{opacity:1;transform:translateX(0);pointer-events:auto}
-.slide.prev{opacity:0;transform:translateX(-40px)}
+/* ===== SLIDES ===== */
+.deck{position:relative;width:100vw;height:100vh}
+.s{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .6s cubic-bezier(.4,0,.2,1)}
+.s.on{opacity:1;pointer-events:auto}
+.s.on .anim{animation:fadeUp .7s .15s both}
+.s.on .anim2{animation:fadeUp .7s .3s both}
+.s.on .anim3{animation:fadeUp .7s .45s both}
+.s.on .anim4{animation:fadeUp .7s .6s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-/* Typography */
-h1{font-size:3.2em;font-weight:900;line-height:1.1;margin-bottom:16px;letter-spacing:-.03em}
-h2{font-size:2.4em;font-weight:800;line-height:1.15;margin-bottom:20px;letter-spacing:-.02em}
-h3{font-size:1.4em;font-weight:600;margin-bottom:12px;color:var(--accent)}
-p,.desc{font-size:1.15em;line-height:1.7;color:var(--muted);max-width:800px}
-.big-number{font-size:5em;font-weight:900;line-height:1;letter-spacing:-.04em}
-.highlight{color:var(--accent)}
-.green{color:var(--success)}
+/* ===== BACKGROUNDS ===== */
+.bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+.bg::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.bg-mesh{background:
+  radial-gradient(ellipse at 20% 50%, rgba(59,130,246,.25) 0%, transparent 60%),
+  radial-gradient(ellipse at 80% 20%, rgba(139,92,246,.2) 0%, transparent 50%),
+  radial-gradient(ellipse at 50% 80%, rgba(16,185,129,.15) 0%, transparent 50%),
+  #0a0f1e}
+.bg-problem{background:
+  radial-gradient(ellipse at 70% 30%, rgba(239,68,68,.2) 0%, transparent 50%),
+  radial-gradient(ellipse at 20% 70%, rgba(245,158,11,.15) 0%, transparent 50%),
+  #0a0f1e}
+.bg-solution{background:
+  radial-gradient(ellipse at 30% 40%, rgba(59,130,246,.25) 0%, transparent 50%),
+  radial-gradient(ellipse at 70% 70%, rgba(16,185,129,.2) 0%, transparent 50%),
+  #0a0f1e}
+.bg-features{background:
+  radial-gradient(ellipse at 50% 30%, rgba(139,92,246,.2) 0%, transparent 50%),
+  radial-gradient(ellipse at 80% 80%, rgba(245,158,11,.15) 0%, transparent 50%),
+  #0a0f1e}
+.bg-green{background:
+  radial-gradient(ellipse at 40% 40%, rgba(16,185,129,.25) 0%, transparent 50%),
+  radial-gradient(ellipse at 70% 70%, rgba(59,130,246,.15) 0%, transparent 50%),
+  #0a0f1e}
+.bg-end{background:
+  radial-gradient(ellipse at 50% 50%, rgba(59,130,246,.2) 0%, transparent 40%),
+  radial-gradient(ellipse at 20% 80%, rgba(139,92,246,.2) 0%, transparent 50%),
+  radial-gradient(ellipse at 80% 20%, rgba(245,158,11,.15) 0%, transparent 50%),
+  #0a0f1e}
+
+/* ===== CONTENT ===== */
+.content{position:relative;z-index:1;width:100%;max-width:1200px;padding:40px 60px}
+.full{text-align:center;display:flex;flex-direction:column;align-items:center}
+
+/* ===== TYPO ===== */
+h1{font-size:4.5em;font-weight:900;line-height:1.05;letter-spacing:-.04em;background:linear-gradient(135deg,#fff 30%,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h2{font-size:2.6em;font-weight:800;line-height:1.12;letter-spacing:-.03em;margin-bottom:12px}
+.label{font-size:.8em;font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:16px;display:inline-block;padding:6px 18px;border-radius:100px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06)}
+.label-blue{color:#60a5fa;border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.08)}
+.label-amber{color:#fbbf24;border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08)}
+.label-green{color:#34d399;border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.08)}
+.label-red{color:#f87171;border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.08)}
+.label-purple{color:#a78bfa;border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.08)}
+.sub{font-size:1.3em;font-weight:300;color:rgba(255,255,255,.55);line-height:1.6;max-width:650px}
+.accent{color:#fbbf24}
+.green{color:#34d399}
 .blue{color:#60a5fa}
-.red{color:var(--danger)}
-.tag{display:inline-block;background:var(--primary);padding:6px 16px;border-radius:20px;font-size:.85em;font-weight:600;margin:4px}
+.red{color:#f87171}
+.purple{color:#a78bfa}
+.muted{color:rgba(255,255,255,.45)}
+.big{font-size:4.5em;font-weight:900;line-height:1;letter-spacing:-.04em}
+code{font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.08);padding:4px 10px;border-radius:8px;font-size:.85em;border:1px solid rgba(255,255,255,.1)}
 
-/* Layouts */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center;width:100%}
-.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px;width:100%}
-.center{text-align:center;align-items:center}
-.center h1,.center h2,.center p{max-width:none}
+/* ===== GRID ===== */
+.row{display:flex;gap:40px;align-items:flex-start;width:100%}
+.col{flex:1;min-width:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
 
-/* Cards */
-.card{background:var(--surface);border:1px solid #334155;border-radius:16px;padding:28px;transition:transform .2s}
-.card h3{margin-bottom:8px}
-.card p{font-size:.95em}
-.card-icon{font-size:2em;margin-bottom:12px}
+/* ===== CARDS ===== */
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;backdrop-filter:blur(10px);transition:border-color .3s}
+.card:hover{border-color:rgba(255,255,255,.2)}
+.card h3{font-size:1.05em;font-weight:700;margin-bottom:6px}
+.card p{font-size:.88em;line-height:1.55;color:rgba(255,255,255,.5)}
+.card-glow{position:relative;overflow:hidden}
+.card-glow::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,.03) 0%,transparent 70%);pointer-events:none}
 
-/* Feature grid */
-.features{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
-.feature{display:flex;align-items:flex-start;gap:14px;background:var(--surface);padding:18px 20px;border-radius:12px;border:1px solid #334155}
-.feature .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:6px}
-.feature span{font-size:.95em;line-height:1.5}
+/* ===== STAT CARD ===== */
+.stat{text-align:center;padding:32px 24px}
+.stat .num{font-size:3.8em;font-weight:900;line-height:1;letter-spacing:-.03em;margin-bottom:4px}
+.stat .lbl{font-size:.85em;color:rgba(255,255,255,.45);font-weight:500}
 
-/* Table */
-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:12px;overflow:hidden;font-size:.95em}
-th{background:var(--primary-dark);padding:14px 18px;text-align:left;font-weight:600;font-size:.85em;text-transform:uppercase;letter-spacing:.04em}
-td{padding:12px 18px;border-bottom:1px solid #334155;background:var(--surface)}
+/* ===== FEATURE ITEMS ===== */
+.fi{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.fi .ico{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:7px}
+.fi span{font-size:.9em;line-height:1.5;color:rgba(255,255,255,.7)}
+.fi strong{color:#fff}
+
+/* ===== BUTTON VISUAL ===== */
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.bv{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7em;border:2px solid;text-align:center;line-height:1.1}
+
+/* ===== TABLE ===== */
+table{width:100%;border-collapse:separate;border-spacing:0;border-radius:14px;overflow:hidden;font-size:.88em}
+th{background:rgba(255,255,255,.06);padding:14px 18px;text-align:left;font-weight:600;font-size:.8em;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);border-bottom:1px solid rgba(255,255,255,.08)}
+td{padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.7)}
 tr:last-child td{border-bottom:none}
-tr.total td{background:var(--primary-dark);font-weight:700;font-size:1.05em}
+tr.tot td{background:rgba(59,130,246,.15);font-weight:700;color:#fff;font-size:1em}
 
-/* Button bar */
-.btn-row{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
-.btn-vis{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-weight:600;font-size:.9em;border:2px solid}
-.btn-red{background:#7f1d1d;border-color:#ef4444;color:#fca5a5}
-.btn-yellow{background:#78350f;border-color:#f59e0b;color:#fde68a}
-.btn-green{background:#064e3b;border-color:#10b981;color:#6ee7b7}
-.btn-blue{background:#1e3a5f;border-color:#3b82f6;color:#93c5fd}
-.btn-dark{background:#1f2937;border-color:#6b7280;color:#d1d5db}
+/* ===== PIN GRID ===== */
+.pins{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-family:'JetBrains Mono',monospace;font-size:.78em}
+.pin{padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.6)}
+.pin b{color:#60a5fa;font-weight:600}
 
-/* Timeline */
-.timeline{position:relative;padding-left:30px}
-.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:3px;background:#334155;border-radius:2px}
-.timeline-item{position:relative;margin-bottom:20px;padding-left:20px}
-.timeline-item::before{content:'';position:absolute;left:-26px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--primary);border:3px solid var(--bg)}
+/* ===== LCD MOCKUP ===== */
+.lcd-frame{background:#1a1a1a;border-radius:10px;padding:4px;display:inline-block;border:2px solid #333}
+.lcd{background:#0a1a0a;border-radius:6px;padding:16px 20px;font-family:'JetBrains Mono',monospace;color:#4ade80;font-size:1.05em;line-height:1.6;min-width:300px;text-align:left}
 
-/* Diagram */
-.diagram-box{background:var(--surface);border:2px solid #334155;border-radius:14px;padding:24px;text-align:center}
-.pin-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'JetBrains Mono',monospace;font-size:.85em}
-.pin{padding:8px 12px;border-radius:8px;background:#0f172a;border:1px solid #334155}
-.pin b{color:#60a5fa}
+/* ===== TIMELINE ===== */
+.tl{position:relative;padding-left:28px}
+.tl::before{content:'';position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:rgba(255,255,255,.1);border-radius:1px}
+.tl-i{position:relative;margin-bottom:18px;padding-left:18px}
+.tl-i::before{content:'';position:absolute;left:-25px;top:7px;width:12px;height:12px;border-radius:50%;background:#2563eb;border:2px solid #0a0f1e}
+.tl-i strong{color:#fff;font-size:.95em}
+.tl-i p{font-size:.85em;color:rgba(255,255,255,.45);margin-top:2px}
 
-/* Navigation */
-.nav{position:fixed;bottom:24px;right:30px;display:flex;gap:10px;z-index:100}
-.nav button{background:var(--surface);border:1px solid #475569;color:var(--text);width:44px;height:44px;border-radius:10px;font-size:1.2em;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.nav button:hover{background:var(--primary)}
-.progress{position:fixed;bottom:0;left:0;height:3px;background:var(--primary);transition:width .4s;z-index:100}
-.slide-num{position:fixed;bottom:28px;left:30px;color:var(--muted);font-size:.85em;font-weight:500;z-index:100}
+/* ===== CATEGORY PILL ===== */
+.cat-pill{border-radius:12px;padding:16px 18px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)}
+.cat-pill h4{font-size:.9em;font-weight:700;margin-bottom:4px}
+.cat-pill p{font-size:.78em;color:rgba(255,255,255,.4);line-height:1.4}
 
-/* Decorative */
-.glow{position:absolute;width:400px;height:400px;border-radius:50%;filter:blur(120px);opacity:.15;pointer-events:none}
-.glow-blue{background:#3b82f6;top:-100px;right:-100px}
-.glow-purple{background:#8b5cf6;bottom:-100px;left:-100px}
-.glow-amber{background:#f59e0b;top:50%;right:-150px}
+/* ===== NAV ===== */
+.nav-bar{position:fixed;bottom:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 30px;z-index:100;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.dots{display:flex;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);cursor:pointer;transition:all .3s}
+.dot.on{background:#fff;width:24px;border-radius:4px}
+.nav-btn{background:none;border:1px solid rgba(255,255,255,.15);color:#fff;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1em;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.nav-btn:hover{background:rgba(255,255,255,.1)}
+.nav-info{font-size:.75em;color:rgba(255,255,255,.3);font-weight:500}
+.progress-bar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#2563eb,#7c3aed);transition:width .5s;z-index:100}
 
-/* Code */
-code{font-family:'JetBrains Mono',monospace;background:#0f172a;padding:3px 8px;border-radius:6px;font-size:.85em;border:1px solid #334155}
-
-/* List */
-ul.clean{list-style:none}
-ul.clean li{padding:8px 0;padding-left:20px;position:relative;font-size:1.05em;color:var(--muted)}
-ul.clean li::before{content:'';position:absolute;left:0;top:16px;width:8px;height:8px;border-radius:50%;background:var(--primary)}
+/* ===== DEVICE SVG ===== */
+.device-svg{max-width:380px;width:100%}
 
 @media(max-width:1024px){
-  .slide{padding:30px 40px}
-  h1{font-size:2.2em}
-  h2{font-size:1.6em}
-  .two-col,.three-col{grid-template-columns:1fr}
-  .features{grid-template-columns:1fr}
+  .content{padding:24px 30px}
+  h1{font-size:2.8em}
+  h2{font-size:1.8em}
+  .sub{font-size:1.05em}
+  .row{flex-direction:column;gap:24px}
+  .g3,.g4{grid-template-columns:1fr 1fr}
+  .big{font-size:3em}
 }
 </style>
 </head>
 <body>
 
-<div class="slides" id="slides">
+<div class="progress-bar" id="prog"></div>
 
-<!-- SLIDE 0: Titulo -->
-<div class="slide active" id="s0">
-  <div class="glow glow-blue"></div>
-  <div class="glow glow-purple"></div>
-  <div style="text-align:center">
-    <div style="margin-bottom:20px">
-      <span class="tag">Arduino</span>
-      <span class="tag" style="background:#7c3aed">Impressao 3D</span>
-      <span class="tag" style="background:#059669">Acessibilidade</span>
+<div class="deck">
+
+<!-- ========== SLIDE 0: TITULO ========== -->
+<div class="s on">
+  <div class="bg bg-mesh"></div>
+  <div class="content full">
+    <div class="anim" style="margin-bottom:24px">
+      <span class="label label-blue">Arduino</span>
+      <span class="label label-purple">Impressao 3D</span>
+      <span class="label label-green">Acessibilidade</span>
     </div>
-    <h1 style="font-size:4em">Voz Autista <span class="highlight">v2.0</span></h1>
-    <p style="font-size:1.4em;color:var(--muted);margin:16px auto;max-width:700px">Comunicador Assistivo de Baixo Custo para Pessoas com Autismo</p>
-    <div style="margin-top:30px;color:#475569;font-size:.95em">
-      <p>Maio 2026</p>
-    </div>
+    <h1 class="anim2" style="font-size:5em">Voz Autista</h1>
+    <h2 class="anim2" style="font-size:2em;font-weight:400;color:rgba(255,255,255,.35);margin-top:-4px;margin-bottom:20px">v2.0</h2>
+    <p class="sub anim3">Comunicador assistivo de baixo custo para pessoas com autismo</p>
+    <p class="anim4" style="margin-top:40px;font-size:.85em;color:rgba(255,255,255,.2)">Maio 2026 &nbsp;|&nbsp; Pressione <kbd style="background:rgba(255,255,255,.1);padding:2px 8px;border-radius:4px;font-size:.9em">&#8594;</kbd> para comecar</p>
   </div>
 </div>
 
-<!-- SLIDE 1: O Problema -->
-<div class="slide" id="s1">
-  <div class="glow glow-amber"></div>
-  <h3>O Problema</h3>
-  <h2>Comunicacao verbal e um desafio real</h2>
-  <div class="two-col" style="margin-top:30px">
-    <div>
-      <ul class="clean">
-        <li>~1 em cada 36 criancas e diagnosticada com TEA (CDC, 2023)</li>
-        <li>Ate 40% das pessoas com autismo sao nao-verbais ou minimamente verbais</li>
-        <li>Dispositivos AAC comerciais custam <strong class="red">R$ 2.000 a R$ 15.000</strong></li>
-        <li>Familias de baixa renda nao tem acesso a essas solucoes</li>
-      </ul>
-    </div>
-    <div class="three-col" style="grid-template-columns:1fr">
-      <div class="card" style="text-align:center;border-color:var(--danger)">
-        <div class="big-number red">R$5k+</div>
-        <p>Preco medio de um dispositivo AAC comercial</p>
+<!-- ========== SLIDE 1: O PROBLEMA ========== -->
+<div class="s">
+  <div class="bg bg-problem"></div>
+  <div class="content">
+    <span class="label label-red anim">O Problema</span>
+    <h2 class="anim" style="max-width:600px">Comunicacao verbal e um <span class="red">desafio real</span></h2>
+    <div class="row anim2" style="margin-top:32px">
+      <div class="col">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="fi"><div class="ico" style="background:#f87171"></div><span><strong>1 em cada 36</strong> criancas e diagnosticada com TEA (CDC, 2023)</span></div>
+          <div class="fi"><div class="ico" style="background:#fbbf24"></div><span>Ate <strong>40%</strong> sao nao-verbais ou minimamente verbais</span></div>
+          <div class="fi"><div class="ico" style="background:#f87171"></div><span>Dispositivos AAC comerciais: <strong class="red">R$ 2.000 a R$ 15.000</strong></span></div>
+          <div class="fi"><div class="ico" style="background:#fbbf24"></div><span>Familias de baixa renda <strong>sem acesso</strong> a tecnologia assistiva</span></div>
+        </div>
       </div>
-      <div class="card" style="text-align:center;border-color:var(--success)">
-        <div class="big-number green">~R$115</div>
-        <p>Custo do Voz Autista v2.0</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 2: A Solucao -->
-<div class="slide" id="s2">
-  <h3>A Solucao</h3>
-  <h2>Um dispositivo <span class="highlight">acessivel</span> e <span class="green">personalizavel</span></h2>
-  <p style="margin-bottom:30px">O usuario navega por categorias e palavras usando botoes coloridos. O dispositivo reproduz o audio correspondente por um alto-falante.</p>
-  <div class="btn-row" style="margin-bottom:30px">
-    <div class="btn-vis btn-red">Cat+</div>
-    <div class="btn-vis btn-yellow">Cat-</div>
-    <div class="btn-vis btn-green">Pal+</div>
-    <div class="btn-vis btn-blue">Pal-</div>
-    <div class="btn-vis btn-dark">FALAR</div>
-  </div>
-  <div class="three-col">
-    <div class="card">
-      <div class="card-icon">🗂</div>
-      <h3>7 Categorias</h3>
-      <p>Necessidades, Sentimentos, Acoes, Comidas, Lugares, Pessoas, Saude</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">💬</div>
-      <h3>35 Palavras</h3>
-      <p>5 palavras por categoria, reproduzidas por audio MP3 em alto-falante</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">🔗</div>
-      <h3>Frases Compostas</h3>
-      <p>"Eu quero" + "Beber" + "Agua" - ate 5 palavras encadeadas</p>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 3: Funcionalidades v2.0 -->
-<div class="slide" id="s3">
-  <h3>Novidades da v2.0</h3>
-  <h2>8 funcionalidades novas</h2>
-  <div class="features" style="margin-top:20px">
-    <div class="feature"><div class="dot" style="background:var(--accent)"></div><span><strong>Frases compostas</strong> - Press longo adiciona, combo fala a frase toda</span></div>
-    <div class="feature"><div class="dot" style="background:var(--success)"></div><span><strong>Volume analogico</strong> - Potenciometro em tempo real (0-30)</span></div>
-    <div class="feature"><div class="dot" style="background:#60a5fa"></div><span><strong>Bateria 18650</strong> - Recarregavel via USB, ~30h de autonomia</span></div>
-    <div class="feature"><div class="dot" style="background:#a78bfa"></div><span><strong>Monitor de bateria</strong> - Icone no LCD atualizado a cada 10s</span></div>
-    <div class="feature"><div class="dot" style="background:#f472b6"></div><span><strong>Feedback tatil</strong> - Motor de vibracao a cada acao (60ms)</span></div>
-    <div class="feature"><div class="dot" style="background:#34d399"></div><span><strong>Modo sleep</strong> - LCD apaga apos 2 min, qualquer botao acorda</span></div>
-    <div class="feature"><div class="dot" style="background:#fbbf24"></div><span><strong>Auto-detect I2C</strong> - Funciona com qualquer modulo LCD</span></div>
-    <div class="feature"><div class="dot" style="background:#fb923c"></div><span><strong>Config facil</strong> - Secao dedicada no codigo para personalizar</span></div>
-  </div>
-</div>
-
-<!-- SLIDE 4: Como Funciona -->
-<div class="slide" id="s4">
-  <h3>Interacao</h3>
-  <h2>Como o usuario opera o dispositivo</h2>
-  <div class="two-col" style="margin-top:20px">
-    <div>
-      <div class="timeline">
-        <div class="timeline-item">
-          <strong style="color:var(--text)">1. Ligar</strong>
-          <p>Chave on/off. LCD mostra "Voz Autista v2.0"</p>
+      <div class="col anim3" style="max-width:340px">
+        <div class="card stat" style="border-color:rgba(248,113,113,.3);margin-bottom:16px">
+          <div class="num red">R$5k+</div>
+          <div class="lbl">Preco medio AAC comercial</div>
         </div>
-        <div class="timeline-item">
-          <strong style="color:var(--text)">2. Escolher categoria</strong>
-          <p>Botao <span class="red">vermelho</span> (avancar) ou <span class="highlight">amarelo</span> (voltar)</p>
-        </div>
-        <div class="timeline-item">
-          <strong style="color:var(--text)">3. Escolher palavra</strong>
-          <p>Botao <span class="green">verde</span> (avancar) ou <span class="blue">azul</span> (voltar)</p>
-        </div>
-        <div class="timeline-item">
-          <strong style="color:var(--text)">4. Falar</strong>
-          <p>Press <strong>curto</strong> = fala agora | Press <strong>longo</strong> = adiciona a frase</p>
-        </div>
-        <div class="timeline-item">
-          <strong style="color:var(--text)">5. Frase composta</strong>
-          <p><span class="red">Verm</span>+<span class="highlight">Amar</span> juntos = fala a frase toda</p>
+        <div class="card stat" style="border-color:rgba(52,211,153,.3)">
+          <div class="num green">~R$128</div>
+          <div class="lbl">Custo do Voz Autista v2.0</div>
         </div>
       </div>
     </div>
-    <div class="diagram-box">
-      <h3 style="margin-bottom:16px">Display LCD 16x2</h3>
-      <div style="background:#0a0a0a;border-radius:8px;padding:20px;font-family:'JetBrains Mono';margin-bottom:16px">
-        <div style="color:#4ade80;font-size:1.1em;text-align:left">
-          <div>Necessidades&nbsp;&nbsp;&nbsp;&nbsp;[|||]</div>
-          <div>&#9654; Eu quero&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9829;2</div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 2: A SOLUCAO ========== -->
+<div class="s">
+  <div class="bg bg-solution"></div>
+  <div class="content">
+    <span class="label label-blue anim">A Solucao</span>
+    <h2 class="anim">Dispositivo <span class="accent">acessivel</span> e <span class="green">personalizavel</span></h2>
+    <p class="anim sub" style="margin-bottom:28px;font-size:1.05em">Navegue por categorias e palavras com botoes coloridos. O dispositivo fala por voce.</p>
+    <div class="row anim2">
+      <div class="col">
+        <div class="btns" style="margin-bottom:28px">
+          <div class="bv" style="background:#7f1d1d;border-color:#ef4444;color:#fca5a5">CAT<br>+</div>
+          <div class="bv" style="background:#78350f;border-color:#f59e0b;color:#fde68a">CAT<br>-</div>
+          <div class="bv" style="background:#064e3b;border-color:#10b981;color:#6ee7b7">PAL<br>+</div>
+          <div class="bv" style="background:#1e3a5f;border-color:#3b82f6;color:#93c5fd">PAL<br>-</div>
+          <div class="bv" style="background:#1f2937;border-color:#6b7280;color:#d1d5db;width:70px">FALAR</div>
+        </div>
+        <div class="g3">
+          <div class="card card-glow">
+            <h3><span class="blue">7</span> Categorias</h3>
+            <p>Necessidades, Sentimentos, Acoes, Comidas, Lugares, Pessoas, Saude</p>
+          </div>
+          <div class="card card-glow">
+            <h3><span class="accent">35</span> Palavras</h3>
+            <p>5 por categoria, audio MP3 no alto-falante</p>
+          </div>
+          <div class="card card-glow">
+            <h3><span class="green">5</span> Frases</h3>
+            <p>Empilhe palavras: "Eu quero + Beber + Agua"</p>
+          </div>
         </div>
       </div>
-      <p style="font-size:.85em;color:var(--muted)">Linha 1: Categoria + bateria<br>Linha 2: Seta + palavra + frase ativa</p>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 5: Hardware -->
-<div class="slide" id="s5">
-  <h3>Hardware</h3>
-  <h2>Componentes e pinagem</h2>
-  <div class="two-col" style="margin-top:10px">
-    <div>
-      <div class="pin-grid">
-        <div class="pin"><b>D2</b> Botao Vermelho (Cat+)</div>
-        <div class="pin"><b>D3</b> Botao Amarelo (Cat-)</div>
-        <div class="pin"><b>D4</b> Botao Verde (Pal+)</div>
-        <div class="pin"><b>D5</b> Botao Azul (Pal-)</div>
-        <div class="pin"><b>D6</b> Botao Preto (FALAR)</div>
-        <div class="pin"><b>D7</b> Motor vibracao</div>
-        <div class="pin"><b>D10</b> DFPlayer TX</div>
-        <div class="pin"><b>D11</b> 1k -> DFPlayer RX</div>
-        <div class="pin"><b>A0</b> Potenciometro vol.</div>
-        <div class="pin"><b>A1</b> Divisor bat. 10k+10k</div>
-        <div class="pin"><b>A4</b> LCD SDA (I2C)</div>
-        <div class="pin"><b>A5</b> LCD SCL (I2C)</div>
-      </div>
-    </div>
-    <div>
-      <table>
-        <tr><th>Componente</th><th>Funcao</th></tr>
-        <tr><td>Arduino Uno R3</td><td>Microcontrolador</td></tr>
-        <tr><td>LCD 16x2 I2C</td><td>Display navegacao</td></tr>
-        <tr><td>DFPlayer Mini + SD</td><td>Audio MP3</td></tr>
-        <tr><td>5 Botoes coloridos</td><td>Navegacao</td></tr>
-        <tr><td>Pot. 10k linear</td><td>Volume</td></tr>
-        <tr><td>Motor coin + 2N2222</td><td>Vibracao</td></tr>
-        <tr><td>18650 + TP4056</td><td>Bateria + carga</td></tr>
-        <tr><td>Case impresso 3D</td><td>Gabinete</td></tr>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 6: Categorias -->
-<div class="slide" id="s6">
-  <h3>Conteudo</h3>
-  <h2>7 categorias, 35 palavras</h2>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px">
-    <div class="card" style="border-color:#3b82f6">
-      <h3 style="color:#60a5fa">Necessidades</h3>
-      <p>Eu quero, Comer, Beber, Banheiro, Dormir</p>
-    </div>
-    <div class="card" style="border-color:#f59e0b">
-      <h3 style="color:#fbbf24">Sentimentos</h3>
-      <p>Feliz, Triste, Bravo, Calmo, Medo</p>
-    </div>
-    <div class="card" style="border-color:#10b981">
-      <h3 style="color:#34d399">Acoes</h3>
-      <p>Brincar, Ajuda, Sair, Parar, Ir</p>
-    </div>
-    <div class="card" style="border-color:#ec4899">
-      <h3 style="color:#f472b6">Comidas</h3>
-      <p>Agua, Suco, Leite, Pao, Fruta</p>
-    </div>
-    <div class="card" style="border-color:#8b5cf6">
-      <h3 style="color:#a78bfa">Lugares</h3>
-      <p>Casa, Escola, Parque, Medico, Banho</p>
-    </div>
-    <div class="card" style="border-color:#f97316">
-      <h3 style="color:#fb923c">Pessoas</h3>
-      <p>Mamae, Papai, Vovo, Professor, Amigo</p>
-    </div>
-    <div class="card" style="border-color:#ef4444">
-      <h3 style="color:#f87171">Saude</h3>
-      <p>Doi, Enjoo, Frio, Calor, Cansado</p>
-    </div>
-    <div class="card" style="border-color:#334155;text-align:center;display:flex;flex-direction:column;justify-content:center">
-      <p style="font-size:1.1em;color:var(--text)"><strong>Facilmente expansivel</strong></p>
-      <p style="font-size:.85em">Edite o array no codigo + grave MP3s no SD</p>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 7: Case 3D -->
-<div class="slide" id="s7">
-  <h3>Case 3D</h3>
-  <h2>Gabinete parametrico em <span class="highlight">OpenSCAD</span></h2>
-  <div class="two-col" style="margin-top:20px">
-    <div>
-      <ul class="clean">
-        <li>Dimensoes: <strong>175 x 115 x 47mm</strong></li>
-        <li>Parede: 2.5mm, cantos arredondados</li>
-        <li>Berco para bateria 18650</li>
-        <li>Suporte para motor de vibracao</li>
-        <li>Grade do alto-falante (furos 3mm)</li>
-        <li>Furos para 5 botoes com labels em relevo</li>
-        <li>Snap-fit com clique (4 bumps)</li>
-        <li>4 pes de borracha antideslizantes</li>
-        <li>24 furos de ventilacao no fundo</li>
-        <li>Aberturas: USB, SD, carga, volume, on/off</li>
-      </ul>
-      <div style="margin-top:20px">
-        <span class="tag" style="background:#059669">PLA/PETG</span>
-        <span class="tag" style="background:#7c3aed">~R$15 impressao</span>
-      </div>
-    </div>
-    <div class="diagram-box">
-      <p style="font-size:1.1em;font-weight:600;margin-bottom:12px">Abrir visualizador 3D interativo:</p>
-      <p style="font-size:.95em;color:var(--muted);margin-bottom:16px">
-        <code>case_3d/visualizar_case_3d.html</code>
-      </p>
-      <div style="border:2px dashed #475569;border-radius:12px;padding:40px;color:#64748b">
-        <p>Visualizador 3D</p>
-        <p style="font-size:.85em;margin-top:8px">Vista explodida | Componentes internos | Wireframe | Troca de cor</p>
-      </div>
-      <p style="font-size:.85em;color:var(--muted);margin-top:12px">Tampa exportada invertida para impressao sem suportes</p>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 8: Simulacao -->
-<div class="slide" id="s8">
-  <h3>Simulacao</h3>
-  <h2>Teste completo <span class="highlight">sem hardware</span></h2>
-  <div class="two-col" style="margin-top:20px">
-    <div>
-      <p style="margin-bottom:20px">O projeto pode ser testado integralmente no simulador <strong>Wokwi</strong> sem nenhum componente fisico.</p>
-      <div class="timeline">
-        <div class="timeline-item"><strong style="color:var(--text)">1.</strong> Acesse wokwi.com</div>
-        <div class="timeline-item"><strong style="color:var(--text)">2.</strong> Novo projeto Arduino Uno</div>
-        <div class="timeline-item"><strong style="color:var(--text)">3.</strong> Cole <code>sketch.ino</code> + <code>diagram.json</code></div>
-        <div class="timeline-item"><strong style="color:var(--text)">4.</strong> Clique Play</div>
-      </div>
-      <table style="margin-top:20px;font-size:.85em">
-        <tr><th>Real</th><th>Simulacao</th></tr>
-        <tr><td>DFPlayer + speaker</td><td>Buzzer (tons)</td></tr>
-        <tr><td>Motor vibracao</td><td>LED verde</td></tr>
-        <tr><td>Bateria 18650</td><td>Potenciometro</td></tr>
-      </table>
-    </div>
-    <div class="diagram-box" style="text-align:center">
-      <p style="font-size:1.2em;font-weight:600;margin-bottom:16px">DEMO AO VIVO</p>
-      <div style="border:2px dashed var(--primary);border-radius:12px;padding:30px;margin-bottom:16px">
-        <p style="color:var(--primary);font-size:1.1em;font-weight:600">wokwi.com</p>
-        <p style="color:var(--muted);font-size:.9em;margin-top:8px">Abrir e demonstrar navegacao, fala e frases compostas</p>
-      </div>
-      <p style="font-size:.85em;color:var(--muted)">Arquivos: <code>wokwi_simulacao/</code></p>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 9: Custo -->
-<div class="slide" id="s9">
-  <h3>Custo</h3>
-  <h2>Bill of Materials - <span class="green">~R$115</span></h2>
-  <div class="two-col" style="margin-top:20px">
-    <div>
-      <table>
-        <tr><th>Componente</th><th style="text-align:right">Custo</th></tr>
-        <tr><td>Arduino Uno R3</td><td style="text-align:right">R$ 35</td></tr>
-        <tr><td>DFPlayer Mini + microSD</td><td style="text-align:right">R$ 18</td></tr>
-        <tr><td>LCD 16x2 I2C</td><td style="text-align:right">R$ 15</td></tr>
-        <tr><td>Bateria 18650 + TP4056</td><td style="text-align:right">R$ 22</td></tr>
-        <tr><td>Alto-falante 8ohm 2W</td><td style="text-align:right">R$ 5</td></tr>
-        <tr><td>5 botoes + fios + resistores</td><td style="text-align:right">R$ 10</td></tr>
-        <tr><td>Pot. + motor + transistor + diodo</td><td style="text-align:right">R$ 8</td></tr>
-        <tr><td>Impressao 3D (PLA)</td><td style="text-align:right">R$ 15</td></tr>
-        <tr class="total"><td>TOTAL</td><td style="text-align:right">~R$ 128</td></tr>
-      </table>
-    </div>
-    <div style="text-align:center">
-      <div class="card" style="border-color:var(--success);margin-bottom:20px">
-        <p style="font-size:.9em;color:var(--muted)">Economia vs. comercial</p>
-        <div class="big-number green" style="font-size:3.5em">95%</div>
-        <p style="font-size:.9em;color:var(--muted)">mais barato</p>
-      </div>
-      <div class="card" style="border-color:#60a5fa">
-        <p style="font-size:.9em;color:var(--muted)">Autonomia de bateria</p>
-        <div class="big-number blue" style="font-size:3.5em">~30h</div>
-        <p style="font-size:.9em;color:var(--muted)">18650 2600mAh, ~80mA medio</p>
+      <div class="col anim3" style="max-width:320px;display:flex;flex-direction:column;align-items:center">
+        <div class="lcd-frame">
+          <div class="lcd">
+            <div>Necessidades&nbsp;&nbsp;&nbsp;[|||]</div>
+            <div>&#9654; Eu quero&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9829;2</div>
+          </div>
+        </div>
+        <p style="font-size:.75em;color:rgba(255,255,255,.3);margin-top:12px">LCD 16x2 I2C - Display real</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 10: Codigo -->
-<div class="slide" id="s10">
-  <h3>Software</h3>
-  <h2>Codigo Arduino - <span class="highlight">590 linhas</span></h2>
-  <div class="two-col" style="margin-top:20px">
-    <div>
-      <h3 style="color:var(--text)">Arquitetura</h3>
-      <div class="features" style="grid-template-columns:1fr;gap:10px;margin-top:12px">
-        <div class="feature"><div class="dot" style="background:var(--primary)"></div><span><code>setup()</code> - Init LCD, DFPlayer, pinos, splash screen</span></div>
-        <div class="feature"><div class="dot" style="background:var(--primary)"></div><span><code>loop()</code> - Sleep check, volume, bateria, debounce, botoes</span></div>
-        <div class="feature"><div class="dot" style="background:var(--primary)"></div><span><code>trackSpeakButton()</code> - Detecta press curto vs longo</span></div>
-        <div class="feature"><div class="dot" style="background:var(--primary)"></div><span><code>speakPhrase()</code> - Reproduz frase composta sequencial</span></div>
-        <div class="feature"><div class="dot" style="background:var(--primary)"></div><span><code>detectI2C()</code> - Scan automatico de enderecos LCD</span></div>
-      </div>
+<!-- ========== SLIDE 3: FUNCIONALIDADES ========== -->
+<div class="s">
+  <div class="bg bg-features"></div>
+  <div class="content">
+    <span class="label label-purple anim">Novidades v2.0</span>
+    <h2 class="anim"><span class="purple">8</span> funcionalidades novas</h2>
+    <div class="g2 anim2" style="margin-top:24px;gap:12px">
+      <div class="fi"><div class="ico" style="background:#fbbf24"></div><span><strong>Frases compostas</strong> &mdash; Press longo adiciona, combo reproduz a frase</span></div>
+      <div class="fi"><div class="ico" style="background:#34d399"></div><span><strong>Volume analogico</strong> &mdash; Potenciometro em tempo real (0-30)</span></div>
+      <div class="fi"><div class="ico" style="background:#60a5fa"></div><span><strong>Bateria 18650</strong> &mdash; Recarregavel via USB, ~30h autonomia</span></div>
+      <div class="fi"><div class="ico" style="background:#a78bfa"></div><span><strong>Monitor de bateria</strong> &mdash; Icone no LCD, atualizado a cada 10s</span></div>
+      <div class="fi"><div class="ico" style="background:#f472b6"></div><span><strong>Feedback tatil</strong> &mdash; Motor de vibracao confirma cada acao</span></div>
+      <div class="fi"><div class="ico" style="background:#34d399"></div><span><strong>Modo sleep</strong> &mdash; LCD apaga apos 2 min de inatividade</span></div>
+      <div class="fi"><div class="ico" style="background:#fbbf24"></div><span><strong>Auto-detect I2C</strong> &mdash; Funciona com qualquer modulo LCD</span></div>
+      <div class="fi"><div class="ico" style="background:#fb923c"></div><span><strong>Config facil</strong> &mdash; Edite categorias e palavras sem tocar na logica</span></div>
     </div>
-    <div>
-      <h3 style="color:var(--text)">Bibliotecas</h3>
-      <table style="margin-top:12px">
-        <tr><th>Biblioteca</th><th>Uso</th></tr>
-        <tr><td><code>Wire.h</code></td><td>I2C (built-in)</td></tr>
-        <tr><td><code>LiquidCrystal_I2C</code></td><td>Display LCD</td></tr>
-        <tr><td><code>SoftwareSerial</code></td><td>Serial DFPlayer</td></tr>
-        <tr><td><code>DFRobotDFPlayerMini</code></td><td>Controle audio</td></tr>
-      </table>
-      <div class="card" style="margin-top:16px;border-color:var(--accent)">
-        <h3>Configuracao facil</h3>
-        <p>Secao delimitada no codigo para editar categorias, palavras, tempos e pinos sem tocar na logica</p>
+  </div>
+</div>
+
+<!-- ========== SLIDE 4: COMO FUNCIONA ========== -->
+<div class="s">
+  <div class="bg bg-mesh"></div>
+  <div class="content">
+    <span class="label label-blue anim">Interacao</span>
+    <h2 class="anim">Como o usuario opera</h2>
+    <div class="row anim2" style="margin-top:24px">
+      <div class="col">
+        <div class="tl">
+          <div class="tl-i"><strong>1. Ligar</strong><p>Chave on/off. LCD: "Voz Autista v2.0"</p></div>
+          <div class="tl-i"><strong>2. Escolher categoria</strong><p>Botao <span class="red">vermelho</span> (+) ou <span class="accent">amarelo</span> (-)</p></div>
+          <div class="tl-i"><strong>3. Escolher palavra</strong><p>Botao <span class="green">verde</span> (+) ou <span class="blue">azul</span> (-)</p></div>
+          <div class="tl-i"><strong>4. Falar</strong><p>Press <strong>curto</strong> = fala | Press <strong>longo</strong> (0.8s) = adiciona a frase</p></div>
+          <div class="tl-i"><strong>5. Frase composta</strong><p><span class="red">Vermelho</span> + <span class="accent">Amarelo</span> juntos = fala tudo</p></div>
+          <div class="tl-i"><strong>6. Limpar frase</strong><p><span class="green">Verde</span> + <span class="blue">Azul</span> juntos = limpa</p></div>
+        </div>
+      </div>
+      <div class="col anim3" style="display:flex;flex-direction:column;align-items:center;gap:20px">
+        <div class="card" style="width:100%;text-align:center;border-color:rgba(96,165,250,.2)">
+          <p style="font-size:.8em;color:rgba(255,255,255,.4);margin-bottom:8px">Exemplo de frase composta</p>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px">
+            <span class="label label-blue" style="margin:0">Eu quero</span>
+            <span style="color:rgba(255,255,255,.3);line-height:2">+</span>
+            <span class="label label-green" style="margin:0">Beber</span>
+            <span style="color:rgba(255,255,255,.3);line-height:2">+</span>
+            <span class="label label-amber" style="margin:0">Agua</span>
+          </div>
+          <p style="font-size:.8em;color:rgba(255,255,255,.3)">&#9654; Dispositivo fala as 3 palavras em sequencia</p>
+        </div>
+        <div class="lcd-frame">
+          <div class="lcd" style="font-size:.95em">
+            <div>&#9834; Frase (3)...</div>
+            <div>&#9654; Agua</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 11: Trabalhos futuros -->
-<div class="slide" id="s11">
-  <h3>Proximos Passos</h3>
-  <h2>Evolucao do projeto</h2>
-  <div class="three-col" style="margin-top:30px">
-    <div class="card" style="border-color:var(--success)">
-      <h3 style="color:var(--success)">Curto prazo</h3>
-      <ul class="clean">
-        <li>LED RGB por categoria</li>
-        <li>Log de uso na EEPROM</li>
-        <li>Mais categorias (PROGMEM)</li>
-        <li>Modo aprendizado</li>
-      </ul>
-    </div>
-    <div class="card" style="border-color:var(--accent)">
-      <h3 style="color:var(--accent)">Medio prazo</h3>
-      <ul class="clean">
-        <li>Migracao para ESP32</li>
-        <li>App mobile Bluetooth</li>
-        <li>Display OLED com pictogramas</li>
-        <li>Multi-idioma</li>
-      </ul>
-    </div>
-    <div class="card" style="border-color:#8b5cf6">
-      <h3 style="color:#a78bfa">Longo prazo</h3>
-      <ul class="clean">
-        <li>Text-to-Speech (ESP32 + API)</li>
-        <li>PCB customizada</li>
-        <li>Producao em escala</li>
-        <li>Parcerias com escolas/clinicas</li>
-      </ul>
+<!-- ========== SLIDE 5: HARDWARE ========== -->
+<div class="s">
+  <div class="bg bg-solution"></div>
+  <div class="content">
+    <span class="label label-blue anim">Hardware</span>
+    <h2 class="anim">Componentes e pinagem</h2>
+    <div class="row anim2" style="margin-top:20px">
+      <div class="col">
+        <div class="pins">
+          <div class="pin"><b>D2</b> Botao Vermelho (Cat+)</div>
+          <div class="pin"><b>D3</b> Botao Amarelo (Cat-)</div>
+          <div class="pin"><b>D4</b> Botao Verde (Pal+)</div>
+          <div class="pin"><b>D5</b> Botao Azul (Pal-)</div>
+          <div class="pin"><b>D6</b> Botao Preto (FALAR)</div>
+          <div class="pin"><b>D7</b> Motor vibracao (2N2222)</div>
+          <div class="pin"><b>D10</b> DFPlayer TX</div>
+          <div class="pin"><b>D11</b> 1k&#8486; &#8594; DFPlayer RX</div>
+          <div class="pin"><b>A0</b> Potenciometro volume</div>
+          <div class="pin"><b>A1</b> Divisor bat. 10k+10k</div>
+          <div class="pin"><b>A4</b> LCD SDA (I2C)</div>
+          <div class="pin"><b>A5</b> LCD SCL (I2C)</div>
+        </div>
+      </div>
+      <div class="col anim3">
+        <table>
+          <tr><th>Componente</th><th>Funcao</th></tr>
+          <tr><td>Arduino Uno R3</td><td>Microcontrolador</td></tr>
+          <tr><td>LCD 16x2 I2C</td><td>Display</td></tr>
+          <tr><td>DFPlayer Mini + SD</td><td>Audio MP3</td></tr>
+          <tr><td>5 Botoes coloridos 12mm</td><td>Navegacao</td></tr>
+          <tr><td>Potenciometro 10k</td><td>Volume</td></tr>
+          <tr><td>Motor coin + 2N2222</td><td>Vibracao</td></tr>
+          <tr><td>18650 + TP4056</td><td>Bateria + carga USB</td></tr>
+          <tr><td>Case impresso 3D</td><td>Gabinete PLA</td></tr>
+        </table>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 12: Final -->
-<div class="slide" id="s12">
-  <div class="glow glow-blue"></div>
-  <div class="glow glow-purple"></div>
-  <div style="text-align:center">
-    <h1 style="font-size:3.5em">Obrigado!</h1>
-    <p style="font-size:1.3em;color:var(--muted);margin:20px auto">Tecnologia assistiva acessivel para quem precisa</p>
-    <div style="margin-top:40px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap">
-      <div class="card" style="min-width:200px">
-        <h3>GitHub</h3>
-        <p><code>github.com/joao-ped/Project_auts</code></p>
+<!-- ========== SLIDE 6: CATEGORIAS ========== -->
+<div class="s">
+  <div class="bg bg-features"></div>
+  <div class="content">
+    <span class="label label-amber anim">Conteudo</span>
+    <h2 class="anim"><span class="accent">7</span> categorias, <span class="accent">35</span> palavras</h2>
+    <div class="g4 anim2" style="margin-top:24px">
+      <div class="cat-pill" style="border-color:rgba(96,165,250,.25)"><h4 class="blue">Necessidades</h4><p>Eu quero, Comer, Beber, Banheiro, Dormir</p></div>
+      <div class="cat-pill" style="border-color:rgba(251,191,36,.25)"><h4 class="accent">Sentimentos</h4><p>Feliz, Triste, Bravo, Calmo, Medo</p></div>
+      <div class="cat-pill" style="border-color:rgba(52,211,153,.25)"><h4 class="green">Acoes</h4><p>Brincar, Ajuda, Sair, Parar, Ir</p></div>
+      <div class="cat-pill" style="border-color:rgba(244,114,182,.25)"><h4 style="color:#f472b6">Comidas</h4><p>Agua, Suco, Leite, Pao, Fruta</p></div>
+      <div class="cat-pill" style="border-color:rgba(167,139,250,.25)"><h4 class="purple">Lugares</h4><p>Casa, Escola, Parque, Medico, Banho</p></div>
+      <div class="cat-pill" style="border-color:rgba(251,146,60,.25)"><h4 style="color:#fb923c">Pessoas</h4><p>Mamae, Papai, Vovo, Professor, Amigo</p></div>
+      <div class="cat-pill" style="border-color:rgba(248,113,113,.25)"><h4 class="red">Saude</h4><p>Doi, Enjoo, Frio, Calor, Cansado</p></div>
+      <div class="cat-pill" style="border-color:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;text-align:center"><div><h4 style="color:rgba(255,255,255,.6)">+ Expansivel</h4><p>Edite o array no .ino e grave MP3s no SD</p></div></div>
+    </div>
+    <p class="anim3" style="margin-top:20px;font-size:.85em;color:rgba(255,255,255,.3)">Cartao SD FAT32 &nbsp;|&nbsp; Pastas /01/ a /07/ &nbsp;|&nbsp; Arquivos 001.mp3 a 005.mp3 &nbsp;|&nbsp; Voz clara, 1-3 segundos cada</p>
+  </div>
+</div>
+
+<!-- ========== SLIDE 7: CASE 3D ========== -->
+<div class="s">
+  <div class="bg bg-mesh"></div>
+  <div class="content">
+    <span class="label label-purple anim">Case 3D</span>
+    <h2 class="anim">Gabinete parametrico em <span class="purple">OpenSCAD</span></h2>
+    <div class="row anim2" style="margin-top:24px">
+      <div class="col">
+        <div class="g2" style="gap:10px">
+          <div class="fi"><div class="ico" style="background:#a78bfa"></div><span><strong>175 x 115 x 47mm</strong> externo</span></div>
+          <div class="fi"><div class="ico" style="background:#a78bfa"></div><span>Parede <strong>2.5mm</strong>, cantos arredondados</span></div>
+          <div class="fi"><div class="ico" style="background:#60a5fa"></div><span>Berco para <strong>bateria 18650</strong></span></div>
+          <div class="fi"><div class="ico" style="background:#34d399"></div><span>Suporte <strong>motor vibracao</strong></span></div>
+          <div class="fi"><div class="ico" style="background:#fbbf24"></div><span>Grade speaker <strong>furos 3mm</strong></span></div>
+          <div class="fi"><div class="ico" style="background:#f472b6"></div><span><strong>5 furos</strong> botoes + labels relevo</span></div>
+          <div class="fi"><div class="ico" style="background:#fb923c"></div><span><strong>Snap-fit</strong> com 4 bumps de clique</span></div>
+          <div class="fi"><div class="ico" style="background:#34d399"></div><span><strong>4 pes</strong> borracha + <strong>24 furos</strong> ventilacao</span></div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:8px">
+          <span class="label label-green" style="margin:0">PLA / PETG</span>
+          <span class="label label-purple" style="margin:0">~R$15</span>
+          <span class="label" style="margin:0">Sem suportes (tampa invertida)</span>
+        </div>
       </div>
-      <div class="card" style="min-width:200px">
-        <h3>Simulacao</h3>
-        <p><code>wokwi.com</code> + arquivos do repo</p>
-      </div>
-      <div class="card" style="min-width:200px">
-        <h3>Case 3D</h3>
-        <p><code>visualizar_case_3d.html</code></p>
+      <div class="col anim3" style="max-width:360px;text-align:center">
+        <div class="card" style="border-color:rgba(167,139,250,.2);padding:32px">
+          <p style="font-size:1em;font-weight:600;margin-bottom:8px">Visualizador 3D interativo</p>
+          <p style="font-size:.85em;color:rgba(255,255,255,.4);margin-bottom:20px"><code>case_3d/visualizar_case_3d.html</code></p>
+          <div style="border:2px dashed rgba(167,139,250,.3);border-radius:12px;padding:28px;color:rgba(167,139,250,.6);font-size:.9em">
+            Vista explodida<br>Componentes internos<br>Wireframe<br>Troca de cor
+          </div>
+        </div>
       </div>
     </div>
-    <p style="margin-top:40px;color:#475569;font-size:.9em">Setas do teclado para navegar | Voz Autista v2.0</p>
+  </div>
+</div>
+
+<!-- ========== SLIDE 8: SIMULACAO ========== -->
+<div class="s">
+  <div class="bg bg-green"></div>
+  <div class="content">
+    <span class="label label-green anim">Simulacao</span>
+    <h2 class="anim">Teste completo <span class="green">sem hardware</span></h2>
+    <div class="row anim2" style="margin-top:24px">
+      <div class="col">
+        <p style="color:rgba(255,255,255,.5);margin-bottom:20px;font-size:.95em">O projeto roda integralmente no simulador <strong style="color:#fff">Wokwi</strong> sem nenhum componente fisico.</p>
+        <div class="tl">
+          <div class="tl-i"><strong>1. Acesse wokwi.com</strong></div>
+          <div class="tl-i"><strong>2. Novo projeto Arduino Uno</strong></div>
+          <div class="tl-i"><strong>3. Cole <code>sketch.ino</code> + <code>diagram.json</code></strong></div>
+          <div class="tl-i"><strong>4. Clique Play</strong></div>
+        </div>
+        <table style="margin-top:16px;font-size:.82em">
+          <tr><th>Hardware real</th><th>Na simulacao</th></tr>
+          <tr><td>DFPlayer + speaker</td><td>Buzzer (tons diferentes)</td></tr>
+          <tr><td>Motor vibracao</td><td>LED verde</td></tr>
+          <tr><td>Bateria 18650</td><td>Potenciometro</td></tr>
+        </table>
+      </div>
+      <div class="col anim3" style="max-width:380px;display:flex;flex-direction:column;align-items:center;gap:20px">
+        <div class="card" style="width:100%;text-align:center;border-color:rgba(52,211,153,.3);padding:36px">
+          <p style="font-size:1.4em;font-weight:800;margin-bottom:12px;color:#34d399">DEMO AO VIVO</p>
+          <p style="font-size:.95em;color:rgba(255,255,255,.5)">Abra o Wokwi e demonstre: navegacao, fala, frases compostas, volume, sleep</p>
+        </div>
+        <p style="font-size:.8em;color:rgba(255,255,255,.25)">Arquivos em <code>wokwi_simulacao/</code></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 9: CUSTO ========== -->
+<div class="s">
+  <div class="bg bg-solution"></div>
+  <div class="content">
+    <span class="label label-green anim">Investimento</span>
+    <h2 class="anim">Bill of Materials &mdash; <span class="green">~R$128</span></h2>
+    <div class="row anim2" style="margin-top:24px">
+      <div class="col">
+        <table>
+          <tr><th>Componente</th><th style="text-align:right">Custo</th></tr>
+          <tr><td>Arduino Uno R3</td><td style="text-align:right">R$ 35</td></tr>
+          <tr><td>DFPlayer Mini + microSD</td><td style="text-align:right">R$ 18</td></tr>
+          <tr><td>LCD 16x2 I2C</td><td style="text-align:right">R$ 15</td></tr>
+          <tr><td>Bateria 18650 + TP4056</td><td style="text-align:right">R$ 22</td></tr>
+          <tr><td>Alto-falante 8&#8486; 2W</td><td style="text-align:right">R$ 5</td></tr>
+          <tr><td>Botoes + fios + resistores</td><td style="text-align:right">R$ 10</td></tr>
+          <tr><td>Pot. + motor + transistor + diodo</td><td style="text-align:right">R$ 8</td></tr>
+          <tr><td>Impressao 3D (PLA)</td><td style="text-align:right">R$ 15</td></tr>
+          <tr class="tot"><td>TOTAL</td><td style="text-align:right">~R$ 128</td></tr>
+        </table>
+      </div>
+      <div class="col anim3" style="max-width:300px;display:flex;flex-direction:column;gap:16px">
+        <div class="card stat" style="border-color:rgba(52,211,153,.3)">
+          <div class="num green" style="font-size:4em">95%</div>
+          <div class="lbl">mais barato que comercial</div>
+        </div>
+        <div class="card stat" style="border-color:rgba(96,165,250,.3)">
+          <div class="num blue" style="font-size:4em">~30h</div>
+          <div class="lbl">autonomia (18650 2600mAh)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 10: SOFTWARE ========== -->
+<div class="s">
+  <div class="bg bg-features"></div>
+  <div class="content">
+    <span class="label label-blue anim">Software</span>
+    <h2 class="anim">Codigo Arduino &mdash; <span class="blue">590 linhas</span></h2>
+    <div class="row anim2" style="margin-top:24px">
+      <div class="col">
+        <h3 style="font-size:.9em;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:12px">ARQUITETURA</h3>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="fi"><div class="ico" style="background:#60a5fa"></div><span><code>setup()</code> &mdash; Init LCD, DFPlayer, pinos, splash</span></div>
+          <div class="fi"><div class="ico" style="background:#60a5fa"></div><span><code>loop()</code> &mdash; Sleep, volume, bateria, debounce, botoes</span></div>
+          <div class="fi"><div class="ico" style="background:#60a5fa"></div><span><code>trackSpeakButton()</code> &mdash; Press curto vs longo</span></div>
+          <div class="fi"><div class="ico" style="background:#60a5fa"></div><span><code>speakPhrase()</code> &mdash; Frase composta sequencial</span></div>
+          <div class="fi"><div class="ico" style="background:#60a5fa"></div><span><code>detectI2C()</code> &mdash; Scan automatico LCD</span></div>
+        </div>
+      </div>
+      <div class="col anim3">
+        <h3 style="font-size:.9em;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:12px">BIBLIOTECAS</h3>
+        <table style="font-size:.85em">
+          <tr><th>Biblioteca</th><th>Uso</th></tr>
+          <tr><td><code>Wire.h</code></td><td>I2C (built-in)</td></tr>
+          <tr><td><code>LiquidCrystal_I2C</code></td><td>Display LCD</td></tr>
+          <tr><td><code>SoftwareSerial</code></td><td>Comunicacao DFPlayer</td></tr>
+          <tr><td><code>DFRobotDFPlayerMini</code></td><td>Controle audio MP3</td></tr>
+        </table>
+        <div class="card" style="margin-top:16px;border-color:rgba(251,191,36,.2)">
+          <h3 style="color:#fbbf24">Personalizacao facil</h3>
+          <p>Secao delimitada no codigo: edite categorias, palavras, tempos e pinos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 11: FUTURO ========== -->
+<div class="s">
+  <div class="bg bg-problem"></div>
+  <div class="content">
+    <span class="label label-amber anim">Evolucao</span>
+    <h2 class="anim">Proximos passos</h2>
+    <div class="g3 anim2" style="margin-top:28px">
+      <div class="card" style="border-color:rgba(52,211,153,.2)">
+        <h3 class="green">Curto prazo</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+          <div class="fi" style="padding:10px 14px"><span>LED RGB por categoria</span></div>
+          <div class="fi" style="padding:10px 14px"><span>Log de uso na EEPROM</span></div>
+          <div class="fi" style="padding:10px 14px"><span>Mais categorias (PROGMEM)</span></div>
+          <div class="fi" style="padding:10px 14px"><span>Modo aprendizado</span></div>
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(251,191,36,.2)">
+        <h3 class="accent">Medio prazo</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+          <div class="fi" style="padding:10px 14px"><span>Migracao para ESP32</span></div>
+          <div class="fi" style="padding:10px 14px"><span>App mobile Bluetooth</span></div>
+          <div class="fi" style="padding:10px 14px"><span>Display OLED pictogramas</span></div>
+          <div class="fi" style="padding:10px 14px"><span>Multi-idioma</span></div>
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(167,139,250,.2)">
+        <h3 class="purple">Longo prazo</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+          <div class="fi" style="padding:10px 14px"><span>Text-to-Speech (API)</span></div>
+          <div class="fi" style="padding:10px 14px"><span>PCB customizada</span></div>
+          <div class="fi" style="padding:10px 14px"><span>Producao em escala</span></div>
+          <div class="fi" style="padding:10px 14px"><span>Parceria escolas/clinicas</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 12: OBRIGADO ========== -->
+<div class="s">
+  <div class="bg bg-end"></div>
+  <div class="content full">
+    <h1 class="anim" style="font-size:5.5em;background:linear-gradient(135deg,#60a5fa,#a78bfa,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Obrigado!</h1>
+    <p class="sub anim2" style="margin-top:12px;margin-bottom:40px">Tecnologia assistiva acessivel para quem precisa</p>
+    <div class="g3 anim3" style="max-width:750px">
+      <div class="card" style="text-align:center">
+        <h3 class="blue">GitHub</h3>
+        <p><code style="font-size:.75em">joao-ped/Project_auts</code></p>
+      </div>
+      <div class="card" style="text-align:center">
+        <h3 class="green">Simulacao</h3>
+        <p><code style="font-size:.75em">wokwi.com</code></p>
+      </div>
+      <div class="card" style="text-align:center">
+        <h3 class="purple">Case 3D</h3>
+        <p><code style="font-size:.75em">visualizar_case_3d.html</code></p>
+      </div>
+    </div>
+    <p class="anim4" style="margin-top:50px;font-size:.8em;color:rgba(255,255,255,.2)">Voz Autista v2.0 &nbsp;&bull;&nbsp; Maio 2026</p>
   </div>
 </div>
 
 </div>
 
-<!-- Navigation -->
-<div class="nav">
-  <button onclick="prev()" id="btnPrev">&#8592;</button>
-  <button onclick="next()" id="btnNext">&#8594;</button>
+<!-- ===== NAVIGATION BAR ===== -->
+<div class="nav-bar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="nav-btn" onclick="prev()">&#8592;</button>
+    <button class="nav-btn" onclick="next()">&#8594;</button>
+    <span class="nav-info" id="sn">1/13</span>
+  </div>
+  <div class="dots" id="dots"></div>
+  <span class="nav-info">&#8592; &#8594; para navegar</span>
 </div>
-<div class="progress" id="progress"></div>
-<div class="slide-num" id="slideNum">1 / 13</div>
 
 <script>
-var current = 0;
-var total = document.querySelectorAll('.slide').length;
+var cur=0, slides=document.querySelectorAll('.s'), total=slides.length;
+var dotsEl=document.getElementById('dots');
+for(var i=0;i<total;i++){var d=document.createElement('div');d.className='dot'+(i===0?' on':'');d.setAttribute('data-i',i);d.onclick=function(){go(+this.getAttribute('data-i'))};dotsEl.appendChild(d)}
 
-function go(n) {
-  if (n < 0 || n >= total) return;
-  var slides = document.querySelectorAll('.slide');
-  slides[current].classList.remove('active');
-  slides[current].classList.add(n > current ? 'prev' : '');
-  current = n;
-  // Reset all
-  for (var i = 0; i < slides.length; i++) {
-    slides[i].classList.remove('active', 'prev');
-  }
-  slides[current].classList.add('active');
-  document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
-  document.getElementById('slideNum').textContent = (current + 1) + ' / ' + total;
+function go(n){
+  if(n<0||n>=total)return;
+  slides[cur].classList.remove('on');
+  cur=n;
+  slides[cur].classList.add('on');
+  document.querySelectorAll('.dot').forEach(function(d,i){d.classList.toggle('on',i===cur)});
+  document.getElementById('prog').style.width=((cur+1)/total*100)+'%';
+  document.getElementById('sn').textContent=(cur+1)+'/'+total;
 }
+function next(){go(cur+1)}
+function prev(){go(cur-1)}
 
-function next() { go(current + 1); }
-function prev() { go(current - 1); }
-
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); next(); }
-  if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); prev(); }
-  if (e.key === 'Home') { e.preventDefault(); go(0); }
-  if (e.key === 'End') { e.preventDefault(); go(total - 1); }
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='Enter'){e.preventDefault();next()}
+  if(e.key==='ArrowLeft'||e.key==='Backspace'){e.preventDefault();prev()}
+  if(e.key==='Home'){e.preventDefault();go(0)}
+  if(e.key==='End'){e.preventDefault();go(total-1)}
 });
-
-// Touch swipe
-var touchStartX = 0;
-document.addEventListener('touchstart', function(e) { touchStartX = e.touches[0].clientX; });
-document.addEventListener('touchend', function(e) {
-  var diff = touchStartX - e.changedTouches[0].clientX;
-  if (Math.abs(diff) > 50) { diff > 0 ? next() : prev(); }
-});
-
-go(0);
+var tx=0;
+document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX});
+document.addEventListener('touchend',function(e){var d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50){d>0?next():prev()}});
 </script>
 </body>
 </html>
