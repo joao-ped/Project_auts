@@ -4,6 +4,35 @@ Dispositivo de comunicacao assistiva de baixo custo para pessoas com autismo que
 
 Projeto desenvolvido com Arduino Uno, impressao 3D e componentes acessiveis.
 
+**Site do projeto:** https://joao-ped.github.io/Project_auts/ (apos ativar Pages, veja secao abaixo)
+
+---
+
+## Hospedar no GitHub Pages (passo a passo)
+
+O `index.html` na raiz funciona como pagina inicial e linka para todas as ferramentas. Para ativar:
+
+1. Faca commit e push das mudancas (incluindo `index.html` e `.nojekyll`):
+   ```bash
+   git add index.html .nojekyll
+   git commit -m "Adiciona site index.html + .nojekyll"
+   git push origin main
+   ```
+2. No GitHub, va em **Settings -> Pages** do repositorio
+3. Em **Source**, escolha **Deploy from a branch**
+4. Em **Branch**, selecione `main` e pasta `/ (root)`, depois **Save**
+5. Aguarde 1-2 min e acesse `https://joao-ped.github.io/Project_auts/`
+
+> O arquivo `.nojekyll` (vazio) impede que o Jekyll processe o site - importante para que pastas como `wokwi_simulacao/` e arquivos com underscore funcionem.
+
+Links que ficarao online:
+- `/` -> hub (index.html)
+- `/apresentacao.html` -> slides
+- `/manual_montagem_visual.html` -> manual
+- `/simulador.html` -> simulador no navegador
+- `/wokwi_simulacao/abrir_no_wokwi.html` -> assistente Wokwi
+- `/case_3d/visualizar_case_3d.html` -> viewer 3D
+
 ---
 
 ## Funcionalidades
@@ -60,7 +89,7 @@ D7  -> Transistor -> Motor vib.  A5  -> LCD SCL (I2C)
 
 ### Custo estimado
 
-O custo total dos componentes fica entre **R$ 80 - R$ 120**, dependendo do fornecedor. Componentes mais caros: Arduino (~R$35), DFPlayer (~R$15), bateria 18650 (~R$20), impressao 3D (~R$15).
+O custo total dos componentes fica em torno de **~R$ 128**, dependendo do fornecedor. Componentes mais caros: Arduino (~R$35), bateria 18650 (~R$15), LCD I2C (~R$15), impressao 3D (~R$15), DFPlayer (~R$12).
 
 ## Estrutura do projeto
 

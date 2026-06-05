@@ -1,6 +1,18 @@
 # Como Simular o "Voz Autista v2.0" no Wokwi
 
-## Metodo 1: Importar o projeto (mais rapido)
+> **Atalho:** abra `abrir_no_wokwi.html` no navegador deste projeto para uma pagina com
+> botoes "Copiar diagram.json" / "Copiar sketch.ino" e o link direto para o Wokwi em branco.
+
+## Metodo 1 - Pagina assistente (mais rapido, recomendado)
+
+1. Abra `wokwi_simulacao/abrir_no_wokwi.html` no navegador (clique duplo)
+2. Clique em **"Abrir Wokwi (Arduino Uno em branco)"** - abre nova aba
+3. No Wokwi, va na aba **diagram.json**, apague tudo
+4. Volte a pagina assistente e clique **"Copiar diagram.json"**, cole no Wokwi (Ctrl+V)
+5. Va na aba **sketch.ino**, apague, copie do assistente, cole no Wokwi
+6. Aperte **Play** verde
+
+## Metodo 2 - Copy/paste manual
 
 1. Acesse [https://wokwi.com](https://wokwi.com)
 2. Crie uma conta (gratuita) ou faca login
@@ -10,7 +22,31 @@
 6. Substitua todo o conteudo pelo arquivo `diagram.json`
 7. Clique no botao verde **"Play"** para iniciar a simulacao
 
-## Metodo 2: Montar manualmente
+## Metodo 3 - Links raw do GitHub (para compartilhar com terceiros)
+
+Estes links sempre apontam para a versao mais recente empurrada para `main`:
+
+- `diagram.json`: https://raw.githubusercontent.com/joao-ped/Project_auts/main/wokwi_simulacao/diagram.json
+- `sketch.ino`:   https://raw.githubusercontent.com/joao-ped/Project_auts/main/wokwi_simulacao/sketch.ino
+
+Mande os 2 links para qualquer pessoa - ela abre, copia, cola no Wokwi e simula.
+
+## Metodo 4 - Gist + URL direta (opcional, 1 clique para abrir)
+
+Se voce criar um GitHub Gist contendo `diagram.json` + `sketch.ino`, o Wokwi consegue
+abrir o projeto direto pela URL:
+
+```
+https://wokwi.com/projects/new/gist/<GIST_ID>
+```
+
+Passos:
+1. Va em https://gist.github.com (logado)
+2. Crie um gist publico com os 2 arquivos (mesmos nomes: `diagram.json` e `sketch.ino`)
+3. Pegue o ID do gist (parte final da URL apos `/gists/`)
+4. Acesse `https://wokwi.com/projects/new/gist/SEU_ID` - abre direto, sem copy/paste
+
+## Metodo 5 - Montar manualmente
 
 ### Componentes para adicionar:
 - 1x Arduino Uno

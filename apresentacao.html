@@ -350,7 +350,157 @@ tr.tot td{background:rgba(59,130,246,.15);font-weight:700;color:#fff;font-size:1
   </div>
 </div>
 
-<!-- ========== SLIDE 6: CATEGORIAS ========== -->
+<!-- ========== SLIDE 6: CIRCUITO ESQUEMATICO ========== -->
+<div class="s">
+  <div class="bg bg-mesh"></div>
+  <div class="content">
+    <span class="label label-blue anim">Circuito</span>
+    <h2 class="anim">Esquematico <span class="blue">completo</span></h2>
+    <div class="anim2" style="margin-top:20px;display:flex;justify-content:center">
+      <svg width="850" height="420" viewBox="0 0 850 420" style="max-width:100%;height:auto">
+        <defs>
+          <linearGradient id="sc-ard" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0369a1"/></linearGradient>
+          <linearGradient id="sc-dfp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
+          <linearGradient id="sc-lcd" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#166534"/><stop offset="100%" stop-color="#14532d"/></linearGradient>
+          <linearGradient id="sc-bat" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
+          <filter id="sc-sh" x="-4%" y="-4%" width="110%" height="115%"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".15"/></filter>
+        </defs>
+
+        <!-- Arduino (centro) -->
+        <rect x="310" y="100" width="200" height="240" rx="8" fill="url(#sc-ard)" filter="url(#sc-sh)"/>
+        <text x="410" y="128" text-anchor="middle" fill="#fff" font-size="14" font-weight="800">ARDUINO UNO</text>
+        <g font-size="9" font-weight="600" font-family="monospace">
+          <text x="325" y="158" fill="rgba(255,255,255,.8)">D2</text>
+          <text x="325" y="175" fill="rgba(255,255,255,.8)">D3</text>
+          <text x="325" y="192" fill="rgba(255,255,255,.8)">D4</text>
+          <text x="325" y="209" fill="rgba(255,255,255,.8)">D5</text>
+          <text x="325" y="226" fill="rgba(255,255,255,.8)">D6</text>
+          <text x="325" y="248" fill="#86efac">D7</text>
+          <text x="325" y="275" fill="rgba(255,255,255,.8)">D10</text>
+          <text x="325" y="292" fill="rgba(255,255,255,.8)">D11</text>
+          <text x="490" y="158" text-anchor="end" fill="#fdba74">A0</text>
+          <text x="490" y="178" text-anchor="end" fill="#fdba74">A1</text>
+          <text x="490" y="205" text-anchor="end" fill="#d8b4fe">A4</text>
+          <text x="490" y="222" text-anchor="end" fill="#d8b4fe">A5</text>
+          <text x="490" y="255" text-anchor="end" fill="#fca5a5">5V</text>
+          <text x="490" y="275" text-anchor="end" fill="#d1d5db">GND</text>
+          <text x="490" y="300" text-anchor="end" fill="#fca5a5">VIN</text>
+        </g>
+
+        <!-- Botoes (esquerda) -->
+        <rect x="52" y="142" width="40" height="20" rx="6" fill="#ef4444"/><text x="72" y="156" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">Cat+</text>
+        <rect x="52" y="165" width="40" height="20" rx="6" fill="#eab308"/><text x="72" y="179" text-anchor="middle" fill="#1a1a00" font-size="7" font-weight="700">Cat-</text>
+        <rect x="52" y="188" width="40" height="20" rx="6" fill="#22c55e"/><text x="72" y="202" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">Pal+</text>
+        <rect x="52" y="211" width="40" height="20" rx="6" fill="#3b82f6"/><text x="72" y="225" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">Pal-</text>
+        <rect x="52" y="234" width="40" height="20" rx="6" fill="#4b5563"/><text x="72" y="248" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">FALAR</text>
+        <line x1="92" y1="152" x2="322" y2="152" stroke="#ef4444" stroke-width="1.5" opacity=".7"/>
+        <line x1="92" y1="172" x2="322" y2="172" stroke="#ca8a04" stroke-width="1.5" opacity=".7"/>
+        <line x1="92" y1="195" x2="322" y2="188" stroke="#22c55e" stroke-width="1.5" opacity=".7"/>
+        <line x1="92" y1="218" x2="322" y2="205" stroke="#3b82f6" stroke-width="1.5" opacity=".7"/>
+        <line x1="92" y1="241" x2="322" y2="222" stroke="#6b7280" stroke-width="1.5" opacity=".7"/>
+        <line x1="52" y1="152" x2="35" y2="152" stroke="#555" stroke-width="1"/>
+        <line x1="52" y1="175" x2="35" y2="175" stroke="#555" stroke-width="1"/>
+        <line x1="52" y1="198" x2="35" y2="198" stroke="#555" stroke-width="1"/>
+        <line x1="52" y1="221" x2="35" y2="221" stroke="#555" stroke-width="1"/>
+        <line x1="52" y1="244" x2="35" y2="244" stroke="#555" stroke-width="1"/>
+        <line x1="35" y1="148" x2="35" y2="248" stroke="#555" stroke-width="1.5"/>
+        <text x="28" y="255" text-anchor="end" fill="rgba(255,255,255,.3)" font-size="7">GND</text>
+        <text x="72" y="136" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="7">INPUT_PULLUP</text>
+
+        <!-- LCD (acima) -->
+        <rect x="345" y="20" width="150" height="55" rx="5" fill="url(#sc-lcd)" filter="url(#sc-sh)"/>
+        <rect x="355" y="27" width="130" height="32" rx="2" fill="#0f172a"/>
+        <text x="420" y="43" text-anchor="middle" fill="#4ade80" font-size="7" font-family="monospace">Voz Autista v2.0</text>
+        <text x="420" y="54" text-anchor="middle" fill="#4ade80" font-size="6" font-family="monospace">&#9654; Eu quero</text>
+        <text x="420" y="88" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="8" font-weight="600">LCD 16x2 I2C</text>
+        <!-- LCD wires -->
+        <line x1="380" y1="75" x2="380" y2="95" stroke="#a855f7" stroke-width="1.5"/>
+        <line x1="380" y1="95" x2="510" y2="200" stroke="#a855f7" stroke-width="1.5"/>
+        <line x1="410" y1="75" x2="410" y2="92" stroke="#a855f7" stroke-width="1.5"/>
+        <line x1="410" y1="92" x2="510" y2="218" stroke="#a855f7" stroke-width="1.5"/>
+        <line x1="450" y1="75" x2="510" y2="251" stroke="#ef4444" stroke-width="1" opacity=".5"/>
+        <line x1="470" y1="75" x2="510" y2="271" stroke="#555" stroke-width="1" opacity=".5"/>
+
+        <!-- Potenciometro (direita) -->
+        <circle cx="600" cy="155" r="22" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.15)" stroke-width="2"/>
+        <circle cx="600" cy="155" r="12" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line x1="600" y1="155" x2="600" y2="137" stroke="rgba(255,255,255,.4)" stroke-width="3" stroke-linecap="round"/>
+        <text x="600" y="190" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="8" font-weight="600">Pot. 10k (Vol)</text>
+        <line x1="578" y1="155" x2="510" y2="155" stroke="#f97316" stroke-width="1.5"/>
+        <text x="545" y="150" fill="#f97316" font-size="7">A0</text>
+
+        <!-- Divisor tensao (direita) -->
+        <g transform="translate(580,210)">
+          <rect x="0" y="0" width="38" height="14" rx="7" fill="rgba(255,255,255,.06)" stroke="#d97706" stroke-width="1"/>
+          <text x="19" y="10" text-anchor="middle" fill="#d97706" font-size="6" font-weight="700">10k</text>
+          <rect x="0" y="20" width="38" height="14" rx="7" fill="rgba(255,255,255,.06)" stroke="#d97706" stroke-width="1"/>
+          <text x="19" y="30" text-anchor="middle" fill="#d97706" font-size="6" font-weight="700">10k</text>
+          <circle cx="19" cy="17" r="3" fill="#f97316"/>
+        </g>
+        <line x1="580" y1="227" x2="510" y2="175" stroke="#f97316" stroke-width="1.5"/>
+        <text x="560" y="205" fill="rgba(255,255,255,.4)" font-size="7">Div.Bat A1</text>
+
+        <!-- DFPlayer (abaixo) -->
+        <rect x="370" y="340" width="80" height="55" rx="5" fill="url(#sc-dfp)" filter="url(#sc-sh)"/>
+        <text x="410" y="365" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">DFPlayer</text>
+        <text x="410" y="378" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="7">Mini MP3</text>
+        <text x="410" y="410" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="8">+ microSD + Speaker</text>
+        <!-- DFPlayer wires -->
+        <line x1="322" y1="271" x2="260" y2="271" stroke="#06b6d4" stroke-width="1.5"/>
+        <line x1="260" y1="271" x2="260" y2="350" stroke="#06b6d4" stroke-width="1"/>
+        <rect x="245" y="310" width="30" height="12" rx="6" fill="rgba(255,255,255,.06)" stroke="#d97706" stroke-width="1"/>
+        <text x="260" y="319" text-anchor="middle" fill="#d97706" font-size="6" font-weight="700">1k</text>
+        <line x1="260" y1="350" x2="370" y2="350" stroke="#06b6d4" stroke-width="1.5"/>
+        <line x1="322" y1="288" x2="245" y2="288" stroke="#06b6d4" stroke-width="1.5"/>
+        <line x1="245" y1="288" x2="245" y2="365" stroke="#06b6d4" stroke-width="1"/>
+        <line x1="245" y1="365" x2="370" y2="365" stroke="#06b6d4" stroke-width="1.5"/>
+        <text x="310" y="350" fill="#06b6d4" font-size="6" font-weight="600">RX (1k)</text>
+        <text x="310" y="365" fill="#06b6d4" font-size="6" font-weight="600">TX</text>
+
+        <!-- Speaker -->
+        <circle cx="520" cy="370" r="22" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+        <circle cx="520" cy="370" r="12" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+        <circle cx="520" cy="370" r="4" fill="rgba(255,255,255,.15)"/>
+        <text x="520" y="400" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="7">8&#8486; 2W</text>
+        <line x1="450" y1="370" x2="498" y2="370" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+
+        <!-- Motor vibracao (esquerda abaixo) -->
+        <g transform="translate(70,300)">
+          <circle cx="20" cy="20" r="14" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+          <text x="20" y="23" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="8" font-weight="700">M</text>
+          <text x="20" y="45" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="7">Motor Vib.</text>
+          <!-- Transistor -->
+          <circle cx="80" cy="35" r="12" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+          <text x="80" y="38" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="6" font-weight="600">2N2222</text>
+          <text x="80" y="58" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="6">+ 1N4148</text>
+          <!-- Resistor 1k -->
+          <rect x="105" y="29" width="30" height="12" rx="6" fill="rgba(255,255,255,.06)" stroke="#d97706" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" fill="#d97706" font-size="6" font-weight="700">1k</text>
+          <line x1="135" y1="35" x2="200" y2="35" stroke="#06b6d4" stroke-width="1.5"/>
+          <line x1="200" y1="35" x2="252" y2="-56" stroke="#06b6d4" stroke-width="1.5"/>
+        </g>
+        <text x="255" y="280" fill="#06b6d4" font-size="7" font-weight="600">D7</text>
+
+        <!-- Alimentacao (direita abaixo) -->
+        <g transform="translate(640,300)">
+          <rect x="0" y="0" width="180" height="95" rx="10" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <text x="90" y="18" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="9" font-weight="700">ALIMENTACAO</text>
+          <rect x="15" y="28" width="65" height="18" rx="9" fill="url(#sc-bat)"/>
+          <text x="47" y="41" text-anchor="middle" fill="#fff" font-size="7" font-weight="600">18650 3.7V</text>
+          <rect x="15" y="55" width="50" height="18" rx="3" fill="rgba(139,92,246,.3)" stroke="rgba(139,92,246,.4)" stroke-width="1"/>
+          <text x="40" y="67" text-anchor="middle" fill="#c4b5fd" font-size="7" font-weight="600">TP4056</text>
+          <rect x="80" y="57" width="32" height="14" rx="7" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+          <circle cx="100" cy="64" r="4" fill="#34d399"/>
+          <text x="96" y="82" text-anchor="middle" fill="#34d399" font-size="6">ON/OFF</text>
+          <text x="140" y="68" fill="#fca5a5" font-size="8" font-weight="700">VIN</text>
+        </g>
+      </svg>
+    </div>
+    <p class="anim3" style="font-size:.8em;color:rgba(255,255,255,.3);margin-top:8px">Cores: <span style="color:#ef4444">vermelho=5V</span> &nbsp; <span style="color:#6b7280">cinza=GND</span> &nbsp; <span style="color:#06b6d4">ciano=digital</span> &nbsp; <span style="color:#f97316">laranja=analogico</span> &nbsp; <span style="color:#a855f7">roxo=I2C</span></p>
+  </div>
+</div>
+
+<!-- ========== SLIDE 7: CATEGORIAS ========== -->
 <div class="s">
   <div class="bg bg-features"></div>
   <div class="content">
@@ -370,7 +520,7 @@ tr.tot td{background:rgba(59,130,246,.15);font-weight:700;color:#fff;font-size:1
   </div>
 </div>
 
-<!-- ========== SLIDE 7: CASE 3D ========== -->
+<!-- ========== SLIDE 8: CASE 3D ========== -->
 <div class="s">
   <div class="bg bg-mesh"></div>
   <div class="content">
@@ -407,7 +557,7 @@ tr.tot td{background:rgba(59,130,246,.15);font-weight:700;color:#fff;font-size:1
   </div>
 </div>
 
-<!-- ========== SLIDE 8: SIMULACAO ========== -->
+<!-- ========== SLIDE 9: SIMULACAO ========== -->
 <div class="s">
   <div class="bg bg-green"></div>
   <div class="content">
@@ -440,7 +590,7 @@ tr.tot td{background:rgba(59,130,246,.15);font-weight:700;color:#fff;font-size:1
   </div>
 </div>
 
-<!-- ========== SLIDE 9: CUSTO DETALHADO ========== -->
+<!-- ========== SLIDE 10: CUSTO DETALHADO ========== -->
 <div class="s">
   <div class="bg bg-solution"></div>
   <div class="content">
@@ -486,7 +636,7 @@ tr.tot td{background:rgba(59,130,246,.15);font-weight:700;color:#fff;font-size:1
   </div>
 </div>
 
-<!-- ========== SLIDE 10: SOFTWARE ========== -->
+<!-- ========== SLIDE 11: SOFTWARE ========== -->
 <div class="s">
   <div class="bg bg-features"></div>
   <div class="content">
@@ -521,7 +671,7 @@ tr.tot td{background:rgba(59,130,246,.15);font-weight:700;color:#fff;font-size:1
   </div>
 </div>
 
-<!-- ========== SLIDE 11: FUTURO ========== -->
+<!-- ========== SLIDE 12: FUTURO ========== -->
 <div class="s">
   <div class="bg bg-problem"></div>
   <div class="content">
@@ -559,7 +709,7 @@ tr.tot td{background:rgba(59,130,246,.15);font-weight:700;color:#fff;font-size:1
   </div>
 </div>
 
-<!-- ========== SLIDE 12: OBRIGADO ========== -->
+<!-- ========== SLIDE 13: OBRIGADO ========== -->
 <div class="s">
   <div class="bg bg-end"></div>
   <div class="content full">
@@ -590,7 +740,7 @@ tr.tot td{background:rgba(59,130,246,.15);font-weight:700;color:#fff;font-size:1
   <div style="display:flex;align-items:center;gap:12px">
     <button class="nav-btn" onclick="prev()">&#8592;</button>
     <button class="nav-btn" onclick="next()">&#8594;</button>
-    <span class="nav-info" id="sn">1/13</span>
+    <span class="nav-info" id="sn">1/14</span>
   </div>
   <div class="dots" id="dots"></div>
   <span class="nav-info">&#8592; &#8594; para navegar</span>

@@ -4,7 +4,16 @@
       "Bash(file \"C:\\\\Users\\\\dell08\\\\Desktop\\\\Projetc_autsm\"/*)",
       "Bash(pip show:*)",
       "Bash(pip install:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\dell08\\\\Documents\\\\GitHub\\\\Project_Auts\" -Recurse -Force)",
+      "Bash(Select-Object FullName, PSIsContainer)",
+      "Bash(Sort-Object FullName)",
+      "Bash(Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\dell08\\\\Documents\\\\GitHub\\\\Project_Auts\" -File -Depth 1 | Select-Object Name, @{Name=\"Size\"; Expression={\"{0:N0} KB\" -f \\($_.Length/1KB\\)}} | Sort-Object Name)",
+      "WebFetch(domain:docs.wokwi.com)",
+      "WebFetch(domain:wokwi.com)",
+      "PowerShell(Out-Null *)",
+      "PowerShell(Start-Sleep -Seconds 2; Add-Type -AssemblyName System.Windows.Forms,System.Drawing; $pri = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds; $bmp = New-Object System.Drawing.Bitmap $pri.Width, $pri.Height; $g = [System.Drawing.Graphics]::FromImage\\($bmp\\); $g.CopyFromScreen\\($pri.Left, $pri.Top, 0, 0, $bmp.Size\\); $out = \"C:\\\\Users\\\\dell08\\\\Documents\\\\GitHub\\\\Project_auts\\\\_manual_screen1.png\"; $bmp.Save\\($out, [System.Drawing.Imaging.ImageFormat]::Png\\); $g.Dispose\\(\\); $bmp.Dispose\\(\\); Write-Output \"salvo $out \\($\\($pri.Width\\)x$\\($pri.Height\\)\\)\")"
     ]
   }
 }

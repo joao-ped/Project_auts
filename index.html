@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voz Autista v2.0 &mdash; Comunicador Assistivo Arduino</title>
+<meta name="description" content="Dispositivo Arduino de comunicacao assistiva para pessoas autistas nao-verbais. ~R$128, 7 categorias, 35 palavras, frases compostas, bateria recarregavel.">
+<meta name="author" content="Joao Pedro Tavares Vicente">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Voz Autista v2.0 - Comunicador Assistivo">
+<meta property="og:description" content="Comunicador assistivo Arduino para pessoas autistas. Open source, ~R$128, montagem documentada.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://joao-ped.github.io/Project_auts/">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-darker: #1e3a8a;
+    --accent: #f59e0b;
+    --accent-light: #fbbf24;
+    --success: #10b981;
+    --g50: #f9fafb;
+    --g100: #f3f4f6;
+    --g200: #e5e7eb;
+    --g300: #d1d5db;
+    --g500: #6b7280;
+    --g600: #4b5563;
+    --g700: #374151;
+    --g800: #1f2937;
+    --g900: #111827;
+    --radius: 16px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,.07), 0 2px 4px -2px rgba(0,0,0,.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.08), 0 4px 6px -4px rgba(0,0,0,.04);
+    --shadow-xl: 0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.05);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Inter',-apple-system,'Segoe UI',sans-serif;
+    background:linear-gradient(180deg,#f0f4ff 0%,#fafbff 30%,#f8fafc 100%);
+    color:var(--g800);
+    line-height:1.6;
+    min-height:100vh;
+}
+
+/* ====== HERO ====== */
+header.hero{
+    background:linear-gradient(135deg,var(--primary-darker) 0%,var(--primary) 50%,#3b82f6 100%);
+    color:#fff;
+    padding:90px 24px 110px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+}
+header.hero::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(251,191,36,.12) 0%, transparent 40%);
+    pointer-events:none;
+}
+header.hero::after{
+    content:'';
+    position:absolute;
+    bottom:-1px;
+    left:0;
+    right:0;
+    height:60px;
+    background:linear-gradient(180deg, transparent 0%, rgba(248,250,252,1) 100%);
+    pointer-events:none;
+}
+.hero-content{
+    position:relative;
+    z-index:1;
+    max-width:840px;
+    margin:0 auto;
+}
+.hero .eyebrow{
+    display:inline-block;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);
+    padding:6px 16px;
+    border-radius:99px;
+    font-size:.82em;
+    font-weight:600;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    margin-bottom:18px;
+    backdrop-filter:blur(6px);
+}
+.hero h1{
+    font-size:clamp(2.2em, 6vw, 3.6em);
+    font-weight:900;
+    letter-spacing:-.025em;
+    line-height:1.05;
+    margin-bottom:18px;
+    text-shadow:0 2px 12px rgba(0,0,0,.18);
+}
+.hero h1 .accent{
+    background:linear-gradient(90deg,#fbbf24,#fed7aa);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+.hero .tagline{
+    font-size:1.15em;
+    font-weight:300;
+    opacity:.95;
+    max-width:640px;
+    margin:0 auto 28px;
+    line-height:1.6;
+}
+.hero .cta-group{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:8px;
+}
+.btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:#fff;
+    color:var(--primary-dark);
+    font-weight:700;
+    text-decoration:none;
+    padding:14px 26px;
+    border-radius:12px;
+    font-size:.98em;
+    transition:transform .15s, box-shadow .15s;
+    box-shadow:var(--shadow-md);
+}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-xl)}
+.btn.ghost{
+    background:transparent;
+    color:#fff;
+    border:1.5px solid rgba(255,255,255,.4);
+    box-shadow:none;
+}
+.btn.ghost:hover{background:rgba(255,255,255,.1)}
+
+/* ====== STATS ====== */
+.stats{
+    max-width:960px;
+    margin:-60px auto 0;
+    padding:0 24px;
+    position:relative;
+    z-index:2;
+}
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:12px;
+    background:#fff;
+    padding:24px;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-xl);
+    border:1px solid var(--g100);
+}
+.stat{text-align:center;padding:8px}
+.stat .num{
+    font-size:1.9em;
+    font-weight:800;
+    color:var(--primary);
+    line-height:1;
+    margin-bottom:4px;
+    font-family:'JetBrains Mono',monospace;
+}
+.stat .label{
+    font-size:.78em;
+    color:var(--g600);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    font-weight:600;
+}
+@media(max-width:680px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ====== CONTAINER ====== */
+.wrap{max-width:1100px;margin:0 auto;padding:60px 24px}
+.section-title{
+    font-size:.85em;
+    color:var(--primary);
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin-bottom:6px;
+}
+.section-h2{
+    font-size:2em;
+    font-weight:800;
+    color:var(--g900);
+    letter-spacing:-.02em;
+    margin-bottom:8px;
+}
+.section-sub{
+    color:var(--g600);
+    font-size:1.05em;
+    margin-bottom:32px;
+    max-width:680px;
+}
+
+/* ====== CARD GRID ====== */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:18px;
+}
+.card{
+    background:#fff;
+    border-radius:var(--radius);
+    padding:28px 24px 24px;
+    border:1px solid var(--g200);
+    text-decoration:none;
+    color:inherit;
+    display:flex;
+    flex-direction:column;
+    transition:transform .2s, box-shadow .2s, border-color .2s;
+    position:relative;
+    overflow:hidden;
+    min-height:240px;
+}
+.card::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;
+    height:4px;
+    background:var(--card-color, var(--primary));
+}
+.card:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--shadow-xl);
+    border-color:var(--card-color, var(--primary));
+}
+.card .icon{
+    width:52px;
+    height:52px;
+    border-radius:12px;
+    background:var(--card-bg, var(--primary-light, #dbeafe));
+    color:var(--card-color, var(--primary));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:18px;
+    font-size:1.6em;
+    font-weight:800;
+}
+.card h3{
+    font-size:1.15em;
+    font-weight:700;
+    color:var(--g900);
+    margin-bottom:6px;
+    letter-spacing:-.01em;
+}
+.card .badge-row{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+}
+.card .badge{
+    background:var(--card-bg, #f3f4f6);
+    color:var(--card-color, var(--g700));
+    font-size:.72em;
+    padding:3px 10px;
+    border-radius:20px;
+    font-weight:600;
+    letter-spacing:.02em;
+}
+.card .desc{
+    color:var(--g600);
+    font-size:.93em;
+    flex:1;
+    line-height:1.55;
+}
+.card .arrow{
+    margin-top:14px;
+    color:var(--card-color, var(--primary));
+    font-weight:700;
+    font-size:.92em;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    transition:gap .2s;
+}
+.card:hover .arrow{gap:10px}
+
+.card.primary{--card-color:#2563eb;--card-bg:#dbeafe}
+.card.purple{--card-color:#7c3aed;--card-bg:#ede9fe}
+.card.green{--card-color:#10b981;--card-bg:#d1fae5}
+.card.orange{--card-color:#f59e0b;--card-bg:#fef3c7}
+.card.cyan{--card-color:#0891b2;--card-bg:#cffafe}
+.card.pink{--card-color:#ec4899;--card-bg:#fce7f3}
+
+/* ====== FEATURES ====== */
+.features{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+    gap:14px;
+    margin-top:24px;
+}
+.feat{
+    background:#fff;
+    border:1px solid var(--g200);
+    border-radius:12px;
+    padding:18px 20px;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+}
+.feat-icon{
+    width:36px;
+    height:36px;
+    border-radius:9px;
+    background:#dbeafe;
+    color:var(--primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    font-size:1.1em;
+    font-weight:800;
+}
+.feat-text{flex:1}
+.feat-text strong{display:block;color:var(--g900);font-size:.95em;margin-bottom:2px}
+.feat-text span{color:var(--g600);font-size:.85em;line-height:1.5}
+
+/* ====== INFO PANEL (Buttons) ====== */
+.btn-panel{
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    color:#fff;
+    border-radius:var(--radius);
+    padding:36px;
+    margin-top:24px;
+}
+.btn-panel h3{font-size:1.3em;margin-bottom:18px;font-weight:700}
+.btn-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.94em}
+.btn-table th{
+    text-align:left;
+    padding:10px 12px;
+    background:rgba(255,255,255,.06);
+    color:rgba(255,255,255,.65);
+    font-weight:600;
+    font-size:.78em;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+}
+.btn-table td{padding:12px;border-top:1px solid rgba(255,255,255,.08)}
+.btn-table .dot{
+    display:inline-block;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    margin-right:8px;
+    vertical-align:middle;
+    border:2px solid rgba(255,255,255,.15);
+}
+
+/* ====== FOOTER ====== */
+footer{
+    background:#0f172a;
+    color:rgba(255,255,255,.75);
+    padding:48px 24px 30px;
+    margin-top:60px;
+}
+.footer-content{
+    max-width:1100px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:40px;
+    margin-bottom:28px;
+}
+@media(max-width:768px){.footer-content{grid-template-columns:1fr}}
+footer h4{
+    color:#fff;
+    font-size:.85em;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    font-weight:700;
+    margin-bottom:14px;
+}
+footer a{color:rgba(255,255,255,.65);text-decoration:none;display:block;padding:4px 0;transition:color .15s}
+footer a:hover{color:#fff}
+footer p{font-size:.9em;line-height:1.6;margin-bottom:8px}
+.footer-bottom{
+    max-width:1100px;
+    margin:0 auto;
+    padding-top:24px;
+    border-top:1px solid rgba(255,255,255,.08);
+    text-align:center;
+    font-size:.82em;
+    color:rgba(255,255,255,.5);
+}
+.footer-bottom .heart{color:#ef4444}
+
+/* ====== UTILITIES ====== */
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tag{
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.18);
+    padding:4px 12px;
+    border-radius:20px;
+    font-size:.78em;
+    font-weight:500;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ====== HERO ====== -->
+<header class="hero">
+    <div class="hero-content">
+        <span class="eyebrow">&#9889; Open Source &middot; Arduino &middot; Acessibilidade</span>
+        <h1>Voz Autista <span class="accent">v2.0</span><br>Comunicador Assistivo</h1>
+        <p class="tagline">
+            Dispositivo de comunica&ccedil;&atilde;o para pessoas autistas n&atilde;o-verbais.
+            Navegue por categorias com bot&otilde;es coloridos e o aparelho fala pela pessoa.
+            Acess&iacute;vel, port&aacute;til, recarreg&aacute;vel e custa cerca de <strong>R$ 128</strong>.
+        </p>
+        <div class="cta-group">
+            <a href="#ferramentas" class="btn">Ver Ferramentas &#8595;</a>
+            <a href="https://github.com/joao-ped/Project_auts" class="btn ghost" target="_blank" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2 0 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.6.2 2.8.1 3.2.9.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.3v3.3c0 .3.1.7.8.6A12 12 0 0 0 12 .3"/></svg>
+                C&oacute;digo no GitHub
+            </a>
+        </div>
+        <div class="tags">
+            <span class="tag">Arduino Uno</span>
+            <span class="tag">LCD I2C</span>
+            <span class="tag">DFPlayer Mini</span>
+            <span class="tag">Bateria 18650</span>
+            <span class="tag">Case 3D</span>
+        </div>
+    </div>
+</header>
+
+<!-- ====== STATS ====== -->
+<section class="stats">
+    <div class="stats-grid">
+        <div class="stat"><div class="num">7</div><div class="label">Categorias</div></div>
+        <div class="stat"><div class="num">35</div><div class="label">Palavras</div></div>
+        <div class="stat"><div class="num">R$128</div><div class="label">Custo total</div></div>
+        <div class="stat"><div class="num">~12h</div><div class="label">Montagem</div></div>
+    </div>
+</section>
+
+<!-- ====== FERRAMENTAS ====== -->
+<section class="wrap" id="ferramentas">
+    <div class="section-title">Ferramentas do projeto</div>
+    <h2 class="section-h2">Tudo que voc&ecirc; precisa para construir</h2>
+    <p class="section-sub">Apresenta&ccedil;&atilde;o, manual de montagem, simulador interativo e visualiza&ccedil;&atilde;o 3D &mdash; tudo em um s&oacute; lugar. Funciona offline.</p>
+
+    <div class="cards">
+        <!-- Apresentacao -->
+        <a class="card primary" href="apresentacao.html">
+            <div class="icon">&#127892;</div>
+            <div class="badge-row"><span class="badge">Slides</span></div>
+            <h3>Apresenta&ccedil;&atilde;o do Projeto</h3>
+            <p class="desc">Slides interativos com vis&atilde;o geral, motiva&ccedil;&atilde;o, p&uacute;blico-alvo e demonstra&ccedil;&atilde;o do produto. Perfeito para mostrar a escola, evento ou banca.</p>
+            <span class="arrow">Abrir apresenta&ccedil;&atilde;o &rarr;</span>
+        </a>
+
+        <!-- Manual de montagem -->
+        <a class="card orange" href="manual_montagem_visual.html">
+            <div class="icon">&#128295;</div>
+            <div class="badge-row"><span class="badge">10 etapas</span><span class="badge">Com diagramas</span></div>
+            <h3>Manual de Montagem</h3>
+            <p class="desc">Passo-a-passo visual com layout do case 3D, vistas das laterais, esquem&aacute;tico el&eacute;trico, lista de materiais e troubleshooting.</p>
+            <span class="arrow">Abrir manual &rarr;</span>
+        </a>
+
+        <!-- Simulador -->
+        <a class="card green" href="simulador.html">
+            <div class="icon">&#127908;</div>
+            <div class="badge-row"><span class="badge">TTS</span><span class="badge">Interativo</span></div>
+            <h3>Simulador no Navegador</h3>
+            <p class="desc">Use o comunicador direto no browser sem hardware. Os bot&otilde;es funcionam, o LCD aparece e a voz toca via Text-to-Speech.</p>
+            <span class="arrow">Abrir simulador &rarr;</span>
+        </a>
+
+        <!-- Wokwi -->
+        <a class="card cyan" href="wokwi_simulacao/abrir_no_wokwi.html">
+            <div class="icon">&#9889;</div>
+            <div class="badge-row"><span class="badge">Circuito real</span><span class="badge">Arduino IDE</span></div>
+            <h3>Simula&ccedil;&atilde;o Wokwi</h3>
+            <p class="desc">Roda o c&oacute;digo Arduino real em circuito virtual no Wokwi. Diagrama com LCD, bot&otilde;es, buzzer, potenci&ocirc;metros &mdash; tudo pronto.</p>
+            <span class="arrow">Abrir no Wokwi &rarr;</span>
+        </a>
+
+        <!-- Case 3D -->
+        <a class="card purple" href="case_3d/visualizar_case_3d.html">
+            <div class="icon">&#127968;</div>
+            <div class="badge-row"><span class="badge">3D viewer</span><span class="badge">OpenSCAD</span></div>
+            <h3>Visualizador do Case 3D</h3>
+            <p class="desc">Veja a caixa impressa em 3D no navegador. Mostra base, tampa, posi&ccedil;&otilde;es dos componentes e aberturas laterais.</p>
+            <span class="arrow">Ver case 3D &rarr;</span>
+        </a>
+
+        <!-- Codigo Arduino -->
+        <a class="card pink" href="https://github.com/joao-ped/Project_auts/blob/main/voz_autista_maker_code.ino" target="_blank" rel="noopener">
+            <div class="icon">&#128187;</div>
+            <div class="badge-row"><span class="badge">.ino</span><span class="badge">589 linhas</span></div>
+            <h3>C&oacute;digo Arduino</h3>
+            <p class="desc">Sketch completo do firmware. Categoriza&ccedil;&atilde;o, navega&ccedil;&atilde;o, frase composta, controle de volume, monitor de bateria e modo sleep.</p>
+            <span class="arrow">Ver no GitHub &rarr;</span>
+        </a>
+    </div>
+</section>
+
+<!-- ====== FUNCIONALIDADES ====== -->
+<section class="wrap" id="funcionalidades">
+    <div class="section-title">Funcionalidades</div>
+    <h2 class="section-h2">O que o aparelho faz</h2>
+    <p class="section-sub">Tudo desenhado para uso real: bot&otilde;es grandes, feedback t&aacute;til, frases compostas e bateria recarreg&aacute;vel.</p>
+
+    <div class="features">
+        <div class="feat"><div class="feat-icon">&#127919;</div><div class="feat-text"><strong>7 categorias &middot; 35 palavras</strong><span>Necessidades, Sentimentos, A&ccedil;&otilde;es, Comidas, Lugares, Pessoas, Sa&uacute;de</span></div></div>
+        <div class="feat"><div class="feat-icon">&#9997;</div><div class="feat-text"><strong>Frases compostas</strong><span>Empilhe at&eacute; 5 palavras e fale tudo de uma vez. Ex: "Eu quero" + "Beber" + "&Aacute;gua".</span></div></div>
+        <div class="feat"><div class="feat-icon">&#128266;</div><div class="feat-text"><strong>Controle de volume</strong><span>Potenci&ocirc;metro anal&oacute;gico ajusta o volume em tempo real, de 0 a 30.</span></div></div>
+        <div class="feat"><div class="feat-icon">&#128267;</div><div class="feat-text"><strong>Bateria recarreg&aacute;vel</strong><span>18650 com m&oacute;dulo TP4056. &Iacute;cone no LCD mostra o n&iacute;vel atual.</span></div></div>
+        <div class="feat"><div class="feat-icon">&#128243;</div><div class="feat-text"><strong>Feedback t&aacute;til</strong><span>Motor de vibra&ccedil;&atilde;o confirma cada a&ccedil;&atilde;o, mesmo se o usu&aacute;rio n&atilde;o olhar o display.</span></div></div>
+        <div class="feat"><div class="feat-icon">&#128164;</div><div class="feat-text"><strong>Modo sleep</strong><span>LCD apaga ap&oacute;s 2 min sem uso. Qualquer bot&atilde;o acorda o aparelho.</span></div></div>
+        <div class="feat"><div class="feat-icon">&#128274;</div><div class="feat-text"><strong>Auto-detec&ccedil;&atilde;o I2C</strong><span>Funciona com diferentes m&oacute;dulos LCD (0x27, 0x3F, 0x20, 0x38) sem alterar c&oacute;digo.</span></div></div>
+        <div class="feat"><div class="feat-icon">&#9881;</div><div class="feat-text"><strong>Configura&ccedil;&atilde;o f&aacute;cil</strong><span>Se&ccedil;&atilde;o dedicada no .ino para personalizar categorias e palavras conforme o usu&aacute;rio.</span></div></div>
+    </div>
+</section>
+
+<!-- ====== BOTOES ====== -->
+<section class="wrap" id="botoes">
+    <div class="section-title">Como se usa</div>
+    <h2 class="section-h2">5 bot&otilde;es coloridos</h2>
+    <p class="section-sub">Mapeamento direto: cor &rarr; fun&ccedil;&atilde;o. Sem menus complicados, sem texto a memorizar.</p>
+
+    <div class="btn-panel">
+        <h3>Mapa de botoes</h3>
+        <table class="btn-table">
+            <thead>
+                <tr><th>Bot&atilde;o</th><th>Cor</th><th>Pino</th><th>Fun&ccedil;&atilde;o</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>CAT+</strong></td><td><span class="dot" style="background:#ef4444"></span>Vermelho</td><td>D2</td><td>Avan&ccedil;a categoria</td></tr>
+                <tr><td><strong>CAT&minus;</strong></td><td><span class="dot" style="background:#eab308"></span>Amarelo</td><td>D3</td><td>Volta categoria</td></tr>
+                <tr><td><strong>PAL+</strong></td><td><span class="dot" style="background:#22c55e"></span>Verde</td><td>D4</td><td>Avan&ccedil;a palavra</td></tr>
+                <tr><td><strong>PAL&minus;</strong></td><td><span class="dot" style="background:#3b82f6"></span>Azul</td><td>D5</td><td>Volta palavra</td></tr>
+                <tr><td><strong>VOZ</strong></td><td><span class="dot" style="background:#374151"></span>Preto</td><td>D6</td><td>Press curto = fala &middot; Press longo = adiciona &agrave; frase</td></tr>
+                <tr><td><strong>CAT+ &amp; CAT&minus;</strong></td><td colspan="2">combinado</td><td>Fala a frase composta inteira</td></tr>
+                <tr><td><strong>PAL+ &amp; PAL&minus;</strong></td><td colspan="2">combinado</td><td>Limpa a frase</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer>
+    <div class="footer-content">
+        <div>
+            <h4>Sobre</h4>
+            <p>Voz Autista &eacute; um projeto open source de comunica&ccedil;&atilde;o assistiva para pessoas autistas n&atilde;o-verbais.</p>
+            <p>Hardware Arduino, c&oacute;digo livre, case impresso em 3D.</p>
+        </div>
+        <div>
+            <h4>Projeto</h4>
+            <a href="https://github.com/joao-ped/Project_auts" target="_blank" rel="noopener">Reposit&oacute;rio GitHub</a>
+            <a href="https://github.com/joao-ped/Project_auts/blob/main/README.md" target="_blank" rel="noopener">README</a>
+            <a href="https://github.com/joao-ped/Project_auts/blob/main/GUIA_IMPLEMENTACAO.md" target="_blank" rel="noopener">Guia de implementa&ccedil;&atilde;o</a>
+            <a href="https://github.com/joao-ped/Project_auts/issues" target="_blank" rel="noopener">Reportar problema</a>
+        </div>
+        <div>
+            <h4>Ferramentas</h4>
+            <a href="apresentacao.html">Apresenta&ccedil;&atilde;o</a>
+            <a href="manual_montagem_visual.html">Manual de montagem</a>
+            <a href="simulador.html">Simulador</a>
+            <a href="wokwi_simulacao/abrir_no_wokwi.html">Wokwi</a>
+            <a href="case_3d/visualizar_case_3d.html">Case 3D</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>Feito com <span class="heart">&hearts;</span> por Jo&atilde;o Pedro Tavares Vicente &middot; <a href="https://github.com/joao-ped/Project_auts" style="display:inline;color:rgba(255,255,255,.6)" target="_blank" rel="noopener">joao-ped/Project_auts</a></p>
+    </div>
+</footer>
+
+</body>
+</html>

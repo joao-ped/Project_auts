@@ -98,8 +98,8 @@ O **Voz Autista v2.0** e um dispositivo de comunicacao assistiva projetado para 
                D13 -|               |- D12
                3.3V-|               |- D11 ---> 1kΩ ---> DFPlayer RX
                AREF-|               |- D10 <--- DFPlayer TX
-                 A0 -|   ARDUINO    |- D9
-  [POT wiper]-->A1 -|    UNO R3    |- D8
+[POT volume]-->A0 -|   ARDUINO    |- D9
+  [BAT div. ]-->A1 -|    UNO R3    |- D8
             A2 -|               |- D7  ---> 1kΩ ---> Base 2N2222
             A3 -|               |- D6  <--- Botao Preto (FALAR)
   [LCD SDA] A4 -|               |- D5  <--- Botao Azul (Pal-)
@@ -180,42 +180,48 @@ O motor de vibracao coin consome mais corrente do que um pino do Arduino pode fo
 ### Esquema
 
 ```
-                         +5V
-                          |
-                    [Motor coin 10mm]
-                     (+)       (-)
-                      |         |
-                      +--[1N4148 catodo(+) / anodo(-)]--+
-                      |         |
-                      |    Collector
-                      |    2N2222
-                      |    Base ---- 1kΩ ---- D7 (Arduino)
-                      |    Emitter
-                      |         |
-                     GND       GND
+            +5V
+             |
+       +-----------+
+       | Motor coin|          1N4148
+       |   10mm    |     K (faixa) ___  A
+       |  (+)  (-) |        |     /   \  |
+       +---+----+--+        +----| |<| --+
+           |    |            |            |
+           |    +------------+        Collector (C)
+          +5V                          2N2222
+                                    Base (B) --- [1k ohm] --- D7 (Arduino)
+                                      Emitter (E)
+                                          |
+                                         GND
 ```
+
+**Leitura:** O motor fica entre +5V e o Collector do 2N2222. O diodo 1N4148 esta em paralelo
+com o motor: **catodo (faixa) voltado para +5V**, anodo no Collector. Quando D7 sobe para HIGH,
+o transistor conduz e o motor gira. O diodo protege contra picos de tensao reversa (flyback).
 
 ### Conexoes detalhadas
 
 | De | Para | Observacao |
 |----|------|------------|
-| Arduino D7 | 1k ohm | Sinal de controle |
-| 1k ohm | Base do 2N2222 | Limita corrente de base |
+| Arduino D7 | Resistor 1k ohm | Sinal de controle |
+| Resistor 1k ohm | Base do 2N2222 | Limita corrente de base (~3mA) |
 | 2N2222 Emitter | GND | Referencia de terra |
 | 2N2222 Collector | Motor(-) | Terminal negativo do motor |
 | Motor(+) | +5V | Terminal positivo do motor |
-| Diodo 1N4148 anodo | Motor(-) / Collector | Protecao flyback |
-| Diodo 1N4148 catodo | Motor(+) / +5V | Protecao flyback |
+| 1N4148 anodo (A) | Motor(-) / Collector | Protecao flyback |
+| 1N4148 catodo (K, faixa) | Motor(+) / +5V | Protecao flyback |
 
 ### Como funciona
 
-1. Arduino coloca D7 em HIGH
-2. Corrente flui pela base do 2N2222 (limitada pelo resistor 1k ohm)
-3. Transistor satura, permitindo corrente pelo motor
-4. Motor vibra por 60ms (configuravel no codigo)
-5. Ao desligar D7, o diodo 1N4148 absorve a tensao reversa gerada pela bobina do motor (protecao flyback)
+1. Arduino coloca D7 em HIGH (5V)
+2. Corrente flui pela base do 2N2222 (limitada pelo resistor 1k ohm a ~3mA)
+3. Transistor satura (Vce ~ 0.2V), permitindo ~80mA pelo motor
+4. Motor vibra por 60ms (configuravel: `VIBRATE_MS` no codigo)
+5. Arduino coloca D7 em LOW, transistor corta
+6. O diodo 1N4148 absorve a tensao reversa gerada pela bobina do motor (protecao flyback)
 
-### Pinagem do 2N2222 (TO-92, visto de frente)
+### Pinagem do 2N2222 (TO-92, lado achatado voltado para voce)
 
 ```
      ___
@@ -225,6 +231,10 @@ O motor de vibracao coin consome mais corrente do que um pino do Arduino pode fo
     \___/
     | | |
     E B C
+
+  E = Emitter  -> GND
+  B = Base     -> [1k ohm] -> D7
+  C = Collector -> Motor (-)
 ```
 
 ---
@@ -236,20 +246,27 @@ A bateria 18650 (3.7V nominal, ate 4.2V carregada) e monitorada por um divisor d
 ### Esquema
 
 ```
-  Bateria (+) ---- [10kΩ] ---- A1 (Arduino) ---- [10kΩ] ---- GND
-                                |
-                          (V_A1 = V_bat / 2)
+  Bateria (+)
+      |
+   [R1 = 10kΩ]
+      |
+      +------------- A1 (Arduino)     V_A1 = V_bat x R2/(R1+R2) = V_bat / 2
+      |
+   [R2 = 10kΩ]
+      |
+     GND
 ```
 
 ### Como funciona
 
-- A tensao da bateria e dividida por 2 pelo divisor resistivo
+- Os dois resistores de 10k ohm formam um divisor de tensao 1:1
+- A tensao no pino A1 e **metade** da tensao da bateria
 - Arduino le o valor analogico no pino A1 (0-1023 corresponde a 0-5V)
-- O codigo converte para a tensao real da bateria multiplicando por 2
-- Faixas de nivel:
-  - **4.2V - 3.9V** = Bateria cheia (icone cheio no LCD)
-  - **3.9V - 3.7V** = Bateria media
-  - **3.7V - 3.5V** = Bateria baixa
+- O codigo converte: `V_bateria = analogRead(A1) * 5.0 / 1023.0 * 2.0`
+- Faixas de nivel exibidas no LCD:
+  - **4.2V - 3.9V** = Bateria cheia (icone cheio)
+  - **3.9V - 3.7V** = Bateria media (icone meio)
+  - **3.7V - 3.5V** = Bateria baixa (icone baixo)
   - **< 3.5V** = Bateria critica (icone vazio)
 
 ### Circuito de alimentacao completo
