@@ -7,25 +7,42 @@
 // Para exportar: Design > Render (F6) > File > Export as STL
 // ============================================================
 //
+// CONFIGURAÇÕES DE IMPRESSÃO RECOMENDADAS:
+//   - Material: PLA ou PETG (PETG mais resistente a calor)
+//   - Bico: 0.4 mm
+//   - Altura de camada: 0.2 mm
+//   - Preenchimento: 20-25% (grade)
+//   - Suportes: SIM, na área dos clipes (DFPlayer, TP4056) e
+//               sob a grade do speaker. "Support touching build
+//               plate only" no Cura ou similar.
+//   - Tempo estimado: ~6h base + ~3h tampa
+//   - Filamento: ~120 g total
+//
 // Componentes internos:
-//   - Arduino Uno (com pilares de montagem)
-//   - LCD 16x2 I2C (janela na tampa + suportes)
-//   - DFPlayer Mini (abertura SD card lateral direita)
-//   - Alto-falante 40mm (grade na tampa)
-//   - 5 Botões táteis (furos na tampa com labels)
-//   - Bateria 18650 (berço no centro da base)
-//   - Módulo TP4056 (abertura micro-USB lateral esquerda)
-//   - Potenciômetro de volume (furo lateral direita)
-//   - Motor de vibração coin 10mm (suporte na base)
+//   - Arduino Uno (com pilares M2.5 + furos de montagem)
+//   - LCD 16x2 I2C (janela na tampa + cantoneiras)
+//   - DFPlayer Mini (clipes laterais + abertura SD card)         [v2.0: clipes]
+//   - Alto-falante 40mm (anel interno + grade na tampa)          [v2.0: anel]
+//   - 5 Botões táteis 12mm (furos na tampa + labels em relevo)
+//   - Bateria 18650 (berço impresso no centro da base)
+//   - Módulo TP4056 (clipes + abertura micro-USB)                [v2.0: clipes]
+//   - Potenciômetro 10kΩ (furo lateral direita)
+//   - Motor de vibração coin 10mm (suporte anelar)
 //   - Chave slide on/off (abertura lateral esquerda)
 //
 // Conectores externos:
-//   - USB Arduino (lateral esquerda)
-//   - Jack alimentação (lateral esquerda)
-//   - Micro-USB carregamento TP4056 (lateral esquerda)
-//   - Chave slide liga/desliga (lateral esquerda)
-//   - Slot SD card DFPlayer (lateral direita)
-//   - Potenciômetro volume (lateral direita)
+//   - USB Arduino       (lateral esq, z=5,  14x12 mm)
+//   - Jack alimentação  (lateral esq, z=3,  12x11 mm)
+//   - Micro-USB TP4056  (lateral esq, z=5,  10x4 mm)
+//   - Chave on/off      (lateral esq, z=20, 13x5 mm)
+//   - Slot SD DFPlayer  (lateral dir, z=8,  14x4 mm)
+//   - Pot. volume       (lateral dir, z=15, Ø7 mm)
+//
+// Labels gravados na tampa (em relevo, 0.8 mm):
+//   CAT+  CAT-  PAL+  PAL-  VOZ
+//
+// Selo gravado na base (em rebaixo, 0.7 mm):
+//   "Voz Autista v2.0"
 //
 // ============================================================
 
@@ -246,6 +263,79 @@ module vibration_motor_mount() {
     }
 }
 
+// --- (v2.0) Suporte para alto-falante de 40mm na tampa ---
+// Anel + 3 guias para encaixar o speaker pela parte interna da tampa
+// O speaker fica preso entre o anel e a parte interna da tampa
+module speaker_mount() {
+    spk_inner_d = spk_diameter + 0.6;       // folga para encaixar
+    spk_outer_d = spk_diameter + 6;
+    spk_ring_h = 4;
+    spk_lip_h = 1.5;                         // lábio que segura o speaker
+
+    difference() {
+        union() {
+            // Anel externo
+            cylinder(h=spk_ring_h, d=spk_outer_d, $fn=48);
+            // Lábio interno para segurar o speaker (recuado 1.5mm)
+            translate([0, 0, spk_ring_h - 0.1])
+            cylinder(h=spk_lip_h, d=spk_diameter - 2, $fn=48);
+        }
+        // Cavidade central onde o speaker entra
+        translate([0, 0, -0.1])
+        cylinder(h=spk_ring_h + 0.2, d=spk_inner_d, $fn=48);
+        // Furo central no lábio para o som passar
+        translate([0, 0, spk_ring_h - 0.5])
+        cylinder(h=spk_lip_h + 1, d=spk_diameter - 8, $fn=48);
+        // Abertura para o fio (passa por um lado)
+        translate([-spk_outer_d/2 - 1, -2, spk_ring_h/2])
+        cube([spk_outer_d/2 + 2, 4, spk_ring_h]);
+    }
+}
+
+// --- (v2.0) Clipes laterais para fixar o DFPlayer Mini ---
+// 2 clipes em formato de L que prendem a PCB de 21x21mm
+module dfplayer_clips() {
+    clip_h = 6;               // altura total do clipe
+    clip_lip = 1.5;           // tamanho do lábio que segura a PCB
+    clip_w = 2;               // espessura da parede do clipe
+    pcb_t = 1.6;              // espessura da PCB do DFPlayer
+
+    // Clipe da esquerda
+    translate([-clip_w, 0, 0]) {
+        cube([clip_w, dfplayer_d, clip_h]);
+        // Lábio superior
+        translate([0, 0, clip_h - clip_lip])
+        cube([clip_w + clip_lip, dfplayer_d, clip_lip]);
+    }
+    // Clipe da direita
+    translate([dfplayer_w, 0, 0]) {
+        cube([clip_w, dfplayer_d, clip_h]);
+        translate([-clip_lip, 0, clip_h - clip_lip])
+        cube([clip_w + clip_lip, dfplayer_d, clip_lip]);
+    }
+}
+
+// --- (v2.0) Clipes laterais para fixar o módulo TP4056 ---
+// Similar aos do DFPlayer mas para a PCB de 25x19mm (pequena, fina)
+module tp4056_clips() {
+    clip_h = 4;
+    clip_lip = 1.2;
+    clip_w = 1.8;
+
+    // Clipe da frente
+    translate([0, -clip_w, 0]) {
+        cube([tp4056_w, clip_w, clip_h]);
+        translate([0, 0, clip_h - clip_lip])
+        cube([tp4056_w, clip_w + clip_lip, clip_lip]);
+    }
+    // Clipe de trás
+    translate([0, tp4056_d, 0]) {
+        cube([tp4056_w, clip_w, clip_h]);
+        translate([0, -clip_lip, clip_h - clip_lip])
+        cube([tp4056_w, clip_w + clip_lip, clip_lip]);
+    }
+}
+
 // ===================== BASE =====================
 module base() {
     total_w = case_width + 2*wall;
@@ -312,6 +402,15 @@ module base() {
                 cylinder(h=wall + 0.2, d=vent_hole_d, $fn=12);
             }
         }
+
+        // --- (v2.0) Selo "Voz Autista v2.0" gravado na base externa ---
+        // Texto rebaixado 0.6mm no fundo do case para identificacao
+        translate([total_w/2, total_d - 18, -0.1])
+        rotate([0, 0, 0])
+        linear_extrude(height=0.7)
+        text("Voz Autista v2.0", size=5,
+             halign="center", valign="center",
+             font="Liberation Sans:style=Bold");
     }
 
     // --- Pilares de montagem nos cantos ---
@@ -348,6 +447,16 @@ module base() {
     // --- (v2.0) Suporte para motor de vibração ---
     translate([wall + vib_x, wall + vib_y, wall])
     vibration_motor_mount();
+
+    // --- (v2.0) Clipes laterais para fixar o DFPlayer Mini ---
+    // Posicionados nas bordas E/D da PCB do DFPlayer (x=80, y=10, 21x21mm)
+    translate([wall + dfplayer_x, wall + dfplayer_y, wall])
+    dfplayer_clips();
+
+    // --- (v2.0) Clipes laterais para fixar o TP4056 ---
+    // Posicionados nas bordas N/S da PCB do TP4056 (x=5, y=62, 25x19mm)
+    translate([wall + tp4056_x, wall + tp4056_y, wall])
+    tp4056_clips();
 
     // --- Borda de encaixe para a tampa (reforçada) ---
     rim_t = 2;   // espessura do rim
@@ -433,6 +542,11 @@ module lid() {
         translate([lcd_pcb_w + 8, 0, 0])
         cube([2, lcd_pcb_h + 2, lcd_support_h]);
     }
+
+    // --- (v2.0) Suporte interno para o alto-falante de 40mm ---
+    // Anel que segura o speaker por dentro da tampa, alinhado com a grade externa
+    translate([wall + spk_x, wall + spk_y, 0])
+    speaker_mount();
 }
 
 // ===================== RENDERIZAÇÃO =====================
