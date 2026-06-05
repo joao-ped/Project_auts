@@ -56,16 +56,16 @@
   <div>LCD: <b>72 x 25mm</b></div>
   <div>Botoes: <b>14mm</b> x5</div>
   <div>Speaker: <b>40mm</b> (furos 3mm)</div>
-  <div style="margin-top:6px" class="new">--- Novidades v2.0 ---</div>
-  <div class="new">Bateria 18650 (berco)</div>
-  <div class="new">TP4056 (micro-USB carga)</div>
-  <div class="new">Chave on/off</div>
-  <div class="new">Potenciometro volume</div>
-  <div class="new">Motor vibracao (suporte)</div>
-  <div class="new">4x Pes de borracha</div>
-  <div class="new">24x Furos ventilacao</div>
-  <div class="new">Snap-fit com clique</div>
-  <div class="new">Labels texto real</div>
+
+  <div style="margin-top:8px;padding-top:6px;border-top:1px solid #333;color:#7eb8ff;font-weight:600;font-size:11px">Componentes internos</div>
+  <div style="display:flex;align-items:center;gap:6px;margin-top:4px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#0e498f"></span>Arduino Uno (5, 5)</div>
+  <div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#b91c1c"></span>DFPlayer (80, 10)</div>
+  <div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#7c3aed"></span>TP4056 (5, 62)</div>
+  <div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#3b82f6"></span>Bateria 18650 (55, 55)</div>
+  <div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#787880"></span>Motor (135, 35)</div>
+  <div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#28282d;border:1px dashed #888"></span>Speaker (na tampa)</div>
+
+  <div style="margin-top:6px;color:#4ade80;font-size:10px">Cores iguais ao manual de montagem</div>
 </div>
 
 <div id="info">Arraste para rotacionar | Scroll para zoom | Clique direito para mover</div>
@@ -158,7 +158,14 @@ function buildModel() {
   var screen=[30,80,30], spk=[30,30,30];
   var batBlue=[59,130,246], batCap=[147,197,253];
   var tp4Purple=[124,58,237], switchGreen=[16,185,129];
-  var pcbGreen=[0,120,60], silver=[180,180,185];
+  // Cores alinhadas ao manual_montagem_visual.html:
+  var arduinoBlue=[14,73,143];          // PCB Arduino oficial (azul navy) - manual usa #0ea5e9 -> #0369a1 gradient
+  var dfpRed=[185,28,28];                // DFPlayer #b91c1c - manual usa
+  var motorGray=[120,120,128];           // Motor cinza (manual usa var(--g400))
+  var motorCenter=[80,80,85];            // Centro do motor (mais escuro)
+  var spkDark=[40,40,45];                // Speaker dummy interno
+  var silver=[180,180,185];
+  var pcbGreen=arduinoBlue;              // alias mantido para compatibilidade
 
   // ===== BASE SHELL =====
   // Bottom plate
@@ -223,14 +230,15 @@ function buildModel() {
   var FL = H_BASE - WALL;  // Floor Y (top surface = 30)
 
   // --- Arduino Uno: x=5, y=5, w=69, d=54, on 6mm pillars ---
-  addBox(-W/2+WALL+5+34.5, FL-7, -D/2+WALL+5+27, 69, 2, 54, pcbGreen, 1, 'base', 'internal');
+  // PCB azul navy (Arduino oficial), nao verde
+  addBox(-W/2+WALL+5+34.5, FL-7, -D/2+WALL+5+27, 69, 2, 54, arduinoBlue, 1, 'base', 'internal');
   addBox(-W/2+WALL+5+35,   FL-9, -D/2+WALL+5+27, 14, 2, 14, [20,20,20], 1, 'base', 'internal');   // ATmega
   addBox(-W/2+WALL+5+2,    FL-10,-D/2+WALL+5+17, 12, 6, 12, silver, 1, 'base', 'internal');         // USB-B
-  addBox(-W/2+WALL+5+2,    FL-10,-D/2+WALL+5+40, 9, 7, 9, [30,30,30], 1, 'base', 'internal');      // Barrel
+  addBox(-W/2+WALL+5+2,    FL-10,-D/2+WALL+5+40, 9, 7, 9, [30,30,30], 1, 'base', 'internal');      // Barrel jack
 
   // --- DFPlayer Mini: x=80, y=10, w=21, d=21 ---
-  addBox(-W/2+WALL+80+10.5, FL-3, -D/2+WALL+10+10.5, 21, 2, 21, [160,30,30], 1, 'base', 'internal');
-  addBox(-W/2+WALL+80+19,   FL-3, -D/2+WALL+10+5,    8, 2, 12, [60,60,60], 1, 'base', 'internal');  // SD
+  addBox(-W/2+WALL+80+10.5, FL-3, -D/2+WALL+10+10.5, 21, 2, 21, dfpRed, 1, 'base', 'internal');
+  addBox(-W/2+WALL+80+19,   FL-3, -D/2+WALL+10+5,    8, 2, 12, [60,60,60], 1, 'base', 'internal');  // SD slot
 
   // --- Battery 18650: center at x=55,y=55, len=65, dia=18 ---
   // Cradle (box around battery)
@@ -246,9 +254,14 @@ function buildModel() {
   addBox(-W/2+WALL+2,      FL-2.5,-D/2+WALL+62+9.5, 4, 3, 8, silver, 1, 'base', 'internal');      // USB
   addBox(-W/2+WALL+5+18,   FL-3.5,-D/2+WALL+62+4,  2, 1, 1.5,[255,40,40], 1, 'base', 'internal'); // LED
 
-  // --- Motor vibracao: x=135, y=35, dia=10 ---
-  addCylinder(-W/2+WALL+135, FL-2.5, -D/2+WALL+35, 6.5, 4, 14, copper, 1, 'base', 'internal');
-  addCylinder(-W/2+WALL+135, FL-3,   -D/2+WALL+35, 5, 3, 12, [110,110,110], 1, 'base', 'internal');
+  // --- Motor vibracao: x=135, y=35, dia=10 (cinza, alinhado ao manual) ---
+  addCylinder(-W/2+WALL+135, FL-2.5, -D/2+WALL+35, 6.5, 4, 14, motorGray, 1, 'base', 'internal');
+  addCylinder(-W/2+WALL+135, FL-3,   -D/2+WALL+35, 5, 3, 12, motorCenter, 1, 'base', 'internal');
+
+  // --- Speaker reservado (NA TAMPA): mostra silueta na vista interna ---
+  // No manual aparece como circulo tracejado em (135, 55) com diam 40mm
+  // Aqui mostramos um disco fino no plano da tampa para indicar a posicao
+  addCylinder(-W/2+WALL+135, -H_LID+1.5, -D/2+WALL+55, 20, 0.6, 24, spkDark, 0.35, 'base', 'internal');
 
   // --- Chave on/off: left wall area, sw_y=85 ---
   addBox(-W/2+WALL+3, FL-10, -D/2+WALL+85+6.5, 8, 5, 13, switchGreen, 1, 'base', 'internal');
@@ -437,8 +450,13 @@ function render() {
     ctx.fillStyle='#a78bfa';
     var t=project(lx(17.5), F-6, lz(71.5)); ctx.fillText('TP4056',t[0],t[1]);
 
-    ctx.fillStyle='#fbbf24';
-    var m=project(lx(135), F-7, lz(35)); ctx.fillText('Motor',m[0],m[1]);
+    ctx.fillStyle='#94a3b8';
+    var m=project(lx(135), F-7, lz(35)); ctx.fillText('Motor M',m[0],m[1]);
+
+    // Speaker reservado (NA TAMPA)
+    ctx.fillStyle='#cbd5e1'; ctx.font='italic 9px Segoe UI';
+    var sp=project(lx(135), -H_LID-2, lz(55)); ctx.fillText('Speaker (na tampa)',sp[0],sp[1]);
+    ctx.font='bold 10px Segoe UI';
 
     ctx.fillStyle='#34d399';
     var s=project(lx(7), F-17, lz(91.5)); ctx.fillText('On/Off',s[0],s[1]);
