@@ -21,3 +21,5 @@ desktop.ini
 *.tmp
 *.bak
 ~$*
+_*.png
+_*.jpg
