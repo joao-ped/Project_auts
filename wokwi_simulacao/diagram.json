@@ -1,226 +1,298 @@
 {
   "version": 1,
-  "author": "Voz Autista v2.0 - Comunicador Assistivo (Joao Pedro Tavares Vicente)",
+  "author": "Voz Autista v3.0 - Comunicador Assistivo (Joao Pedro Tavares Vicente)",
   "editor": "wokwi",
   "parts": [
     {
       "type": "wokwi-arduino-uno",
       "id": "uno",
-      "top": 200,
-      "left": 200,
+      "top": 180,
+      "left": 220,
       "attrs": {}
     },
+
     {
       "type": "wokwi-lcd1602",
       "id": "lcd",
-      "top": -90,
-      "left": 160,
-      "attrs": {
-        "pins": "i2c"
-      }
+      "top": -110,
+      "left": 180,
+      "attrs": { "pins": "i2c" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "lbl_lcd",
+      "top": -140,
+      "left": 180,
+      "attrs": { "text": "LCD 16x2 I2C (SDA=A4 verde, SCL=A5 laranja)", "color": "green" }
     },
 
     {
       "type": "wokwi-pushbutton",
       "id": "btn_cat_up",
-      "top": 460,
-      "left": -120,
-      "attrs": {
-        "color": "red",
-        "label": "Cat+",
-        "bounce": "0"
-      }
+      "top": 500,
+      "left": -140,
+      "attrs": { "color": "red", "label": "Cat+", "bounce": "0" }
     },
     {
       "type": "wokwi-pushbutton",
       "id": "btn_cat_down",
-      "top": 460,
-      "left": -20,
-      "attrs": {
-        "color": "yellow",
-        "label": "Cat-",
-        "bounce": "0"
-      }
+      "top": 500,
+      "left": -40,
+      "attrs": { "color": "yellow", "label": "Cat-", "bounce": "0" }
     },
     {
       "type": "wokwi-pushbutton",
       "id": "btn_word_up",
-      "top": 460,
-      "left": 80,
-      "attrs": {
-        "color": "green",
-        "label": "Pal+",
-        "bounce": "0"
-      }
+      "top": 500,
+      "left": 60,
+      "attrs": { "color": "green", "label": "Pal+", "bounce": "0" }
     },
     {
       "type": "wokwi-pushbutton",
       "id": "btn_word_down",
-      "top": 460,
-      "left": 180,
-      "attrs": {
-        "color": "blue",
-        "label": "Pal-",
-        "bounce": "0"
-      }
+      "top": 500,
+      "left": 160,
+      "attrs": { "color": "blue", "label": "Pal-", "bounce": "0" }
     },
     {
       "type": "wokwi-pushbutton",
       "id": "btn_speak",
-      "top": 460,
-      "left": 280,
-      "attrs": {
-        "color": "black",
-        "label": "FALAR",
-        "bounce": "0"
-      }
-    },
-
-    {
-      "type": "wokwi-buzzer",
-      "id": "buzzer",
-      "top": 80,
-      "left": 620,
-      "attrs": {
-        "volume": "0.1"
-      }
+      "top": 500,
+      "left": 260,
+      "attrs": { "color": "black", "label": "FALAR", "bounce": "0" }
     },
     {
-      "type": "wokwi-led",
-      "id": "led_vibrate",
-      "top": 200,
-      "left": 640,
-      "attrs": {
-        "color": "green",
-        "label": "VIBRACAO (D7)"
-      }
-    },
-    {
-      "type": "wokwi-resistor",
-      "id": "r_led",
-      "top": 240,
-      "left": 540,
-      "rotate": 90,
-      "attrs": {
-        "value": "220"
-      }
+      "type": "wokwi-text",
+      "id": "lbl_botoes",
+      "top": 470,
+      "left": -140,
+      "attrs": { "text": "BOTOES D2-D6 (INPUT_PULLUP -> GND). No case v3.0: layout 2+2+1, FALAR maior", "color": "gold" }
     },
 
     {
       "type": "wokwi-potentiometer",
       "id": "pot_volume",
-      "top": 250,
-      "left": -180,
-      "attrs": {
-        "value": "512"
-      }
+      "top": 60,
+      "left": -220,
+      "attrs": { "value": "512" }
     },
+    {
+      "type": "wokwi-text",
+      "id": "lbl_volume",
+      "top": 30,
+      "left": -220,
+      "attrs": { "text": "VOLUME (A0, fio roxo)", "color": "purple" }
+    },
+
     {
       "type": "wokwi-potentiometer",
       "id": "pot_battery",
       "top": 250,
-      "left": -40,
-      "attrs": {
-        "value": "800"
-      }
+      "left": -220,
+      "attrs": { "value": "860" }
     },
-
     {
       "type": "wokwi-resistor",
-      "id": "r_dfplayer",
-      "top": 360,
-      "left": 540,
+      "id": "r_bat_top",
+      "top": 330,
+      "left": -120,
       "rotate": 90,
-      "attrs": {
-        "value": "1000"
-      }
+      "attrs": { "value": "100000" }
     },
     {
-      "type": "wokwi-microsd-card",
-      "id": "sd_card",
-      "top": 380,
-      "left": 660,
-      "attrs": {}
-    },
-
-    {
-      "type": "wokwi-text",
-      "id": "lbl_volume",
-      "top": 220,
-      "left": -180,
-      "attrs": {
-        "text": "VOLUME (A0)",
-        "color": "purple"
-      }
+      "type": "wokwi-resistor",
+      "id": "r_bat_bot",
+      "top": 420,
+      "left": -120,
+      "rotate": 90,
+      "attrs": { "value": "33000" }
     },
     {
       "type": "wokwi-text",
       "id": "lbl_battery",
       "top": 220,
-      "left": -40,
-      "attrs": {
-        "text": "BATERIA (A1)",
-        "color": "orange"
-      }
+      "left": -260,
+      "attrs": { "text": "BATERIA (A1, fio marrom): o pot faz o papel da 18650 (gire = 3.0V a 4.2V).", "color": "brown" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "lbl_battery2",
+      "top": 240,
+      "left": -260,
+      "attrs": { "text": "Divisor REAL 100k/33k + ref interna 1.1V (igual ao hardware v3.0)", "color": "brown" }
+    },
+
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzzer",
+      "top": -40,
+      "left": 620,
+      "attrs": { "volume": "0.1" }
     },
     {
       "type": "wokwi-text",
       "id": "lbl_audio",
-      "top": 50,
+      "top": -70,
+      "left": 560,
+      "attrs": { "text": "AUDIO (D9): buzzer SO na simulacao.", "color": "gold" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "lbl_audio2",
+      "top": -55,
+      "left": 560,
+      "attrs": { "text": "Hardware real: DFPlayer Mini + alto-falante 8ohm 2W (D10=TX, D11=RX)", "color": "gray" }
+    },
+
+    {
+      "type": "wokwi-resistor",
+      "id": "r_dfp_serie",
+      "top": 420,
       "left": 540,
-      "attrs": {
-        "text": "AUDIO (D9 buzzer = DFPlayer real)",
-        "color": "brown"
-      }
+      "rotate": 90,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_dfp_gnd",
+      "top": 510,
+      "left": 540,
+      "rotate": 90,
+      "attrs": { "value": "2000" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "lbl_dfp",
+      "top": 390,
+      "left": 480,
+      "attrs": { "text": "v3.0: divisor 1k/2k em D11 -> RX do DFPlayer (logica 3.3V).", "color": "gray" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "lbl_dfp2",
+      "top": 405,
+      "left": 480,
+      "attrs": { "text": "No real, adicione 470uF + 100nF no VCC do DFPlayer", "color": "gray" }
+    },
+    {
+      "type": "wokwi-microsd-card",
+      "id": "sd_card",
+      "top": 480,
+      "left": 680,
+      "attrs": {}
     },
     {
       "type": "wokwi-text",
       "id": "lbl_sd",
-      "top": 350,
+      "top": 455,
+      "left": 680,
+      "attrs": { "text": "microSD (referencia visual)", "color": "gray" }
+    },
+
+    {
+      "type": "wokwi-npn-transistor",
+      "id": "q_motor",
+      "top": 180,
       "left": 660,
-      "attrs": {
-        "text": "SD (so referencia visual)",
-        "color": "gray"
-      }
+      "attrs": { "type": "2N2222" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_base",
+      "top": 220,
+      "left": 540,
+      "rotate": 0,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_motor",
+      "top": 90,
+      "left": 680,
+      "attrs": { "color": "green", "label": "MOTOR" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_led",
+      "top": 60,
+      "left": 580,
+      "rotate": 0,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "lbl_motor",
+      "top": 150,
+      "left": 560,
+      "attrs": { "text": "VIBRACAO (D7 amarelo): driver REAL 2N2222 + base 1k.", "color": "green" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "lbl_motor2",
+      "top": 165,
+      "left": 560,
+      "attrs": { "text": "LED = carga (no real: motor coin 10mm + 1N4148 antiparalelo, catodo no +5V)", "color": "gray" }
+    },
+
+    {
+      "type": "wokwi-text",
+      "id": "lbl_energia",
+      "top": 640,
+      "left": -140,
+      "attrs": { "text": "ENERGIA (so no hardware real): 18650 -> TP4056 -> chave -> boost MT3608 -> 5V", "color": "red" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "lbl_cores",
+      "top": 660,
+      "left": -140,
+      "attrs": { "text": "Cores: vermelho=VCC preto=GND amarelo=digital verde=SDA laranja=SCL roxo=A0 marrom=A1", "color": "gray" }
     }
   ],
   "connections": [
-    [ "uno:2",  "btn_cat_up:1.r",    "red",      [ "v-30", "h-200" ] ],
-    [ "btn_cat_up:2.r",    "uno:GND.1", "black",  [ "v60", "h120" ] ],
+    [ "uno:2", "btn_cat_up:1.r", "gold", [ "v-30", "h-220" ] ],
+    [ "btn_cat_up:2.r", "uno:GND.1", "black", [ "v60", "h120" ] ],
 
-    [ "uno:3",  "btn_cat_down:1.r",  "#CCCC00",  [ "v-30", "h-100" ] ],
-    [ "btn_cat_down:2.r",  "uno:GND.1", "black",  [ "v60", "h60" ] ],
+    [ "uno:3", "btn_cat_down:1.r", "gold", [ "v-30", "h-120" ] ],
+    [ "btn_cat_down:2.r", "uno:GND.1", "black", [ "v60", "h60" ] ],
 
-    [ "uno:4",  "btn_word_up:1.r",   "green",    [ "v-30", "h0" ] ],
-    [ "btn_word_up:2.r",   "uno:GND.1", "black",  [ "v60", "h0" ] ],
+    [ "uno:4", "btn_word_up:1.r", "gold", [ "v-30", "h-20" ] ],
+    [ "btn_word_up:2.r", "uno:GND.1", "black", [ "v60", "h0" ] ],
 
-    [ "uno:5",  "btn_word_down:1.r", "blue",     [ "v-30", "h100" ] ],
-    [ "btn_word_down:2.r", "uno:GND.1", "black",  [ "v60", "h-60" ] ],
+    [ "uno:5", "btn_word_down:1.r", "gold", [ "v-30", "h80" ] ],
+    [ "btn_word_down:2.r", "uno:GND.1", "black", [ "v60", "h-60" ] ],
 
-    [ "uno:6",  "btn_speak:1.r",     "gray",     [ "v-30", "h200" ] ],
-    [ "btn_speak:2.r",     "uno:GND.1", "black",  [ "v60", "h-120" ] ],
+    [ "uno:6", "btn_speak:1.r", "gold", [ "v-30", "h180" ] ],
+    [ "btn_speak:2.r", "uno:GND.1", "black", [ "v60", "h-120" ] ],
 
     [ "lcd:GND", "uno:GND.2", "black", [ "v0" ] ],
-    [ "lcd:VCC", "uno:5V",    "red",   [ "v0" ] ],
-    [ "lcd:SDA", "uno:A4",    "green", [ "v0" ] ],
-    [ "lcd:SCL", "uno:A5",    "orange",[ "v0" ] ],
+    [ "lcd:VCC", "uno:5V", "red", [ "v0" ] ],
+    [ "lcd:SDA", "uno:A4", "green", [ "v0" ] ],
+    [ "lcd:SCL", "uno:A5", "orange", [ "v0" ] ],
 
-    [ "uno:9", "buzzer:1", "brown", [ "v-40", "h220" ] ],
+    [ "pot_volume:VCC", "uno:5V", "red", [ "v0" ] ],
+    [ "pot_volume:GND", "uno:GND.1", "black", [ "v0" ] ],
+    [ "pot_volume:SIG", "uno:A0", "purple", [ "v0" ] ],
+
+    [ "pot_battery:VCC", "uno:5V", "red", [ "v0" ] ],
+    [ "pot_battery:GND", "uno:GND.1", "black", [ "v0" ] ],
+    [ "pot_battery:SIG", "r_bat_top:1", "brown", [ "v40", "h60" ] ],
+    [ "r_bat_top:2", "uno:A1", "brown", [ "v20", "h140" ] ],
+    [ "r_bat_bot:1", "uno:A1", "brown", [ "v-20", "h140" ] ],
+    [ "r_bat_bot:2", "uno:GND.1", "black", [ "v40", "h160" ] ],
+
+    [ "uno:9", "buzzer:1", "gold", [ "v-50", "h260" ] ],
     [ "buzzer:2", "uno:GND.3", "black", [ "v0" ] ],
 
-    [ "uno:7", "r_led:1",       "green", [ "v-20", "h120" ] ],
-    [ "r_led:2", "led_vibrate:A", "green", [ "v0" ] ],
-    [ "led_vibrate:C", "uno:GND.3", "black", [ "v0" ] ],
+    [ "uno:7", "r_base:1", "gold", [ "v-20", "h160" ] ],
+    [ "r_base:2", "q_motor:B", "gold", [ "v0" ] ],
+    [ "q_motor:E", "uno:GND.3", "black", [ "v20", "h-200" ] ],
+    [ "uno:5V", "r_led:1", "red", [ "v-30", "h240" ] ],
+    [ "r_led:2", "led_motor:A", "red", [ "v0" ] ],
+    [ "led_motor:C", "q_motor:C", "gold", [ "v0" ] ],
 
-    [ "pot_volume:SIG",  "uno:A0", "purple", [ "v0" ] ],
-    [ "pot_volume:VCC",  "uno:5V", "red",    [ "v0" ] ],
-    [ "pot_volume:GND",  "uno:GND.1", "black",[ "v0" ] ],
-
-    [ "pot_battery:SIG", "uno:A1", "orange", [ "v0" ] ],
-    [ "pot_battery:VCC", "uno:5V", "red",    [ "v0" ] ],
-    [ "pot_battery:GND", "uno:GND.1", "black",[ "v0" ] ],
-
-    [ "uno:11",      "r_dfplayer:1", "cyan",  [ "v40", "h120" ] ],
-    [ "r_dfplayer:2","uno:GND.3",    "black", [ "v0" ] ]
+    [ "uno:11", "r_dfp_serie:1", "gold", [ "v40", "h160" ] ],
+    [ "r_dfp_serie:2", "r_dfp_gnd:1", "gold", [ "v0" ] ],
+    [ "r_dfp_gnd:2", "uno:GND.3", "black", [ "v0" ] ]
   ]
 }

@@ -1,8 +1,8 @@
-# Voz Autista v2.0 - Guia de Implementacao Completo
+# Voz Autista v3.0 - Guia de Implementacao Completo
 
 **Comunicador Assistivo para Pessoas com Autismo**
 
-Versao: 2.0 | Atualizado: Maio 2026
+Versao: 3.0 | Atualizado: Junho 2026
 
 ---
 
@@ -15,8 +15,8 @@ Versao: 2.0 | Atualizado: Maio 2026
 5. [Circuito do Motor de Vibracao](#5-circuito-do-motor-de-vibracao)
 6. [Circuito de Monitoramento de Bateria](#6-circuito-de-monitoramento-de-bateria)
 7. [Estrutura do Cartao SD](#7-estrutura-do-cartao-sd)
-8. [Funcionalidades v2.0](#8-funcionalidades-v20)
-9. [Montagem Passo a Passo](#9-montagem-passo-a-passo)
+8. [Funcionalidades](#8-funcionalidades)
+9. [Montagem Passo a Passo (case v3.0)](#9-montagem-passo-a-passo-case-v30)
 10. [Upload do Codigo](#10-upload-do-codigo)
 11. [Configuracao Facil](#11-configuracao-facil)
 12. [Como Usar](#12-como-usar)
@@ -27,18 +27,24 @@ Versao: 2.0 | Atualizado: Maio 2026
 
 ## 1. Visao Geral do Projeto
 
-O **Voz Autista v2.0** e um dispositivo de comunicacao assistiva projetado para pessoas com autismo que possuem dificuldade na comunicacao verbal. O usuario navega por categorias e palavras usando botoes coloridos, e o dispositivo reproduz o audio correspondente por um alto-falante.
+O **Voz Autista** e um dispositivo de comunicacao assistiva (AAC) de baixo custo
+(~R$128) para pessoas autistas nao-verbais ou com comunicacao verbal limitada.
+O usuario navega por 7 categorias x 5 palavras com botoes coloridos e o
+dispositivo reproduz o audio MP3 correspondente.
 
-### Novidades na v2.0
+### O que mudou da v2.0 para a v3.0
 
-- 7 categorias com 35 palavras (antes eram 3 categorias com 15 palavras)
-- Controle de volume por potenciometro analogico
-- Deteccao automatica do endereco I2C do display LCD
-- Monitoramento de bateria com icone no LCD
-- Modo frase composta (empilhar varias palavras e falar de uma vez)
-- Feedback tatil por motor de vibracao
-- Modo sleep apos 2 minutos de inatividade
-- Secao de configuracao facil no codigo-fonte
+**A pinagem dos botoes, LCD, DFPlayer, volume e vibracao NAO mudou.**
+As mudancas sao de circuito (valores e fios novos) e de case:
+
+| Mudanca | Por que |
+|---------|---------|
+| Divisor da bateria: **10k+10k -> 100k+33k** + capacitor 100nF em A1, lido com a **referencia interna de 1.1V** | Com a 18650 alimentando o Arduino, o VCC *e* a tensao da bateria - medir Vbat/2 contra o proprio VCC dava leitura constante (bug). A referencia interna e absoluta. Bonus: o dreno cai de ~210uA para ~32uA |
+| RX do DFPlayer: resistor 1k -> **divisor 1k/2k** | O DFPlayer e logica 3.3V; o divisor entrega 3.3V limpos (recomendacao do datasheet DFR0299) |
+| **Capacitor 470uF + 100nF** no VCC/GND do DFPlayer | O modulo tem picos de corrente no inicio de cada faixa que causavam resets/cliques |
+| **Fio novo: BUSY do DFPlayer -> D8** | A frase composta espera o MP3 terminar de verdade, em vez de pausa fixa de 1.3s |
+| **Boost MT3608** entre a chave e o rail 5V | A 18650 (3.0-4.2V) direto no 5V roda o ATmega fora de spec e deixa o LCD com contraste fraco. O boost entrega 5V estaveis |
+| Case v3.0 em cunha, botoes 2+2+1, bateria com tampa de troca | Ver `case_3d/CHANGELOG_V3.md` |
 
 ---
 
@@ -55,21 +61,27 @@ O **Voz Autista v2.0** e um dispositivo de comunicacao assistiva projetado para 
 | 1 | Botao momentaneo 12mm | **Verde** | Palavra + (avancar) |
 | 1 | Botao momentaneo 12mm | **Azul** | Palavra - (voltar) |
 | 1 | Botao momentaneo 12mm | **Preto** | FALAR (reproducao) |
-| 1 | Resistor 1k ohm | 1/4W | D11 para DFPlayer RX (protecao serial) |
+| 1 | Resistor 1k ohm | 1/4W | D11 -> RX DFPlayer (perna de cima do divisor) |
+| 1 | Resistor 2k ohm | 1/4W | **v3.0** RX DFPlayer -> GND (perna de baixo) |
+| 1 | Capacitor eletrolitico 470uF | >= 10V | **v3.0** VCC/GND do DFPlayer (anti-reset) |
+| 2 | Capacitor ceramico 100nF | -- | **v3.0** 1x DFPlayer VCC, 1x pino A1 |
 | 1 | Potenciometro 10k ohm | Linear (B10K) | Ajuste de volume |
 | 1 | Motor de vibracao coin | 10mm, 3-5V | Feedback tatil |
 | 1 | Transistor NPN 2N2222 | TO-92 | Driver do motor de vibracao |
 | 1 | Diodo 1N4148 | Diodo de sinal | Protecao flyback do motor |
 | 1 | Resistor 1k ohm | 1/4W | Base do transistor 2N2222 |
-| 2 | Resistor 10k ohm | 1/4W | Divisor de tensao da bateria |
+| 1 | Resistor 100k ohm | 1/4W | **v3.0** Divisor da bateria (substitui 10k) |
+| 1 | Resistor 33k ohm | 1/4W | **v3.0** Divisor da bateria (substitui 10k) |
 | 1 | Bateria 18650 | 3.7V recarregavel | Alimentacao portatil |
-| 1 | Modulo TP4056 | Carregador Li-Ion com protecao | Carga da bateria via micro-USB |
+| 1 | Modulo TP4056 | Carregador Li-Ion com protecao (DW01A) | Carga via micro-USB |
+| 1 | Modulo boost MT3608 | Ajustado para 5.0V | **v3.0** Rail 5V estavel a partir da 18650 |
 | 1 | Chave deslizante | 2 posicoes | Liga/Desliga geral |
 | 1 | Cartao microSD | FAT32, ate 32GB | Armazenamento dos audios MP3 |
 | -- | Fios jumper | Macho-macho e macho-femea | Conexoes |
-| 1 | Case impresso 3D | Veja pasta `/case_3d/` | Caixa do dispositivo |
+| 1 | Case impresso 3D v3.0 | Pasta `/case_3d/` (base + tampa + tampa bateria) | Caixa do dispositivo |
 
-**Nota sobre os botoes:** Os 5 botoes sao ligados usando os resistores pull-up internos do Arduino (INPUT_PULLUP). Cada botao conecta o pino digital ao GND quando pressionado. Nao e necessario resistor externo para os botoes.
+**Nota sobre os botoes:** ligados com pull-up interno (INPUT_PULLUP); cada botao
+conecta o pino ao GND. Nao precisa resistor externo.
 
 ---
 
@@ -82,34 +94,37 @@ O **Voz Autista v2.0** e um dispositivo de comunicacao assistiva projetado para 
 | D4 | Botao Verde (Pal+) | Botao para GND | INPUT_PULLUP interno |
 | D5 | Botao Azul (Pal-) | Botao para GND | INPUT_PULLUP interno |
 | D6 | Botao Preto (FALAR) | Botao para GND | INPUT_PULLUP interno |
-| D7 | Motor vibracao | Via transistor NPN 2N2222 | Veja circuito abaixo |
-| D10 | DFPlayer TX | DFPlayer TX para Arduino D10 | SoftwareSerial RX |
-| D11 | DFPlayer RX | Arduino D11 para 1k ohm para DFPlayer RX | SoftwareSerial TX (com resistor) |
-| A0 | Potenciometro volume | Pino central (wiper) | Range 0-1023 mapeado para 0-30 |
-| A1 | Divisor tensao bateria | Juncao dos dois resistores 10k ohm | V_A1 = V_bat / 2 |
-| A4 | LCD SDA | Modulo I2C do LCD | Barramento I2C dados |
-| A5 | LCD SCL | Modulo I2C do LCD | Barramento I2C clock |
+| D7 | Motor vibracao | Via 1k -> base 2N2222 | Flyback 1N4148 no motor |
+| **D8** | **DFPlayer BUSY** | **BUSY -> D8 direto** | **NOVO v3.0** - LOW = tocando |
+| D10 | DFPlayer TX | TX -> D10 | SoftwareSerial RX |
+| D11 | DFPlayer RX | D11 -> 1k -> RX; RX -> 2k -> GND | **ATUALIZADO v3.0** divisor 3.3V |
+| A0 | Potenciometro volume | Wiper (centro) | 0-1023 -> volume 0-30 |
+| A1 | Divisor da bateria | Juncao 100k (Vbat) / 33k (GND) + 100nF | **ATUALIZADO v3.0** ref interna 1.1V |
+| A4 | LCD SDA | Modulo I2C | Barramento I2C dados |
+| A5 | LCD SCL | Modulo I2C | Barramento I2C clock |
+
+Pinos livres para expansao: D9, D12, D13, A2, A3.
 
 ### Diagrama de pinos do Arduino
 
 ```
-                    +-----[USB]-----+
-                    |               |
-               D13 -|               |- D12
-               3.3V-|               |- D11 ---> 1kΩ ---> DFPlayer RX
-               AREF-|               |- D10 <--- DFPlayer TX
-[POT volume]-->A0 -|   ARDUINO    |- D9
-  [BAT div. ]-->A1 -|    UNO R3    |- D8
-            A2 -|               |- D7  ---> 1kΩ ---> Base 2N2222
-            A3 -|               |- D6  <--- Botao Preto (FALAR)
-  [LCD SDA] A4 -|               |- D5  <--- Botao Azul (Pal-)
-  [LCD SCL] A5 -|               |- D4  <--- Botao Verde (Pal+)
-                    |               |- D3  <--- Botao Amarelo (Cat-)
-                    |               |- D2  <--- Botao Vermelho (Cat+)
+                     +-----[USB]-----+
+                     |               |
+                D13 -|               |- D12
+                3.3V-|               |- D11 ---> 1k ---> DFPlayer RX ---> 2k ---> GND
+                AREF-|               |- D10 <--- DFPlayer TX
+ [POT volume]--> A0 -|    ARDUINO    |- D9
+ [BAT 100k/33k]> A1 -|     UNO R3    |- D8  <--- DFPlayer BUSY        [NOVO v3.0]
+                 A2 -|               |- D7  ---> 1k ---> Base 2N2222
+                 A3 -|               |- D6  <--- Botao Preto  (FALAR)
+   [LCD SDA] --> A4 -|               |- D5  <--- Botao Azul   (Pal-)
+   [LCD SCL] --> A5 -|               |- D4  <--- Botao Verde  (Pal+)
+                     |               |- D3  <--- Botao Amarelo(Cat-)
+                     |               |- D2  <--- Botao Vermelho(Cat+)
                  5V -|               |- GND
                 GND -|               |- GND
-                VIN -|               |-
-                    +---------------+
+                VIN -|               |
+                     +---------------+
 ```
 
 ---
@@ -124,482 +139,252 @@ Pino Dx ----+---- [Botao] ---- GND
         (pull-up interno ativado por software)
 ```
 
-Cada botao liga o pino ao GND quando pressionado. O Arduino detecta nivel LOW como "pressionado".
+| Botao | Cor | Pino | Posicao no case v3.0 |
+|-------|-----|------|----------------------|
+| CAT- | Amarelo | D3 | Fileira de cima, esquerda (simbolo "v") |
+| CAT+ | Vermelho | D2 | Fileira de cima, direita (simbolo "^") |
+| PAL- | Azul | D5 | Fileira do meio, esquerda (simbolo "<") |
+| PAL+ | Verde | D4 | Fileira do meio, direita (simbolo ">") |
+| FALAR | Preto | D6 | Embaixo, central, anel maior (balao de fala) |
 
-| Botao | Cor | Pino | Funcao |
-|-------|-----|------|--------|
-| Cat+ | Vermelho | D2 | Avanca categoria |
-| Cat- | Amarelo | D3 | Volta categoria |
-| Pal+ | Verde | D4 | Avanca palavra |
-| Pal- | Azul | D5 | Volta palavra |
-| FALAR | Preto | D6 | Reproduz audio / frase |
-
-### 4.2 DFPlayer Mini
+### 4.2 DFPlayer Mini (ATUALIZADO v3.0)
 
 ```
-             +--------+
-             | DFP    |
-   D10 <---- | TX     |
-   D11 -1kΩ->| RX     |
-         5V -| VCC    |
-        GND -| GND    |
-             | SPK1 --+--- Alto-falante 8Ω 2W (+)
-             | SPK2 --+--- Alto-falante 8Ω 2W (-)
-             | SD slot|  <-- Cartao microSD
-             +--------+
+                      +----------+
+            D10 <---- | TX       |
+ D11 --[1k]--+------> | RX       |     <- divisor 1k/2k: nivel 3.3V
+             |        |          |
+           [2k]       | VCC -----+--- 5V  (+ 470uF e 100nF para o GND,
+             |        |          |         o mais perto possivel do modulo)
+            GND       | GND -----+--- GND
+                      | SPK1 ----+--- Alto-falante 8ohm 2W (+)
+                      | SPK2 ----+--- Alto-falante 8ohm 2W (-)
+                      | BUSY ----+--> D8   [NOVO v3.0: LOW = tocando]
+                      | SD slot  |  <- microSD FAT32
+                      +----------+
 ```
 
-**Importante:** O resistor de 1k ohm entre D11 e o pino RX do DFPlayer e obrigatorio. Ele limita a corrente e protege o modulo, pois o DFPlayer opera a 3.3V na serial.
+**Importante:** o eletrolitico de 470uF evita resets do DFPlayer nos picos de
+corrente do inicio de cada faixa. Observe a polaridade (perna maior no VCC).
 
 ### 4.3 LCD 16x2 I2C
 
 ```
-Modulo I2C (soldado atras do LCD):
-  VCC → 5V do Arduino
-  GND → GND do Arduino
-  SDA → A4 do Arduino
-  SCL → A5 do Arduino
+  VCC -> 5V | GND -> GND | SDA -> A4 | SCL -> A5
 ```
 
 ### 4.4 Potenciometro de Volume
 
 ```
-  5V ---- [Terminal 1]
-           |
-  A0 ---- [Wiper (centro)]    Potenciometro 10kΩ linear
-           |
-  GND --- [Terminal 3]
+  5V ---[Terminal 1]   A0 ---[Wiper]   GND ---[Terminal 3]
 ```
+
+### 4.5 Alimentacao completa (ATUALIZADO v3.0)
+
+```
+  [Bateria 18650] --- B+/B- --- [TP4056 c/ protecao] --- OUT+ ---[Chave]--- IN+ [MT3608] OUT+ --- 5V do Arduino,
+                                       |                                        (ajustado     LCD, DFPlayer, pot,
+                                      OUT- ------------------------------------- p/ 5.0V)     motor (rail 5V comum)
+                                       |
+                                      GND comum (Arduino + LCD + DFPlayer + divisor + emissor 2N2222)
+```
+
+**Antes de conectar o Arduino:** alimente o MT3608 e gire o trimpot ate medir
+**5.0V** na saida com multimetro. So depois ligue o rail.
+
+**Por que o boost?** A 18650 entrega 3.0-4.2V. Direto no pino 5V, o ATmega328
+roda 16MHz abaixo do minimo de 4.5V do datasheet e o LCD HD44780 perde
+contraste. O MT3608 (~R$5) resolve os dois problemas e ainda da volume cheio
+ao DFPlayer.
 
 ---
 
 ## 5. Circuito do Motor de Vibracao
 
-O motor de vibracao coin consome mais corrente do que um pino do Arduino pode fornecer. Por isso, usamos um transistor NPN 2N2222 como driver.
-
-### Esquema
+(Sem mudancas eletricas na v3.0 - apenas documentacao revisada.)
 
 ```
-            +5V
-             |
-       +-----------+
-       | Motor coin|          1N4148
-       |   10mm    |     K (faixa) ___  A
-       |  (+)  (-) |        |     /   \  |
-       +---+----+--+        +----| |<| --+
-           |    |            |            |
-           |    +------------+        Collector (C)
-          +5V                          2N2222
-                                    Base (B) --- [1k ohm] --- D7 (Arduino)
-                                      Emitter (E)
-                                          |
-                                         GND
+            +5V ----+-------------+
+                    |             |
+               [Motor coin]   [1N4148]   <- catodo (faixa) no +5V
+                    |             |
+                    +------+------+
+                           |
+                       Coletor (C)
+                        2N2222          Base (B) --- [1k] --- D7
+                       Emissor (E)
+                           |
+                          GND
 ```
 
-**Leitura:** O motor fica entre +5V e o Collector do 2N2222. O diodo 1N4148 esta em paralelo
-com o motor: **catodo (faixa) voltado para +5V**, anodo no Collector. Quando D7 sobe para HIGH,
-o transistor conduz e o motor gira. O diodo protege contra picos de tensao reversa (flyback).
-
-### Conexoes detalhadas
-
-| De | Para | Observacao |
-|----|------|------------|
-| Arduino D7 | Resistor 1k ohm | Sinal de controle |
-| Resistor 1k ohm | Base do 2N2222 | Limita corrente de base (~3mA) |
-| 2N2222 Emitter | GND | Referencia de terra |
-| 2N2222 Collector | Motor(-) | Terminal negativo do motor |
-| Motor(+) | +5V | Terminal positivo do motor |
-| 1N4148 anodo (A) | Motor(-) / Collector | Protecao flyback |
-| 1N4148 catodo (K, faixa) | Motor(+) / +5V | Protecao flyback |
-
-### Como funciona
-
-1. Arduino coloca D7 em HIGH (5V)
-2. Corrente flui pela base do 2N2222 (limitada pelo resistor 1k ohm a ~3mA)
-3. Transistor satura (Vce ~ 0.2V), permitindo ~80mA pelo motor
-4. Motor vibra por 60ms (configuravel: `VIBRATE_MS` no codigo)
-5. Arduino coloca D7 em LOW, transistor corta
-6. O diodo 1N4148 absorve a tensao reversa gerada pela bobina do motor (protecao flyback)
-
-### Pinagem do 2N2222 (TO-92, lado achatado voltado para voce)
-
-```
-     ___
-    /   \
-   | 2N  |
-   | 2222|
-    \___/
-    | | |
-    E B C
-
-  E = Emitter  -> GND
-  B = Base     -> [1k ohm] -> D7
-  C = Collector -> Motor (-)
-```
+- Ib = (5 - 0.7) / 1k ~ 4.3mA -> beta forcado ~19 para 80mA: saturacao garantida
+- O 1N4148 fica em **antiparalelo com o motor**: catodo (faixa) no +5V, anodo no coletor
+- Pinagem do 2N2222 (TO-92, face plana para voce): **E - B - C**
 
 ---
 
-## 6. Circuito de Monitoramento de Bateria
-
-A bateria 18650 (3.7V nominal, ate 4.2V carregada) e monitorada por um divisor de tensao resistivo.
-
-### Esquema
+## 6. Circuito de Monitoramento de Bateria (ATUALIZADO v3.0)
 
 ```
-  Bateria (+)
-      |
-   [R1 = 10kΩ]
-      |
-      +------------- A1 (Arduino)     V_A1 = V_bat x R2/(R1+R2) = V_bat / 2
-      |
-   [R2 = 10kΩ]
-      |
-     GND
+  Bateria (+) -----[R1 = 100k]-----+----------- A1 (Arduino)
+                                   |       |
+                              [R2 = 33k] [100nF]
+                                   |       |
+                                  GND     GND
 ```
 
-### Como funciona
+### Como funciona (v3.0)
 
-- Os dois resistores de 10k ohm formam um divisor de tensao 1:1
-- A tensao no pino A1 e **metade** da tensao da bateria
-- Arduino le o valor analogico no pino A1 (0-1023 corresponde a 0-5V)
-- O codigo converte: `V_bateria = analogRead(A1) * 5.0 / 1023.0 * 2.0`
-- Faixas de nivel exibidas no LCD:
-  - **4.2V - 3.9V** = Bateria cheia (icone cheio)
-  - **3.9V - 3.7V** = Bateria media (icone meio)
-  - **3.7V - 3.5V** = Bateria baixa (icone baixo)
-  - **< 3.5V** = Bateria critica (icone vazio)
+- O divisor entrega `Vbat x 33/133` em A1: 4.2V -> 1.042V; 3.0V -> 0.744V
+- O codigo le A1 contra a **referencia interna de 1.1V** (`analogReference(INTERNAL)`),
+  que e absoluta - nao depende do VCC variavel da bateria
+- ADC ~969 = 100% | ADC ~692 = 0%
+- O capacitor de 100nF em A1 compensa a impedancia alta do divisor para o
+  sample-and-hold do ADC (fonte: datasheet ATmega328, secao ADC, impedancia
+  de fonte recomendada <= 10k)
+- Dreno permanente do divisor: ~32uA (era ~210uA com 10k+10k)
 
-### Circuito de alimentacao completo
-
-```
-  [Bateria 18650 3.7V]
-        |         |
-       (+)       (-)
-        |         |
-  [Modulo TP4056] |     <-- Carga via micro-USB
-        |         |
-  [Chave deslizante]    <-- Liga/Desliga
-        |         |
-      VIN       GND
-    (Arduino)  (Arduino)
-```
-
-**Nota:** O modulo TP4056 com protecao (versao com chip DW01A) e recomendado. Ele protege contra sobrecarga, sobredescarga e curto-circuito.
+> **Atencao:** nao reutilize os resistores de 10k da v2.0 neste divisor - o
+> firmware v3.0 espera 100k/33k. Se mudar os valores, recalcule os limites
+> 692/969 em `readBattery()`.
 
 ---
 
 ## 7. Estrutura do Cartao SD
 
-O cartao microSD deve ser formatado em **FAT32**. Os arquivos MP3 devem seguir a estrutura de pastas abaixo. Sao **7 categorias** com **5 palavras** cada, totalizando **35 arquivos MP3**.
-
-### Estrutura de pastas e arquivos
+O cartao microSD deve ser formatado em **FAT32**. Sao **7 categorias** com
+**5 palavras** cada (35 MP3s):
 
 ```
 microSD (FAT32)
-│
-├── /01/                 ← Necessidades
-│   ├── 001.mp3          → "Eu quero"
-│   ├── 002.mp3          → "Comer"
-│   ├── 003.mp3          → "Beber"
-│   ├── 004.mp3          → "Banheiro"
-│   └── 005.mp3          → "Dormir"
-│
-├── /02/                 ← Sentimentos
-│   ├── 001.mp3          → "Feliz"
-│   ├── 002.mp3          → "Triste"
-│   ├── 003.mp3          → "Bravo"
-│   ├── 004.mp3          → "Calmo"
-│   └── 005.mp3          → "Medo"
-│
-├── /03/                 ← Acoes
-│   ├── 001.mp3          → "Brincar"
-│   ├── 002.mp3          → "Ajuda"
-│   ├── 003.mp3          → "Sair"
-│   ├── 004.mp3          → "Parar"
-│   └── 005.mp3          → "Ir"
-│
-├── /04/                 ← Comidas
-│   ├── 001.mp3          → "Agua"
-│   ├── 002.mp3          → "Suco"
-│   ├── 003.mp3          → "Leite"
-│   ├── 004.mp3          → "Pao"
-│   └── 005.mp3          → "Fruta"
-│
-├── /05/                 ← Lugares
-│   ├── 001.mp3          → "Casa"
-│   ├── 002.mp3          → "Escola"
-│   ├── 003.mp3          → "Parque"
-│   ├── 004.mp3          → "Medico"
-│   └── 005.mp3          → "Banho"
-│
-├── /06/                 ← Pessoas
-│   ├── 001.mp3          → "Mamae"
-│   ├── 002.mp3          → "Papai"
-│   ├── 003.mp3          → "Vovo"
-│   ├── 004.mp3          → "Professor"
-│   └── 005.mp3          → "Amigo"
-│
-└── /07/                 ← Saude
-    ├── 001.mp3          → "Doi"
-    ├── 002.mp3          → "Enjoo"
-    ├── 003.mp3          → "Frio"
-    ├── 004.mp3          → "Calor"
-    └── 005.mp3          → "Cansado"
+├── /01/ Necessidades: 001 "Eu quero", 002 "Comer", 003 "Beber", 004 "Banheiro", 005 "Dormir"
+├── /02/ Sentimentos:  001 "Feliz", 002 "Triste", 003 "Bravo", 004 "Calmo", 005 "Medo"
+├── /03/ Acoes:        001 "Brincar", 002 "Ajuda", 003 "Sair", 004 "Parar", 005 "Ir"
+├── /04/ Comidas:      001 "Agua", 002 "Suco", 003 "Leite", 004 "Pao", 005 "Fruta"
+├── /05/ Lugares:      001 "Casa", 002 "Escola", 003 "Parque", 004 "Medico", 005 "Banho"
+├── /06/ Pessoas:      001 "Mamae", 002 "Papai", 003 "Vovo", 004 "Professor", 005 "Amigo"
+└── /07/ Saude:        001 "Doi", 002 "Enjoo", 003 "Frio", 004 "Calor", 005 "Cansado"
 ```
 
-### Dicas para os arquivos MP3
-
-- Use voz clara, natural e em ritmo lento
-- Recomendado: taxa de 44100 Hz, 128 kbps, mono
-- Duracao ideal: 1 a 3 segundos por arquivo
-- Ferramentas gratuitas para gerar voz: Google Translate (copiar audio), Balabolka, ou gravar a propria voz
-- Os nomes das pastas devem ser exatamente `01`, `02`, ..., `07` (com dois digitos)
-- Os nomes dos arquivos devem ser exatamente `001.mp3`, `002.mp3`, ..., `005.mp3` (com tres digitos)
-- **Nao coloque outros arquivos** na raiz do cartao SD (o DFPlayer pode confundir a contagem)
+- Pastas exatamente `01`..`07`; arquivos exatamente `001.mp3`..`005.mp3`
+- 44100 Hz, 128 kbps, mono; 1-3 segundos por palavra
+- Nao deixe outros arquivos na raiz do cartao
 
 ---
 
-## 8. Funcionalidades v2.0
+## 8. Funcionalidades
 
-### 8.1 Controle de Volume por Potenciometro
+### 8.1 Volume por potenciometro (A0)
+Leitura a cada 500ms, mapeada para 0-30 e enviada ao DFPlayer.
 
-- **Pino:** A0 (terminal central/wiper do potenciometro)
-- **Funcionamento:** O Arduino le o valor analogico de A0 a cada 500ms e mapeia para volume de 0 a 30
-- **Ajuste em tempo real:** Gire o potenciometro para aumentar ou diminuir o volume enquanto o dispositivo esta em uso
-- O volume atual e enviado ao DFPlayer via comando `dfPlayer.volume()`
+### 8.2 Auto-deteccao I2C do LCD
+Escaneia `0x27`, `0x3F`, `0x20`, `0x38` na inicializacao.
 
-### 8.2 Auto-deteccao do Endereco I2C do LCD
+### 8.3 Monitoramento de bateria (A1) - v3.0
+Divisor 100k/33k + referencia interna 1.1V (secao 6). Icone no LCD a cada 10s.
 
-- O codigo escaneia automaticamente os enderecos I2C mais comuns na inicializacao
-- **Enderecos escaneados:** `0x27`, `0x3F`, `0x20`, `0x38`
-- Se um LCD for encontrado em qualquer desses enderecos, ele e inicializado automaticamente
-- Nao e necessario alterar o codigo ao trocar o modulo LCD
-- Se nenhum LCD for detectado, o dispositivo ainda funciona (apenas sem display)
-
-### 8.3 Monitoramento de Bateria
-
-- **Pino:** A1 (juncao do divisor de tensao 10k ohm + 10k ohm)
-- **Bateria:** 18650 3.7V recarregavel
-- **Carregador:** Modulo TP4056 com protecao
-- **Indicacao:** Icone de bateria no canto do LCD, atualizado a cada 10 segundos
-- **Calculo:** `V_bateria = analogRead(A1) * 5.0 / 1023.0 * 2.0`
-- Niveis exibidos no LCD: cheio, medio, baixo, critico
-
-### 8.4 Frase Composta
-
-O modo frase permite empilhar ate 5 palavras para falar uma frase completa.
+### 8.4 Frase composta + fim de audio real (v3.0)
 
 | Acao | Como fazer | Resultado |
 |------|-----------|-----------|
-| Falar palavra individual | Press **curto** no botao FALAR (preto) | Reproduz o audio da palavra selecionada |
-| Adicionar palavra a frase | Press **longo** no botao FALAR (> 800ms) | Palavra e adicionada ao buffer da frase |
-| Falar frase completa | Pressionar **Cat+ e Cat-** juntos (vermelho + amarelo) | Reproduz todas as palavras da frase em sequencia |
-| Limpar frase | Pressionar **Pal+ e Pal-** juntos (verde + azul) | Limpa o buffer da frase |
+| Falar palavra | Press **curto** no FALAR | Reproduz o audio |
+| Adicionar a frase | Press **longo** no FALAR (>800ms) | Palavra entra no buffer (ate 5) |
+| Falar frase | **Cat+ e Cat- juntos** | Fala a sequencia toda |
+| Limpar frase | **Pal+ e Pal- juntos** | Esvazia o buffer |
 
-**Exemplo de uso:**
-1. Navegue ate "Eu quero" e segure FALAR (press longo) -> adicionado
-2. Navegue ate "Beber" e segure FALAR (press longo) -> adicionado
-3. Navegue ate "Agua" e segure FALAR (press longo) -> adicionado
-4. Pressione Cat+ e Cat- juntos -> o dispositivo fala "Eu quero... Beber... Agua"
+**v3.0:** entre as palavras da frase, o firmware espera o pino **BUSY (D8)**
+subir (fim real do MP3) + 250ms de pausa, em vez do delay fixo de 1.3s.
+Frases soam naturais com audios de qualquer duracao.
 
-### 8.5 Feedback Tatil por Vibracao
+### 8.5 Vibracao (D7)
+Motor coin via 2N2222; 60ms a cada acao de botao.
 
-- **Pino:** D7 (via transistor NPN 2N2222 + diodo flyback 1N4148)
-- **Motor:** Coin 10mm, alimentado por 5V
-- O motor vibra brevemente (60ms) a cada press de botao, confirmando a acao
-- Especialmente util para usuarios que precisam de confirmacao tatil
+### 8.6 Sleep
+LCD apaga apos 2 min sem uso; qualquer botao acorda.
 
-### 8.6 Modo Sleep (Economia de Energia)
-
-- Apos **2 minutos** (120.000ms) sem nenhuma interacao (botao pressionado), o LCD apaga automaticamente
-- O dispositivo entra em modo de baixo consumo
-- **Qualquer botao** pressionado acorda o dispositivo instantaneamente
-- O LCD reacende e volta ao estado anterior (categoria e palavra preservadas)
-- Ideal para prolongar a vida da bateria 18650
-
-### 8.7 Configuracao Facil
-
-O codigo-fonte possui uma secao claramente delimitada para personalizacao:
-
-```cpp
-// =============================================================
-// ██  SECAO DE CONFIGURACAO - EDITE AQUI PARA PERSONALIZAR  ██
-// =============================================================
-```
-
-Nessa secao voce pode:
-- Alterar nomes de categorias e palavras
-- Adicionar ou remover categorias (atualizar `NUM_CATEGORIES`)
-- Ajustar tempos de debounce, press longo, sleep, etc.
-- Alterar os pinos dos botoes
-
-Apos editar, basta criar as pastas e MP3s correspondentes no cartao SD.
+### 8.7 Configuracao facil
+Secao demarcada no `.ino` para editar categorias, palavras e tempos.
 
 ---
 
-## 9. Montagem Passo a Passo
+## 9. Montagem Passo a Passo (case v3.0)
 
-### Passo 1: Preparar os botoes
+> Imprima primeiro: `exportar_base.scad`, `exportar_tampa.scad` e
+> `exportar_tampa_bateria.scad` (que inclui o knob do potenciometro e o
+> adaptador do botao FALAR). Encaixe tudo A SECO antes de soldar.
 
-1. Solde fios nos terminais dos 5 botoes momentaneos
-2. Conecte um terminal de cada botao ao GND do Arduino (podem compartilhar o mesmo fio GND)
-3. Conecte o outro terminal de cada botao ao pino correspondente:
-   - Vermelho -> D2
-   - Amarelo -> D3
-   - Verde -> D4
-   - Azul -> D5
-   - Preto -> D6
+### Passo 1: Eletronica de potencia (fora do case)
+1. Solde fios na 18650 (ou use suporte com fios) -> B+/B- do TP4056
+2. TP4056 OUT+ -> chave deslizante -> IN+ do MT3608; OUT-/GND comum
+3. Alimente e ajuste o trimpot do MT3608 ate **5.0V** na saida
+4. So entao conecte OUT+ do MT3608 ao pino **5V** do Arduino
 
-### Passo 2: Conectar o DFPlayer Mini
+### Passo 2: Perfboard do driver e divisores
+Em uma perfboard pequena (~20x10mm), monte:
+1. 2N2222 + resistor 1k de base + 1N4148 (catodo p/ +5V)
+2. Divisor da bateria: 100k (Vbat -> A1) + 33k (A1 -> GND) + 100nF (A1 -> GND)
+3. Divisor do DFPlayer: 1k (D11 -> RX) + 2k (RX -> GND)
+4. 470uF + 100nF entre VCC e GND do DFPlayer (perto do modulo)
 
-1. Conecte VCC do DFPlayer ao 5V do Arduino
-2. Conecte GND do DFPlayer ao GND do Arduino
-3. Conecte TX do DFPlayer ao pino D10 do Arduino
-4. Conecte um resistor de 1k ohm entre D11 do Arduino e o pino RX do DFPlayer
-5. Conecte o alto-falante nos pinos SPK1 e SPK2 do DFPlayer
-6. Insira o cartao microSD (preparado conforme secao 7)
+### Passo 3: Fixar na base impressa
+1. **Arduino** nos 4 pilares M2.5 (canto esquerdo; USB-B e jack saem pela esquerda)
+2. **TP4056** nos clipes (parede esquerda; micro-USB pela abertura)
+3. **MT3608** e **perfboard** nos cantos de retencao (fundo esquerdo/tras)
+4. **DFPlayer** nos clipes (canto traseiro direito; slot SD pela parede traseira)
+5. **Alto-falante** no fundo, ima para cima, borda sob os 3 postes com labio
+   (o som sai pela grade no fundo do case)
+6. **Motor coin** no suporte anelar (fio pela abertura lateral do anel)
+7. **Chave** na moldura recuada da parede traseira (cola quente por dentro)
+8. **Potenciometro** no furo da parede direita (porca por fora) + knob impresso
 
-### Passo 3: Conectar o LCD I2C
+### Passo 4: Botoes na tampa (layout 2+2+1)
+1. De cima para baixo: CAT- (amarelo) / CAT+ (vermelho), PAL- (azul) /
+   PAL+ (verde), FALAR (preto) embaixo no centro
+2. Cada furo tem anel tatil em relevo e canaleta para pintura/anel colorido
+3. Pressione o **adaptador Ø18 impresso** sobre o cap do botao preto (FALAR)
+4. **LCD**: por dentro da tampa, na face inclinada - 4 parafusos M3
+   auto-atarraxantes nos bosses (janela 73x26 para a area visivel)
 
-1. Conecte VCC do modulo I2C ao 5V do Arduino
-2. Conecte GND do modulo I2C ao GND do Arduino
-3. Conecte SDA ao pino A4 do Arduino
-4. Conecte SCL ao pino A5 do Arduino
-
-### Passo 4: Montar o potenciometro de volume
-
-1. Conecte o terminal 1 do potenciometro ao 5V
-2. Conecte o terminal central (wiper) ao pino A0
-3. Conecte o terminal 3 ao GND
-
-### Passo 5: Montar o circuito do motor de vibracao
-
-1. Conecte D7 do Arduino a um resistor de 1k ohm
-2. Conecte a outra ponta do resistor a Base do transistor 2N2222
-3. Conecte o Emitter do 2N2222 ao GND
-4. Conecte o Collector do 2N2222 ao terminal negativo (-) do motor
-5. Conecte o terminal positivo (+) do motor ao 5V
-6. Solde o diodo 1N4148 em paralelo com o motor:
-   - Catodo (faixa) no terminal positivo (+) / 5V
-   - Anodo no terminal negativo (-) / Collector
-
-### Passo 6: Montar o circuito de monitoramento de bateria
-
-1. Conecte um resistor de 10k ohm entre o terminal positivo da bateria e o pino A1
-2. Conecte outro resistor de 10k ohm entre o pino A1 e o GND
-3. Isso cria um divisor de tensao que reduz a tensao pela metade
-
-### Passo 7: Montar o circuito de alimentacao
-
-1. Conecte a bateria 18650 ao modulo TP4056 (observar polaridade!)
-2. Conecte a saida do TP4056 a uma chave deslizante
-3. Conecte a saida da chave ao VIN e GND do Arduino
-4. Verifique: a chave deve cortar a alimentacao completamente quando desligada
-
-### Passo 8: Montar no case 3D
-
-1. Imprima o case 3D (arquivos na pasta `/case_3d/`)
-2. Posicione os botoes nos furos do painel frontal
-3. Posicione o LCD na abertura do display
-4. Fixe o alto-falante na area de saida de som
-5. Posicione o potenciometro no painel lateral
-6. Acomode o Arduino, DFPlayer, TP4056 e bateria internamente
-7. Passe a chave liga/desliga para o painel lateral
-8. Feche o case
+### Passo 5: Bateria e fechamento
+1. Passe o cordao (se for usar) pelas orelhas traseiras (furos de 4mm)
+2. Encaixe a tampa (saia interna sobre o rim da base, bumps de clique)
+3. 2 parafusos M3: um na frente-direita, um atras-centro
+4. Insira a 18650 pelo **fundo** (tampa da bateria com 2 clipes) -
+   observe os simbolos +/- em relevo na propria tampa
+5. Cole os 4 pes de borracha nos rebaixos do fundo
 
 ---
 
 ## 10. Upload do Codigo
 
-### Requisitos
-
 - Arduino IDE 1.8.x ou 2.x
-- Bibliotecas necessarias (instalar via Gerenciador de Bibliotecas):
-  - `LiquidCrystal_I2C` (por Frank de Brabander)
-  - `DFRobotDFPlayerMini` (por DFRobot)
-
-### Procedimento
-
-1. Abra o arquivo `voz_autista_maker_code.ino` na Arduino IDE
-2. Instale as bibliotecas: **Ferramentas > Gerenciar Bibliotecas**
-   - Buscar "LiquidCrystal I2C" e instalar
-   - Buscar "DFRobotDFPlayerMini" e instalar
-3. Selecione a placa: **Ferramentas > Placa > Arduino Uno**
-4. Selecione a porta COM correta
-5. Clique em **Upload** (seta para a direita)
-6. Aguarde "Upload completo"
+- Bibliotecas: `LiquidCrystal_I2C` (Frank de Brabander) e
+  `DFRobotDFPlayerMini` (DFRobot)
+- Placa: Arduino Uno; abra `voz_autista_maker_code.ino` e faca Upload
+- O USB-B fica acessivel pela lateral esquerda do case - nao precisa abrir
 
 ---
 
 ## 11. Configuracao Facil
 
-Para personalizar as categorias e palavras do dispositivo, edite a secao de configuracao no arquivo `.ino`:
-
-### Alterar palavras existentes
-
-Localize o array `categories[]` e altere os textos:
+Edite a secao demarcada no `.ino` (categorias, palavras, tempos).
+Detalhes na secao 11 do guia v2.0 permanecem validos; os tempos agora incluem:
 
 ```cpp
-Category categories[] = {
-  {"Necessidades", {"Eu quero", "Comer", "Beber", "Banheiro", "Dormir"}, 5},
-  // ... altere os textos entre aspas
-};
-```
-
-### Adicionar nova categoria
-
-1. Adicione uma nova linha no array `categories[]`:
-```cpp
-  {"MinhaCategoria", {"Palavra1", "Palavra2", "Palavra3", "Palavra4", "Palavra5"}, 5},
-```
-2. O `NUM_CATEGORIES` e calculado automaticamente
-3. Crie a pasta correspondente no cartao SD (ex: `/08/`)
-4. Grave os MP3s como `001.mp3` a `005.mp3` na nova pasta
-
-### Alterar tempos
-
-```cpp
-const unsigned long DEBOUNCE_DELAY   = 250;    // Debounce dos botoes (ms)
-const unsigned long LONG_PRESS_TIME  = 800;    // Tempo para press longo (ms)
-const unsigned long SLEEP_TIMEOUT    = 120000; // Tempo para dormir (ms)
-const unsigned long VOLUME_INTERVAL  = 500;    // Intervalo leitura volume (ms)
-const unsigned long BATTERY_INTERVAL = 10000;  // Intervalo leitura bateria (ms)
-const int VIBRATE_MS = 60;                     // Duracao vibracao (ms)
-const int PHRASE_DELAY = 1300;                 // Pausa entre palavras da frase (ms)
+const int PHRASE_DELAY = 250;  // pausa APOS o fim real do audio (BUSY/D8)
 ```
 
 ---
 
 ## 12. Como Usar
 
-### Operacao basica
-
-1. **Ligar:** Deslize a chave para a posicao ON
-2. **Aguarde** a mensagem "Voz Autista v2.0" aparecer no LCD
-3. **Navegar categorias:** Use o botao vermelho (Cat+) e amarelo (Cat-)
-4. **Navegar palavras:** Use o botao verde (Pal+) e azul (Pal-)
-5. **Falar:** Pressione brevemente o botao preto (FALAR)
-6. **Volume:** Gire o potenciometro para ajustar
-
-### Frase composta
-
-1. Navegue ate a primeira palavra desejada
-2. **Segure** o botao preto por mais de 0.8 segundos -> palavra adicionada a frase
-3. Repita para ate 5 palavras
-4. Pressione **vermelho + amarelo juntos** para falar a frase toda
-5. Pressione **verde + azul juntos** para limpar a frase
-
-### Modo sleep
-
-- Apos 2 minutos sem uso, o LCD apaga automaticamente
-- Pressione qualquer botao para acordar o dispositivo
-
-### Bateria
-
-- Observe o icone de bateria no canto do LCD
-- Recarregue conectando um cabo micro-USB ao modulo TP4056
-- O LED vermelho do TP4056 indica carga em andamento
-- O LED azul/verde do TP4056 indica carga completa
+1. **Ligar:** chave na posicao ON (recuada na traseira - empurre com a unha)
+2. Navegue categorias (fileira de cima) e palavras (fileira do meio)
+3. **FALAR** (botao grande de baixo): curto = fala; longo = adiciona a frase
+4. Volume: knob estriado na lateral direita
+5. Recarga: cabo micro-USB na lateral esquerda (LED vermelho = carregando,
+   azul/verde = completo)
+6. Troca de bateria: tampa com clipes no fundo - sem abrir o case
 
 ---
 
@@ -607,65 +392,65 @@ const int PHRASE_DELAY = 1300;                 // Pausa entre palavras da frase 
 
 | Problema | Causa Provavel | Solucao |
 |----------|---------------|---------|
-| LCD nao liga / tela em branco | Endereco I2C nao detectado | Verifique conexoes SDA (A4) e SCL (A5). Verifique se o modulo I2C esta soldado corretamente ao LCD. Tente ajustar o potenciometro de contraste no modulo I2C. |
-| LCD exibe quadrados na linha 1 | Contraste desajustado | Gire o potenciometro azul no modulo I2C ate o texto ficar legivel |
-| DFPlayer nao reproduz audio | Cartao SD com formato errado | Formate o cartao como FAT32. Verifique se as pastas sao /01/, /02/ etc. e arquivos sao 001.mp3, 002.mp3 etc. |
-| Sem som no alto-falante | Conexao do alto-falante solta | Verifique se o alto-falante esta conectado em SPK1 e SPK2 do DFPlayer. Verifique se o volume nao esta no minimo (gire o potenciometro). |
-| Som distorcido ou fraco | Volume muito alto ou MP3 ruim | Reduza o volume pelo potenciometro. Regrave os MP3s em 128kbps mono. |
-| Botao nao responde | Fio solto ou botao com defeito | Verifique a conexao do botao ao pino correto e ao GND. Teste o botao com um multimetro. |
-| Motor de vibracao nao funciona | Circuito do transistor errado | Verifique a pinagem do 2N2222 (E-B-C). Verifique o resistor de 1k ohm na base. Verifique se o diodo 1N4148 esta na polaridade correta. |
-| Vibracao continua sem parar | Transistor em curto ou D7 em HIGH | Troque o 2N2222. Verifique se nao ha curto entre Collector e Emitter. |
-| Bateria nao carrega | Modulo TP4056 com defeito | Verifique a polaridade da bateria no TP4056. Teste com outro cabo micro-USB. Verifique se a chave esta na posicao correta. |
-| Leitura de bateria incorreta | Divisor de tensao com valores errados | Verifique se os dois resistores sao de 10k ohm. Meça a tensao no pino A1 com multimetro (deve ser metade da tensao da bateria). |
-| Dispositivo desliga sozinho | Bateria descarregada | Recarregue a bateria. A protecao do TP4056 corta abaixo de ~2.5V. |
-| LCD apaga sozinho | Modo sleep ativado | Normal! Pressione qualquer botao para acordar. O sleep ocorre apos 2 minutos de inatividade. |
-| Erro na compilacao | Bibliotecas nao instaladas | Instale LiquidCrystal_I2C e DFRobotDFPlayerMini pelo Gerenciador de Bibliotecas. |
-| Upload falha | Porta COM errada ou cabo defeituoso | Selecione a porta correta em Ferramentas > Porta. Use um cabo USB com dados (nao apenas carga). |
-| Palavras na ordem errada | Arquivos MP3 nomeados incorretamente | Os arquivos devem ser nomeados 001.mp3 a 005.mp3 com tres digitos. Nao use nomes descritivos. |
-| Frase composta nao funciona | Press longo nao detectado | Segure o botao preto por pelo menos 0.8 segundos. O LCD mostra um indicador quando a palavra e adicionada. |
-| Volume nao muda | Potenciometro desconectado | Verifique as 3 conexoes do potenciometro: 5V, A0 (wiper), GND. |
-| I2C nao detecta LCD | Barramento I2C com problema | Verifique se nao ha outros dispositivos no barramento. Tente resistores pull-up externos de 4.7k ohm em SDA e SCL. |
+| LCD nao liga / tela em branco | I2C nao detectado | Verifique SDA (A4) e SCL (A5); ajuste o trimpot de contraste do backpack |
+| LCD com contraste fraco mesmo ajustando | Alimentacao abaixo de 5V | Confira a saida do MT3608 (deve ser 5.0V); bateria carregada? |
+| DFPlayer nao reproduz | SD em formato errado | FAT32; pastas /01/../07/; arquivos 001.mp3..005.mp3 |
+| DFPlayer reseta/clica ao tocar | Falta decoupling | Confirme o 470uF + 100nF no VCC do modulo (470uF com polaridade certa) |
+| Frase composta "atropela" as palavras | Fio BUSY solto | Confira BUSY -> D8 (o firmware usa timeout de 8s como fallback) |
+| Medidor de bateria nao muda | Divisor errado | Confirme 100k (Vbat->A1) e 33k (A1->GND); meca A1: deve dar Vbat x 0.248 |
+| Medidor de bateria sempre cheio/vazio | Resistores trocados entre si | 100k vai no lado da bateria, 33k no lado do GND |
+| Volume nao muda | Pot desconectado | 3 fios: 5V, A0 (wiper), GND |
+| Motor nao vibra | Driver errado | 2N2222 e E-B-C (face plana p/ voce); 1k na base; 1N4148 catodo no +5V |
+| Vibracao continua | Transistor em curto | Troque o 2N2222 |
+| Bateria nao carrega | TP4056/cabo | Polaridade da bateria; outro cabo micro-USB |
+| Dispositivo desliga sozinho | Bateria fraca | Recarregue (protecao DW01A corta ~2.5V) |
+| LCD apaga sozinho | Sleep apos 2 min | Normal - qualquer botao acorda |
+| Erro de compilacao | Bibliotecas faltando | Instale LiquidCrystal_I2C e DFRobotDFPlayerMini |
+| Audio engasga so na bateria | Boost no limite | Confira o ajuste de 5.0V do MT3608; bateria com carga |
 
 ---
 
 ## 14. Notas Tecnicas
 
-### Consumo de corrente estimado
+### Consumo estimado (rail 5V)
 
 | Componente | Corrente tipica |
 |-----------|----------------|
 | Arduino Uno | ~50 mA |
-| LCD 16x2 + I2C | ~20 mA (backlight ligado) |
-| DFPlayer Mini (tocando) | ~40 mA |
-| Alto-falante | Incluso no DFPlayer |
-| Motor vibracao (ativo) | ~80 mA (breve, 60ms) |
-| Botoes e resistores | < 1 mA |
-| **Total (tipico)** | **~110 mA** |
+| LCD 16x2 + I2C (backlight) | ~25 mA |
+| DFPlayer tocando | ~40 mA (picos de ~200 mA - dai o 470uF) |
+| Motor vibracao (60ms) | ~80 mA (breve) |
+| Divisor da bateria | ~0.03 mA (v3.0; era 0.21 mA) |
+| **Total medio** | **~115 mA no rail 5V** |
 
-### Autonomia estimada com 18650
+### Autonomia com 18650 (via boost)
 
-- Bateria 18650 tipica: 2600 mAh
-- Consumo medio (uso intermitente): ~80 mA
-- Autonomia estimada: **~30 horas** (dependendo do uso)
+- O boost converte: corrente na bateria ~ 115mA x 5V / 3.7V / 0.85 (efic.) ~ 183 mA
+- 18650 de 2600 mAh -> **~14h de uso continuo**; com sleep e uso intermitente,
+  varios dias
 
-### Bibliotecas utilizadas
+### Bibliotecas
 
 | Biblioteca | Versao minima | Funcao |
 |-----------|--------------|--------|
-| Wire.h | (inclusa no Arduino) | Comunicacao I2C |
-| LiquidCrystal_I2C | 1.1.2+ | Controle do LCD |
-| SoftwareSerial | (inclusa no Arduino) | Comunicacao serial com DFPlayer |
-| DFRobotDFPlayerMini | 1.0.5+ | Controle do modulo MP3 |
+| Wire.h | inclusa | I2C |
+| LiquidCrystal_I2C | 1.1.2+ | LCD |
+| SoftwareSerial | inclusa | Serial do DFPlayer (D10/D11) |
+| DFRobotDFPlayerMini | 1.0.5+ | Controle do MP3 |
 
-### Limitacoes conhecidas
+### Notas de projeto
 
-- O LCD 16x2 exibe no maximo 16 caracteres por linha (nomes longos sao truncados)
-- A frase composta suporta ate 5 palavras (configuravel via `MAX_PHRASE`)
-- O DFPlayer pode levar ~200ms para iniciar a reproducao de cada faixa
-- O SoftwareSerial nos pinos D10/D11 pode conflitar com outras bibliotecas que usam interrupcoes
+- SoftwareSerial em D10/D11 usa pin-change interrupts; nao conflita com nada
+  neste projeto (tone() nao e usado no firmware real)
+- `analogReference(INTERNAL)` exige descartar a 1a leitura apos a troca de
+  referencia (feito em `readBattery()`)
+- Pinos livres para expansao: D9, D12, D13, A2, A3
+- O LCD trunca nomes com mais de 16 caracteres; frase composta ate 5 palavras
 
 ---
 
-**Arquivo do codigo-fonte:** `voz_autista_maker_code.ino`
-**Case 3D:** pasta `case_3d/`
+**Codigo-fonte:** `voz_autista_maker_code.ino`
+**Case 3D v3.0:** pasta `case_3d/` (ver `CHANGELOG_V3.md`)
 **Simulacao Wokwi:** pasta `wokwi_simulacao/`
+**Manual visual:** `manual_montagem_visual.html`
+**Viewer 3D do circuito:** `case_3d/visualizar_circuito_3d.html`

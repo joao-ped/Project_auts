@@ -1,29 +1,33 @@
 // ============================================================
-// Voz Autista v2.0 - Simulacao Wokwi
+// Voz Autista v3.0 - Simulacao Wokwi
 // Comunicador Assistivo para pessoas com autismo
 // ============================================================
 //
-// SIMULACAO WOKWI - Equivalencias:
-//   DFPlayer Mini  -> Buzzer no pino D9
-//   Motor vibracao -> LED verde no pino D7
-//   Volume pot     -> Potenciometro em A0
-//   Bateria        -> Potenciometro em A1
+// SIMULACAO WOKWI v3.0 - Equivalencias com o hardware real:
+//   DFPlayer Mini  -> Buzzer no pino D9 (Wokwi nao tem DFPlayer)
+//   Motor vibracao -> Circuito REAL do driver: D7 -> 1k -> 2N2222,
+//                     com LED como carga indicadora (Wokwi nao tem
+//                     motor DC; o 1N4148 fica so no hardware real)
+//   Volume pot     -> Potenciometro em A0 (igual ao real)
+//   Bateria        -> Potenciometro como "fonte variavel" alimentando
+//                     o DIVISOR REAL 100k/33k que chega em A1
 //   LCD I2C        -> LCD 16x2 I2C (0x27)
 //
-// PINAGEM (identica ao hardware real):
+// PINAGEM v3.0 (identica ao hardware real; D9 so existe na simulacao):
 //   D2  -> Botao Vermelho (Cat+)   -> GND
 //   D3  -> Botao Amarelo  (Cat-)   -> GND
 //   D4  -> Botao Verde    (Pal+)   -> GND
 //   D5  -> Botao Azul     (Pal-)   -> GND
 //   D6  -> Botao Preto    (FALAR)  -> GND
-//   D7  -> LED verde (simula vibracao)
-//   D9  -> Buzzer (simula DFPlayer)
+//   D7  -> 1k -> base 2N2222 (LED indica "vibracao")
+//   D8  <- (BUSY do DFPlayer no real; nao usado na simulacao)
+//   D9  -> Buzzer (simula DFPlayer; no real: D10/D11 SoftwareSerial)
 //   A0  <- Potenciometro (volume)
-//   A1  <- Potenciometro (bateria)
+//   A1  <- Divisor 100k/33k alimentado pelo pot "bateria" (ref 1.1V)
 //   A4  -> LCD SDA (I2C)
 //   A5  -> LCD SCL (I2C)
 //
-// FUNCIONALIDADES v2.0:
+// FUNCIONALIDADES (iguais a v2.0):
 //   - 7 categorias, 35 palavras
 //   - Volume via potenciometro
 //   - Bateria simulada com icone
@@ -204,7 +208,7 @@ void setup() {
   lcd.setCursor(2, 0);
   lcd.print(F("Voz Autista"));
   lcd.setCursor(2, 1);
-  lcd.print(F("v2.0  Wokwi"));
+  lcd.print(F("v3.0  Wokwi"));
 
   // Melodia de inicializacao
   tone(buzzerPin, 523, 100);
@@ -222,7 +226,7 @@ void setup() {
   batteryPercent = readBattery();
 
   // Info serial
-  Serial.println(F("=== Voz Autista v2.0 - Simulacao Wokwi ==="));
+  Serial.println(F("=== Voz Autista v3.0 - Simulacao Wokwi ==="));
   Serial.print(F("Categorias: "));
   Serial.println(NUM_CATEGORIES);
   Serial.print(F("Volume: "));
@@ -578,9 +582,19 @@ void updateVolume() {
 
 // ===================== BATERIA =====================
 int readBattery() {
-  // Na simulacao: potenciometro 0-1023 mapeado para 0-100%
+  // v3.0: identico ao hardware real. O wiper do pot "bateria" faz o
+  // papel da 18650 (gire para simular 3.0V..4.2V) e passa pelo divisor
+  // REAL de 100k/33k antes de chegar em A1. A leitura usa a referencia
+  // interna de 1.1V (absoluta, nao depende do VCC):
+  //   4.2V -> 4.2*33/133 = 1.042V -> ADC ~969 (100%)
+  //   3.0V -> 3.0*33/133 = 0.744V -> ADC ~692 (0%)
+  analogReference(INTERNAL);   // 1.1V
+  analogRead(pinBattery);      // descarta 1a leitura (ref estabilizando)
+  delay(2);
   int raw = analogRead(pinBattery);
-  int pct = map(raw, 0, 1023, 0, 100);
+  analogReference(DEFAULT);    // volta p/ VCC (pot de volume)
+  analogRead(pinVolume);       // descarta leitura de transicao
+  int pct = map(raw, 692, 969, 0, 100);
   return constrain(pct, 0, 100);
 }
 

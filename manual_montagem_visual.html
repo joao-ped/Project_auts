@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual de Montagem v2.0 - Voz Autista</title>
+    <title>Manual de Montagem v3.0 - Voz Autista</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
         :root {
@@ -46,6 +46,8 @@
         .material-item .qty{background:var(--primary);color:#fff;min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8em;font-weight:700;flex-shrink:0}
         .material-item.new{border-color:#10b981;background:#ecfdf5}
         .material-item.new .qty{background:#10b981}
+        .material-item.removed{border-color:#ef4444;background:#fef2f2;text-decoration:line-through;color:var(--g400)}
+        .material-item.removed .qty{background:#ef4444}
         .pin-table{width:100%;border-collapse:separate;border-spacing:0;margin:20px 0;border-radius:12px;overflow:hidden;border:1px solid var(--g200);font-size:.9em}
         .pin-table th{background:var(--g800);color:#fff;padding:12px 14px;text-align:left;font-weight:600;font-size:.85em;text-transform:uppercase;letter-spacing:.03em}
         .pin-table td{padding:10px 14px;border-bottom:1px solid var(--g100)}
@@ -61,6 +63,7 @@
         .troubleshoot-item .problem{font-weight:600;color:#92400e;margin-bottom:4px}
         .troubleshoot-item .solution{font-size:.9em;color:#78350f}
         .new-badge{background:#10b981;color:#fff;font-size:.7em;padding:2px 8px;border-radius:6px;font-weight:700;margin-left:8px;vertical-align:middle}
+        .upd-badge{background:#f59e0b;color:#fff;font-size:.7em;padding:2px 8px;border-radius:6px;font-weight:700;margin-left:8px;vertical-align:middle}
         svg{max-width:100%;height:auto}
         svg text{font-family:'Inter',sans-serif}
         footer{text-align:center;padding:40px 20px;color:var(--g500);font-size:.9em}
@@ -73,10 +76,28 @@
 <div class="container">
 
 <header>
-    <h1>Manual de Montagem v2.0</h1>
+    <h1>Manual de Montagem v3.0</h1>
     <p class="subtitle">Voz Autista &mdash; Comunicador Assistivo</p>
-    <span class="badge">7 Categorias &bull; 35 Palavras &bull; Frases Compostas &bull; Bateria</span>
+    <span class="badge">Case console em cunha &bull; Bot&otilde;es 2+2+1 &bull; Bateria com tampa de troca &bull; Circuito revisado</span>
 </header>
+
+<!-- ==================== O QUE MUDOU ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number gold">!</div>
+        <div class="step-title">O que mudou da v2.0 para a v3.0</div>
+    </div>
+    <p class="step-desc"><strong>A pinagem dos bot&otilde;es, LCD, DFPlayer, volume e vibra&ccedil;&atilde;o N&Atilde;O mudou.</strong> As mudan&ccedil;as s&atilde;o de circuito (valores e um fio novo) e de case:</p>
+    <table class="pin-table">
+        <tr><th>Mudan&ccedil;a</th><th>Por qu&ecirc;</th></tr>
+        <tr><td><strong>Divisor da bateria: 10k+10k &rarr; 100k+33k</strong> + 100nF em A1, lido com refer&ecirc;ncia interna 1.1V</td><td>Com a 18650 alimentando o Arduino, o VCC <em>&eacute;</em> a tens&atilde;o da bateria &mdash; medir Vbat/2 contra o pr&oacute;prio VCC dava leitura constante (bug). A refer&ecirc;ncia interna &eacute; absoluta. B&ocirc;nus: dreno 7&times; menor.</td></tr>
+        <tr><td><strong>RX do DFPlayer: 1k &rarr; divisor 1k/2k</strong></td><td>O DFPlayer &eacute; l&oacute;gica 3.3V; o divisor entrega o n&iacute;vel correto (datasheet DFR0299).</td></tr>
+        <tr><td><strong>470&micro;F + 100nF no VCC do DFPlayer</strong></td><td>Picos de corrente no in&iacute;cio de cada faixa causavam resets e cliques.</td></tr>
+        <tr><td><strong>Fio novo: BUSY do DFPlayer &rarr; D8</strong></td><td>A frase composta espera o MP3 terminar de verdade, sem pausa fixa.</td></tr>
+        <tr><td><strong>Boost MT3608</strong> entre a chave e o rail 5V</td><td>A 18650 (3.0&ndash;4.2V) direto no 5V deixa o LCD fraco e o ATmega fora de spec. O boost (~R$5) entrega 5V est&aacute;veis.</td></tr>
+        <tr><td><strong>Case v3.0</strong>: 150&times;100 mm em cunha (40&rarr;48 mm), LCD inclinado 12&deg;, bot&otilde;es 2+2+1 com an&eacute;is t&aacute;teis, FALAR maior, bateria com tampa de troca no fundo, speaker no fundo, orelhas p/ cord&atilde;o</td><td>Acessibilidade (AAC), ergonomia infantil+adulto e corre&ccedil;&atilde;o da colis&atilde;o Arduino&times;bateria do case v2.0. Detalhes: <code>case_3d/CHANGELOG_V3.md</code>.</td></tr>
+    </table>
+</div>
 
 <!-- ==================== MATERIAIS ==================== -->
 <div class="step">
@@ -84,1465 +105,479 @@
         <div class="step-number">0</div>
         <div class="step-title">Lista de Materiais</div>
     </div>
-    <p class="step-desc">Componentes originais + novos para a v2.0 (marcados em verde).</p>
+    <p class="step-desc">Itens novos da v3.0 em verde; item da v2.0 substitu&iacute;do em vermelho.</p>
     <div class="materials-grid">
         <div class="material-item"><span class="qty">1x</span>Arduino Uno R3</div>
         <div class="material-item"><span class="qty">1x</span>LCD 16x2 com I2C</div>
         <div class="material-item"><span class="qty">1x</span>DFPlayer Mini MP3</div>
         <div class="material-item"><span class="qty">1x</span>Alto-falante 8&#8486; 2W 40mm</div>
         <div class="material-item"><span class="qty">5x</span>Botoes 12mm (5 cores)</div>
-        <div class="material-item"><span class="qty">1x</span>Resistor 1k&#8486; (DFPlayer)</div>
+        <div class="material-item"><span class="qty">1x</span>Potenciometro 10k&#8486; linear</div>
+        <div class="material-item"><span class="qty">1x</span>Motor vibracao coin 10mm</div>
+        <div class="material-item"><span class="qty">1x</span>Transistor NPN 2N2222</div>
+        <div class="material-item"><span class="qty">1x</span>Diodo 1N4148</div>
+        <div class="material-item"><span class="qty">2x</span>Resistor 1k&#8486; (RX DFP + base 2N2222)</div>
+        <div class="material-item"><span class="qty">1x</span>Bateria 18650 3.7V</div>
+        <div class="material-item"><span class="qty">1x</span>Modulo TP4056 c/ protecao</div>
+        <div class="material-item"><span class="qty">1x</span>Chave deslizante on/off</div>
         <div class="material-item"><span class="qty">1x</span>Cartao microSD FAT32</div>
         <div class="material-item"><span class="qty">~</span>Fios jumper variados</div>
-        <div class="material-item"><span class="qty">4x</span>Parafusos M3x12 (fecha case)</div>
-        <div class="material-item"><span class="qty">4x</span>Parafusos M2.5x8 (fixa Arduino)</div>
-        <div class="material-item"><span class="qty">4x</span>Pes de borracha 10mm (fundo)</div>
-        <div class="material-item"><span class="qty">1x</span>Case 3D (base + tampa, PLA/PETG)</div>
-        <div class="material-item new"><span class="qty">1x</span>Potenciometro 10k&#8486; linear <span class="new-badge">NOVO</span></div>
-        <div class="material-item new"><span class="qty">1x</span>Motor vibracao coin 10mm <span class="new-badge">NOVO</span></div>
-        <div class="material-item new"><span class="qty">1x</span>Transistor NPN 2N2222 <span class="new-badge">NOVO</span></div>
-        <div class="material-item new"><span class="qty">1x</span>Diodo 1N4148 <span class="new-badge">NOVO</span></div>
-        <div class="material-item new"><span class="qty">1x</span>Resistor 1k&#8486; (transistor) <span class="new-badge">NOVO</span></div>
-        <div class="material-item new"><span class="qty">2x</span>Resistor 10k&#8486; (bateria) <span class="new-badge">NOVO</span></div>
-        <div class="material-item new"><span class="qty">1x</span>Bateria 18650 3.7V <span class="new-badge">NOVO</span></div>
-        <div class="material-item new"><span class="qty">1x</span>Modulo TP4056 carregador <span class="new-badge">NOVO</span></div>
-        <div class="material-item new"><span class="qty">1x</span>Chave deslizante on/off <span class="new-badge">NOVO</span></div>
+        <div class="material-item"><span class="qty">2x</span>Parafusos M3x12 (fecha tampa)</div>
+        <div class="material-item"><span class="qty">8x</span>Parafusos M2.5/M3 auto-atarr. (Arduino+LCD)</div>
+        <div class="material-item"><span class="qty">4x</span>Pes de borracha 10mm</div>
+        <div class="material-item"><span class="qty">1x</span>Case 3D v3.0 (base+tampa+tampa bateria)</div>
+        <div class="material-item new"><span class="qty">1x</span>Resistor 2k&#8486; (RX DFPlayer) <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Resistor 100k&#8486; (bateria) <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Resistor 33k&#8486; (bateria) <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Capacitor 470&micro;F &ge;10V <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">2x</span>Capacitor 100nF <span class="new-badge">NOVO</span></div>
+        <div class="material-item new"><span class="qty">1x</span>Modulo boost MT3608 <span class="new-badge">NOVO</span></div>
+        <div class="material-item removed"><span class="qty">2x</span>Resistor 10k&#8486; (divisor v2.0)</div>
     </div>
-
-    <div class="diagram-container">
-        <svg width="840" height="360" viewBox="0 0 840 360">
-            <defs>
-                <filter id="sh" x="-8%" y="-8%" width="120%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".12"/></filter>
-                <linearGradient id="brd" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0369a1"/></linearGradient>
-                <linearGradient id="dfp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
-                <linearGradient id="lcd" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#166534"/><stop offset="100%" stop-color="#14532d"/></linearGradient>
-                <radialGradient id="spk" cx="40%" cy="40%"><stop offset="0%" stop-color="#525252"/><stop offset="100%" stop-color="#1c1917"/></radialGradient>
-                <linearGradient id="mtl" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#e5e7eb"/><stop offset="50%" stop-color="#d1d5db"/><stop offset="100%" stop-color="#9ca3af"/></linearGradient>
-                <linearGradient id="bat" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
-                <linearGradient id="tp4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#5b21b6"/></linearGradient>
-                <marker id="arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0,6 2,0 4" fill="#f97316"/></marker>
-            </defs>
-            <!-- Arduino -->
-            <g filter="url(#sh)"><rect x="20" y="25" width="120" height="95" rx="5" fill="url(#brd)"/><rect x="17" y="50" width="14" height="22" rx="3" fill="url(#mtl)" stroke="#9ca3af" stroke-width="1"/></g>
-            <text x="80" y="145" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">Arduino Uno</text>
-            <!-- LCD -->
-            <g filter="url(#sh)"><rect x="170" y="25" width="130" height="65" rx="4" fill="url(#lcd)"/><rect x="180" y="33" width="110" height="40" rx="2" fill="#0f172a"/><text x="235" y="55" text-anchor="middle" fill="#4ade80" font-size="8" font-family="'JetBrains Mono'">Voz Autista</text></g>
-            <text x="235" y="110" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">LCD 16x2 I2C</text>
-            <!-- DFPlayer -->
-            <g filter="url(#sh)"><rect x="330" y="30" width="55" height="55" rx="3" fill="url(#dfp)"/><rect x="340" y="65" width="35" height="14" rx="2" fill="#292524"/></g>
-            <text x="358" y="110" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">DFPlayer</text>
-            <!-- Speaker -->
-            <g filter="url(#sh)"><circle cx="440" cy="57" r="30" fill="url(#spk)"/><circle cx="440" cy="57" r="20" fill="none" stroke="#404040" stroke-width="1"/><circle cx="440" cy="57" r="7" fill="#292524"/></g>
-            <text x="440" y="105" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">Speaker 40mm</text>
-            <!-- Botoes -->
-            <g transform="translate(20,160)">
-                <g filter="url(#sh)"><rect x="0" y="0" width="28" height="28" rx="6" fill="#ef4444"/><circle cx="14" cy="14" r="8" fill="#dc2626"/></g>
-                <g filter="url(#sh)"><rect x="40" y="0" width="28" height="28" rx="6" fill="#eab308"/><circle cx="54" cy="14" r="8" fill="#ca8a04"/></g>
-                <g filter="url(#sh)"><rect x="80" y="0" width="28" height="28" rx="6" fill="#22c55e"/><circle cx="94" cy="14" r="8" fill="#16a34a"/></g>
-                <g filter="url(#sh)"><rect x="120" y="0" width="28" height="28" rx="6" fill="#3b82f6"/><circle cx="134" cy="14" r="8" fill="#2563eb"/></g>
-                <g filter="url(#sh)"><rect x="160" y="0" width="28" height="28" rx="6" fill="#374151"/><circle cx="174" cy="14" r="8" fill="#1f2937"/></g>
-            </g>
-            <text x="114" y="210" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">5 Botoes (12mm)</text>
-            <!-- Resistor -->
-            <g filter="url(#sh)" transform="translate(520,30)"><rect x="5" y="5" width="50" height="16" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/><rect x="14" y="5" width="6" height="16" rx="1" fill="#92400e"/><rect x="24" y="5" width="6" height="16" rx="1" fill="#1c1917"/><rect x="34" y="5" width="6" height="16" rx="1" fill="#dc2626"/></g>
-            <text x="550" y="70" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">Resistor 1k&#8486;</text>
-
-            <!-- === NOVOS COMPONENTES (v2.0) === -->
-            <!-- Potenciometro -->
-            <g filter="url(#sh)" transform="translate(510,100)">
-                <circle cx="25" cy="25" r="22" fill="var(--g200)" stroke="var(--g400)" stroke-width="2"/>
-                <circle cx="25" cy="25" r="14" fill="var(--g300)"/>
-                <line x1="25" y1="25" x2="25" y2="8" stroke="var(--g800)" stroke-width="3" stroke-linecap="round"/>
-            </g>
-            <text x="535" y="165" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">Pot. Volume</text>
-            <text x="535" y="177" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
-
-            <!-- Bateria 18650 -->
-            <g filter="url(#sh)" transform="translate(620,20)">
-                <rect x="0" y="0" width="75" height="24" rx="12" fill="url(#bat)"/>
-                <rect x="75" y="5" width="5" height="14" rx="2" fill="#93c5fd"/>
-                <text x="38" y="16" text-anchor="middle" fill="#fff" font-size="8" font-weight="600">18650</text>
-            </g>
-            <text x="658" y="65" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">Bateria 3.7V</text>
-            <text x="658" y="77" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
-
-            <!-- TP4056 -->
-            <g filter="url(#sh)" transform="translate(625,90)">
-                <rect x="0" y="0" width="55" height="30" rx="3" fill="url(#tp4)"/>
-                <rect x="0" y="10" width="8" height="10" rx="2" fill="var(--g300)"/>
-                <text x="30" y="19" text-anchor="middle" fill="#fff" font-size="7" font-weight="600">TP4056</text>
-            </g>
-            <text x="653" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">Carregador</text>
-            <text x="653" y="152" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
-
-            <!-- Motor vibracao -->
-            <g filter="url(#sh)" transform="translate(625,165)">
-                <circle cx="18" cy="18" r="16" fill="var(--g400)" stroke="var(--g500)" stroke-width="2"/>
-                <circle cx="18" cy="18" r="6" fill="var(--g600)"/>
-                <rect x="14" y="14" width="8" height="8" rx="1" fill="var(--g300)" transform="rotate(45,18,18)"/>
-            </g>
-            <text x="643" y="215" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">Motor Vibra.</text>
-            <text x="643" y="227" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
-
-            <!-- Transistor -->
-            <g filter="url(#sh)" transform="translate(720,165)">
-                <path d="M15,0 L30,35 L0,35 Z" fill="#1e293b" stroke="#374151" stroke-width="1.5"/>
-                <text x="15" y="24" text-anchor="middle" fill="#fff" font-size="6">2N</text>
-            </g>
-            <text x="735" y="215" text-anchor="middle" fill="#10b981" font-size="9" font-weight="700">2N2222</text>
-            <text x="735" y="227" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
-
-            <!-- Chave -->
-            <g filter="url(#sh)" transform="translate(720,90)">
-                <rect x="0" y="0" width="35" height="16" rx="8" fill="var(--g300)" stroke="var(--g400)" stroke-width="1.5"/>
-                <circle cx="25" cy="8" r="6" fill="#10b981"/>
-            </g>
-            <text x="738" y="125" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">On/Off</text>
-            <text x="738" y="137" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
-
-            <!-- Div. tensao resistors -->
-            <g filter="url(#sh)" transform="translate(510,195)">
-                <rect x="0" y="0" width="40" height="14" rx="7" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
-                <rect x="0" y="20" width="40" height="14" rx="7" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
-            </g>
-            <text x="530" y="245" text-anchor="middle" fill="#10b981" font-size="9" font-weight="700">2x 10k&#8486;</text>
-            <text x="530" y="257" text-anchor="middle" fill="#10b981" font-size="8">NOVO</text>
-
-            <!-- microSD (insere no DFPlayer) -->
-            <g filter="url(#sh)" transform="translate(240,160)">
-                <rect x="5" y="0" width="28" height="20" rx="3" fill="#1e293b"/><rect x="0" y="8" width="38" height="24" rx="3" fill="#374151"/>
-            </g>
-            <text x="259" y="210" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">microSD</text>
-            <text x="259" y="222" text-anchor="middle" fill="var(--g500)" font-size="8">35 MP3s</text>
-            <path d="M268,185 Q310,185 310,140 L350,140" stroke="#f97316" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
-            <text x="310" y="130" text-anchor="middle" fill="#f97316" font-size="8" font-weight="600">Insere no DFPlayer</text>
-
-            <!-- Jumpers -->
-            <g transform="translate(320,160)">
-                <line x1="5" y1="8" x2="55" y2="8" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
-                <line x1="5" y1="20" x2="55" y2="20" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
-                <line x1="5" y1="32" x2="55" y2="32" stroke="#22c55e" stroke-width="3" stroke-linecap="round"/>
-                <line x1="5" y1="44" x2="55" y2="44" stroke="#a855f7" stroke-width="3" stroke-linecap="round"/>
-            </g>
-            <text x="350" y="222" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="600">Jumpers</text>
-
-            <!-- Cola + Diodo -->
-            <g filter="url(#sh)" transform="translate(420,165)">
-                <rect x="0" y="5" width="10" height="25" rx="2" fill="#f97316"/>
-                <polygon points="5,0 10,5 0,5" fill="#f97316"/>
-            </g>
-            <text x="425" y="210" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="600">Cola</text>
-
-            <g filter="url(#sh)" transform="translate(450,160)">
-                <polygon points="10,0 20,15 0,15" fill="#1e293b" stroke="#374151" stroke-width="1"/>
-                <line x1="0" y1="15" x2="20" y2="15" stroke="#374151" stroke-width="2"/>
-            </g>
-            <text x="460" y="195" text-anchor="middle" fill="#10b981" font-size="9" font-weight="700">1N4148</text>
-
-            <!-- Legenda -->
-            <rect x="20" y="270" width="800" height="70" rx="10" fill="#fff" stroke="var(--g200)" stroke-width="1"/>
-            <text x="40" y="295" fill="var(--g800)" font-size="11" font-weight="700">Novidades v2.0:</text>
-            <text x="40" y="320" fill="var(--g600)" font-size="10">Potenciometro (volume) + Bateria 18650 + TP4056 (carga) + Motor vibracao + Chave on/off + Divisor tensao + Transistor + Diodo</text>
-        </svg>
-    </div>
+    <div class="info"><strong>Custo das mudan&ccedil;as:</strong> resistores e capacitores custam centavos; o MT3608 custa ~R$5. Total do projeto segue em ~R$128&ndash;135.</div>
 </div>
 
-<!-- ==================== ETAPA 1: Layout do case 3D ==================== -->
+<!-- ==================== PINAGEM ==================== -->
 <div class="step">
     <div class="step-header">
         <div class="step-number">1</div>
-        <div class="step-title">Plano do Case 3D &mdash; Onde Cada Pe&ccedil;a Vai</div>
+        <div class="step-title">Tabela de Pinagem v3.0</div>
     </div>
-    <p class="step-desc">Antes de fixar nada, entenda o layout do case impresso. Todas as posicoes abaixo vem do arquivo <code>case_3d/case_voz_autista.scad</code> e devem ser respeitadas para os componentes encaixarem nas aberturas laterais e nos pilares de suporte. Dimens&otilde;es <strong>internas</strong>: <strong>170 &times; 110 &times; 42 mm</strong> (base 30 mm + tampa 12 mm).</p>
-
-    <!-- ===== VISTA SUPERIOR DA BASE ===== -->
-    <div class="diagram-container">
-        <p>BASE &mdash; Vista superior (em escala 1.6 mm/px)</p>
-        <svg width="900" height="540" viewBox="0 0 900 540" preserveAspectRatio="xMidYMid meet">
-            <defs>
-                <pattern id="grid_base" width="16" height="16" patternUnits="userSpaceOnUse">
-                    <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#cbd5e1" stroke-width="0.4"/>
-                </pattern>
-                <linearGradient id="case_base" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#dbeafe"/><stop offset="100%" stop-color="#bfdbfe"/></linearGradient>
-                <linearGradient id="ard_base" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0369a1"/></linearGradient>
-                <linearGradient id="dfp_base" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
-                <linearGradient id="tp4_base" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#5b21b6"/></linearGradient>
-                <linearGradient id="bat_base" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
-            </defs>
-
-            <!-- Case desenhado entre x=200 e x=480 (largura 280), y=40 e y=224 (altura 184) -->
-            <!-- Origem interna (mm 0,0): (204, 44) -->
-            <rect x="200" y="40" width="280" height="184" rx="13" fill="url(#case_base)" stroke="#3b82f6" stroke-width="2"/>
-            <rect x="204" y="44" width="272" height="176" rx="9" fill="url(#grid_base)" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3,2"/>
-
-            <!-- Cotas externas -->
-            <g font-family="'JetBrains Mono'" font-size="10" fill="var(--g500)">
-                <line x1="200" y1="240" x2="480" y2="240" stroke="var(--g500)" stroke-width="1"/>
-                <line x1="200" y1="236" x2="200" y2="244" stroke="var(--g500)" stroke-width="1"/>
-                <line x1="480" y1="236" x2="480" y2="244" stroke="var(--g500)" stroke-width="1"/>
-                <text x="340" y="256" text-anchor="middle">175 mm externo &nbsp;/&nbsp; 170 mm interno</text>
-
-                <line x1="492" y1="40" x2="492" y2="224" stroke="var(--g500)" stroke-width="1"/>
-                <line x1="488" y1="40" x2="496" y2="40" stroke="var(--g500)" stroke-width="1"/>
-                <line x1="488" y1="224" x2="496" y2="224" stroke="var(--g500)" stroke-width="1"/>
-                <text x="506" y="132" transform="rotate(90,506,132)" text-anchor="middle">115 mm ext / 110 mm int</text>
-            </g>
-
-            <!-- Arduino Uno (5,5) 69x54mm -->
-            <rect x="212" y="52" width="110" height="86" rx="3" fill="url(#ard_base)" filter="url(#sh)"/>
-            <text x="267" y="92" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">ARDUINO UNO</text>
-            <text x="267" y="106" text-anchor="middle" fill="rgba(255,255,255,.75)" font-size="8">69 &times; 54 mm</text>
-            <text x="267" y="119" text-anchor="middle" fill="rgba(255,255,255,.6)" font-size="7">(canto 5, 5)</text>
-            <!-- 4 furos M2.5 -->
-            <circle cx="224.4" cy="56" r="2" fill="#fff" stroke="#0c4a6e"/>
-            <circle cx="310" cy="64.2" r="2" fill="#fff" stroke="#0c4a6e"/>
-            <circle cx="310" cy="108.8" r="2" fill="#fff" stroke="#0c4a6e"/>
-            <circle cx="226.3" cy="133" r="2" fill="#fff" stroke="#0c4a6e"/>
-
-            <!-- DFPlayer Mini (80,10) 21x21mm -->
-            <rect x="332" y="60" width="34" height="34" rx="2" fill="url(#dfp_base)" filter="url(#sh)"/>
-            <text x="349" y="77" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">DFPlayer</text>
-            <text x="349" y="88" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="7">21&times;21 mm</text>
-
-            <!-- TP4056 (5,62) 25x19mm -->
-            <rect x="212" y="143" width="40" height="30" rx="2" fill="url(#tp4_base)" filter="url(#sh)"/>
-            <text x="232" y="160" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">TP4056</text>
-            <text x="232" y="170" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="7">25&times;19 mm</text>
-
-            <!-- Bateria 18650 (centro em 55,55), 65mm comp x 18mm diam -->
-            <rect x="299" y="134" width="104" height="29" rx="14" fill="url(#bat_base)" filter="url(#sh)"/>
-            <rect x="403" y="140" width="4" height="17" rx="2" fill="#93c5fd"/>
-            <text x="351" y="153" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">BATERIA 18650</text>
-            <text x="351" y="162" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="7">65 &times; 18 mm</text>
-
-            <!-- Motor vibracao (135,35) diam 10mm -->
-            <circle cx="420" cy="100" r="8" fill="var(--g400)" stroke="var(--g600)" stroke-width="1.5" filter="url(#sh)"/>
-            <text x="420" y="103" text-anchor="middle" fill="var(--g700)" font-size="8" font-weight="700">M</text>
-            <text x="445" y="103" fill="#10b981" font-size="8" font-weight="600">Motor 10 mm</text>
-
-            <!-- Speaker reservado (135,55) - na tampa, marcado tracejado -->
-            <circle cx="420" cy="132" r="32" fill="none" stroke="var(--g400)" stroke-width="1" stroke-dasharray="3,2"/>
-            <text x="420" y="180" text-anchor="middle" fill="var(--g500)" font-size="8" font-style="italic">Speaker (na tampa)</text>
-
-            <!-- Pilares dos cantos (M3) -->
-            <g fill="#fbbf24" stroke="#92400e" stroke-width="1">
-                <circle cx="217" cy="57" r="3"/><circle cx="463" cy="57" r="3"/>
-                <circle cx="217" cy="207" r="3"/><circle cx="463" cy="207" r="3"/>
-            </g>
-
-            <!-- Aberturas laterais com labels DENTRO do viewBox -->
-            <g font-family="Inter" font-size="9" font-weight="600">
-                <!-- ESQUERDA -->
-                <rect x="200" y="76" width="6" height="19" fill="#fff" stroke="#0c4a6e" stroke-width="1"/>
-                <line x1="200" y1="85" x2="180" y2="85" stroke="#0c4a6e" stroke-width="0.8"/>
-                <text x="178" y="88" text-anchor="end" fill="#0c4a6e">USB Arduino</text>
-
-                <rect x="200" y="108" width="6" height="18" fill="#fff" stroke="#0c4a6e" stroke-width="1"/>
-                <line x1="200" y1="117" x2="180" y2="117" stroke="#0c4a6e" stroke-width="0.8"/>
-                <text x="178" y="120" text-anchor="end" fill="#0c4a6e">Jack alim.</text>
-
-                <rect x="200" y="143" width="6" height="6" fill="#fff" stroke="#10b981" stroke-width="1"/>
-                <line x1="200" y1="146" x2="180" y2="146" stroke="#10b981" stroke-width="0.8"/>
-                <text x="178" y="149" text-anchor="end" fill="#10b981">micro-USB carga</text>
-
-                <rect x="200" y="180" width="6" height="8" fill="#fff" stroke="#10b981" stroke-width="1"/>
-                <line x1="200" y1="184" x2="180" y2="184" stroke="#10b981" stroke-width="0.8"/>
-                <text x="178" y="187" text-anchor="end" fill="#10b981">chave on/off</text>
-
-                <!-- DIREITA -->
-                <rect x="474" y="64" width="6" height="6" fill="#fff" stroke="#0c4a6e" stroke-width="1"/>
-                <line x1="480" y1="67" x2="540" y2="67" stroke="#0c4a6e" stroke-width="0.8"/>
-                <text x="544" y="70" fill="#0c4a6e">slot microSD</text>
-
-                <circle cx="477" cy="152" r="3" fill="#fff" stroke="#10b981" stroke-width="1"/>
-                <line x1="480" y1="152" x2="540" y2="152" stroke="#10b981" stroke-width="0.8"/>
-                <text x="544" y="155" fill="#10b981">pot. volume</text>
-            </g>
-
-            <!-- LEGENDA tabular -->
-            <g transform="translate(60,290)">
-                <text x="0" y="0" fill="var(--g800)" font-size="11" font-weight="700">Posi&ccedil;oes &mdash; refer&ecirc;ncia canto interno inferior-esquerdo (0, 0):</text>
-
-                <g font-family="'JetBrains Mono'" font-size="10">
-                    <!-- header -->
-                    <rect x="0" y="14" width="800" height="22" fill="#0f172a"/>
-                    <text x="14" y="29" fill="#fff" font-weight="700">Componente</text>
-                    <text x="220" y="29" fill="#fff" font-weight="700">Posi&ccedil;ao</text>
-                    <text x="420" y="29" fill="#fff" font-weight="700">Dimens&otilde;es</text>
-                    <text x="620" y="29" fill="#fff" font-weight="700">Notas</text>
-
-                    <!-- linhas -->
-                    <g fill="var(--g700)">
-                        <rect x="0" y="36" width="800" height="20" fill="#f8fafc"/>
-                        <text x="14" y="50">Arduino Uno</text>
-                        <text x="220" y="50">canto (5, 5) mm</text>
-                        <text x="420" y="50">69 &times; 54 mm</text>
-                        <text x="620" y="50">altura ~12 mm</text>
-
-                        <rect x="0" y="56" width="800" height="20" fill="#fff"/>
-                        <text x="14" y="70">DFPlayer Mini</text>
-                        <text x="220" y="70">canto (80, 10) mm</text>
-                        <text x="420" y="70">21 &times; 21 mm</text>
-                        <text x="620" y="70">altura ~7 mm</text>
-
-                        <rect x="0" y="76" width="800" height="20" fill="#f8fafc"/>
-                        <text x="14" y="90">TP4056</text>
-                        <text x="220" y="90">canto (5, 62) mm</text>
-                        <text x="420" y="90">25 &times; 19 mm</text>
-                        <text x="620" y="90">altura ~3 mm</text>
-
-                        <rect x="0" y="96" width="800" height="20" fill="#fff"/>
-                        <text x="14" y="110">Bateria 18650</text>
-                        <text x="220" y="110">centro (55, 55) mm</text>
-                        <text x="420" y="110">65 &times; 18 mm</text>
-                        <text x="620" y="110">berco impresso</text>
-
-                        <rect x="0" y="116" width="800" height="20" fill="#f8fafc"/>
-                        <text x="14" y="130">Motor vibra&ccedil;ao</text>
-                        <text x="220" y="130">centro (135, 35) mm</text>
-                        <text x="420" y="130">diam 10 mm</text>
-                        <text x="620" y="130">suporte anelar</text>
-
-                        <rect x="0" y="136" width="800" height="20" fill="#fff"/>
-                        <text x="14" y="150">Speaker</text>
-                        <text x="220" y="150">centro (135, 55) mm</text>
-                        <text x="420" y="150">diam 40 mm</text>
-                        <text x="620" y="150">NA TAMPA (grade)</text>
-
-                        <rect x="0" y="156" width="800" height="20" fill="#f8fafc"/>
-                        <text x="14" y="170">Pilares M3 (4&times;)</text>
-                        <text x="220" y="170">8 mm da borda</text>
-                        <text x="420" y="170">diam 8 mm, h 5 mm</text>
-                        <text x="620" y="170">furo &Oslash;3 mm</text>
-                    </g>
-                </g>
-            </g>
-        </svg>
-    </div>
-
-    <!-- ===== VISTA SUPERIOR DA TAMPA ===== -->
-    <div class="diagram-container">
-        <p>TAMPA &mdash; Vista superior externa (em escala 1.8 mm/px)</p>
-        <svg width="900" height="500" viewBox="0 0 900 500" preserveAspectRatio="xMidYMid meet">
-            <defs>
-                <linearGradient id="lid_top" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#e0e7ff"/><stop offset="100%" stop-color="#c7d2fe"/></linearGradient>
-                <pattern id="speaker_grid" x="0" y="0" width="11" height="11" patternUnits="userSpaceOnUse">
-                    <circle cx="5.5" cy="5.5" r="2" fill="#475569"/>
-                </pattern>
-            </defs>
-
-            <!-- Tampa externa - escala 1.8 mm/px. Case 170x110 mm => 306x198 px -->
-            <!-- Posicionado em x=180, y=40 -->
-            <rect x="180" y="40" width="310" height="202" rx="14" fill="url(#lid_top)" stroke="#6366f1" stroke-width="2"/>
-            <rect x="184" y="44" width="302" height="194" rx="10" fill="rgba(255,255,255,.55)" stroke="#a5b4fc" stroke-width="1" stroke-dasharray="3,2"/>
-
-            <!-- LCD janela (45, 20) mm = (45*1.8+184, 20*1.8+44) = (265, 80); 72x25mm = 130x45 px -->
-            <rect x="265" y="80" width="130" height="45" rx="3" fill="#0f172a" stroke="#1e293b" stroke-width="2"/>
-            <text x="330" y="100" text-anchor="middle" fill="#4ade80" font-size="11" font-family="'JetBrains Mono'">Voz Autista v2.0</text>
-            <text x="330" y="116" text-anchor="middle" fill="#4ade80" font-size="9" font-family="'JetBrains Mono'">&#9654; Eu quero</text>
-
-            <!-- Speaker grille (135, 55) mm = (135*1.8+184, 55*1.8+44) = (427, 143); diam 40mm = 72px (r=36) -->
-            <!-- Mas para nao colidir com botao VOZ em (15+4*28=127 mm, 80mm) = (413, 188), vou mover speaker pra cima -->
-            <!-- Real distance entre speaker e botao VOZ: sqrt((427-413)^2 + (188-143)^2) = sqrt(196+2025) = 47 px. Soma raios 36+22 = 58. STILL OVERLAP -->
-            <!-- Solucao: mostrar grade sem fundo, com furos apenas. E destacar com circulo tracejado fino -->
-            <g>
-                <!-- Furos individuais da grade (12 furos em grade hexagonal) -->
-                <g fill="#475569">
-                    <circle cx="411" cy="127" r="2.5"/><circle cx="427" cy="127" r="2.5"/><circle cx="443" cy="127" r="2.5"/>
-                    <circle cx="403" cy="141" r="2.5"/><circle cx="419" cy="141" r="2.5"/><circle cx="435" cy="141" r="2.5"/><circle cx="451" cy="141" r="2.5"/>
-                    <circle cx="411" cy="155" r="2.5"/><circle cx="427" cy="155" r="2.5"/><circle cx="443" cy="155" r="2.5"/>
-                    <circle cx="419" cy="169" r="2.5"/><circle cx="435" cy="169" r="2.5"/>
-                </g>
-                <circle cx="427" cy="143" r="36" fill="none" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="2,2"/>
-            </g>
-
-            <!-- 5 botoes em y=80mm = 188 px, raio 14mm/2*1.8 = 12.6 px -->
-            <!-- x: 15, 43, 71, 99, 127 mm => px: 211, 261, 312, 362, 413 -->
-            <g font-family="'JetBrains Mono'" font-weight="800">
-                <!-- CAT+ -->
-                <circle cx="211" cy="220" r="17" fill="none" stroke="#a5b4fc" stroke-width="2"/>
-                <circle cx="211" cy="220" r="13" fill="#ef4444" stroke="#dc2626" stroke-width="1.5"/>
-                <circle cx="207" cy="216" r="3" fill="#fff" opacity=".25"/>
-                <text x="211" y="252" text-anchor="middle" fill="var(--g800)" font-size="11">CAT+</text>
-
-                <!-- CAT- -->
-                <circle cx="261" cy="220" r="17" fill="none" stroke="#a5b4fc" stroke-width="2"/>
-                <circle cx="261" cy="220" r="13" fill="#eab308" stroke="#ca8a04" stroke-width="1.5"/>
-                <circle cx="257" cy="216" r="3" fill="#fff" opacity=".25"/>
-                <text x="261" y="252" text-anchor="middle" fill="var(--g800)" font-size="11">CAT-</text>
-
-                <!-- PAL+ -->
-                <circle cx="312" cy="220" r="17" fill="none" stroke="#a5b4fc" stroke-width="2"/>
-                <circle cx="312" cy="220" r="13" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
-                <circle cx="308" cy="216" r="3" fill="#fff" opacity=".25"/>
-                <text x="312" y="252" text-anchor="middle" fill="var(--g800)" font-size="11">PAL+</text>
-
-                <!-- PAL- -->
-                <circle cx="362" cy="220" r="17" fill="none" stroke="#a5b4fc" stroke-width="2"/>
-                <circle cx="362" cy="220" r="13" fill="#3b82f6" stroke="#2563eb" stroke-width="1.5"/>
-                <circle cx="358" cy="216" r="3" fill="#fff" opacity=".25"/>
-                <text x="362" y="252" text-anchor="middle" fill="var(--g800)" font-size="11">PAL-</text>
-
-                <!-- VOZ -->
-                <circle cx="413" cy="220" r="17" fill="none" stroke="#a5b4fc" stroke-width="2"/>
-                <circle cx="413" cy="220" r="13" fill="#374151" stroke="#1f2937" stroke-width="1.5"/>
-                <circle cx="409" cy="216" r="3" fill="#fff" opacity=".15"/>
-                <text x="413" y="252" text-anchor="middle" fill="var(--g800)" font-size="11">VOZ</text>
-            </g>
-
-            <!-- 4 parafusos M3 nos cantos da tampa -->
-            <g fill="#fbbf24" stroke="#92400e" stroke-width="1">
-                <circle cx="197" cy="57" r="3"/><circle cx="473" cy="57" r="3"/>
-                <circle cx="197" cy="225" r="3"/><circle cx="473" cy="225" r="3"/>
-            </g>
-
-            <!-- Callouts -->
-            <g font-family="Inter" font-size="9" font-weight="600">
-                <!-- LCD callout -->
-                <line x1="330" y1="80" x2="330" y2="55" stroke="var(--g500)" stroke-width="0.8"/>
-                <text x="330" y="48" text-anchor="middle" fill="var(--g700)">JANELA LCD 72 &times; 25 mm</text>
-
-                <!-- Speaker callout -->
-                <line x1="463" y1="143" x2="540" y2="143" stroke="var(--g500)" stroke-width="0.8"/>
-                <text x="544" y="141" fill="var(--g700)">Grade speaker</text>
-                <text x="544" y="153" fill="var(--g600)" font-weight="500">&Oslash;40 mm (furos &Oslash;3)</text>
-
-                <!-- Botoes callout -->
-                <text x="312" y="278" text-anchor="middle" fill="var(--g500)" font-style="italic" font-size="8">labels gravados em relevo 0.8 mm no case impresso</text>
-                <text x="312" y="290" text-anchor="middle" fill="var(--g500)" font-style="italic" font-size="8">VOZ = bot&atilde;o FALAR (no codigo: <tspan font-family="'JetBrains Mono'">btnSpeak</tspan>)</text>
-            </g>
-
-            <!-- Cotas -->
-            <g font-family="'JetBrains Mono'" font-size="10" fill="var(--g500)">
-                <line x1="211" y1="305" x2="413" y2="305" stroke="var(--g500)" stroke-width="1"/>
-                <line x1="211" y1="301" x2="211" y2="309" stroke="var(--g500)" stroke-width="1"/>
-                <line x1="413" y1="301" x2="413" y2="309" stroke="var(--g500)" stroke-width="1"/>
-                <text x="312" y="322" text-anchor="middle">4 &times; 28 mm (spacing entre botoes)</text>
-            </g>
-
-            <!-- LEGENDA tabular -->
-            <g transform="translate(60,360)">
-                <text x="0" y="0" fill="var(--g800)" font-size="11" font-weight="700">Dimens&otilde;es da tampa (do <tspan font-family="'JetBrains Mono'" fill="var(--g600)">case_voz_autista.scad</tspan>):</text>
-
-                <g font-family="'JetBrains Mono'" font-size="10">
-                    <rect x="0" y="14" width="800" height="22" fill="#0f172a"/>
-                    <text x="14" y="29" fill="#fff" font-weight="700">Furo / Janela</text>
-                    <text x="220" y="29" fill="#fff" font-weight="700">Posi&ccedil;ao (mm)</text>
-                    <text x="420" y="29" fill="#fff" font-weight="700">Dimens&otilde;es</text>
-                    <text x="620" y="29" fill="#fff" font-weight="700">Notas</text>
-
-                    <g fill="var(--g700)">
-                        <rect x="0" y="36" width="800" height="20" fill="#f8fafc"/>
-                        <text x="14" y="50">Janela LCD</text>
-                        <text x="220" y="50">canto (45, 20)</text>
-                        <text x="420" y="50">72 &times; 25 mm visivel</text>
-                        <text x="620" y="50">PCB 80 &times; 36 (rebaixo)</text>
-
-                        <rect x="0" y="56" width="800" height="20" fill="#fff"/>
-                        <text x="14" y="70">5 furos botoes</text>
-                        <text x="220" y="70">y=80, x=15..127</text>
-                        <text x="420" y="70">furo &Oslash;14 mm</text>
-                        <text x="620" y="70">spacing 28 mm</text>
-
-                        <rect x="0" y="76" width="800" height="20" fill="#f8fafc"/>
-                        <text x="14" y="90">Grade speaker</text>
-                        <text x="220" y="90">centro (135, 55)</text>
-                        <text x="420" y="90">diam 40 mm</text>
-                        <text x="620" y="90">furos &Oslash;3 mm</text>
-                    </g>
-                </g>
-            </g>
-        </svg>
-    </div>
-
-    <div class="info">
-        <strong>O case &eacute; a fonte da verdade.</strong> Antes de cortar fios ou fixar com cola quente,
-        imprima o case primeiro e <em>encaixe os componentes a seco</em> nos pilares e aberturas.
-        Se algo n&atilde;o encaixar (folga &gt; 0.5 mm ou interfer&ecirc;ncia), ajuste o par&acirc;metro
-        <code>tolerance</code> no <code>case_voz_autista.scad</code> e re-imprima a pe&ccedil;a.
-    </div>
+    <p class="step-desc">Cores de fio padronizadas em <strong>todos</strong> os diagramas deste manual, no Wokwi e no viewer 3D: <span class="color-dot" style="background:#ef4444"></span>vermelho=VCC &nbsp;<span class="color-dot" style="background:#1f2937"></span>preto=GND &nbsp;<span class="color-dot" style="background:#eab308"></span>amarelo=sinais digitais &nbsp;<span class="color-dot" style="background:#22c55e"></span>verde=SDA &nbsp;<span class="color-dot" style="background:#f97316"></span>laranja=SCL &nbsp;<span class="color-dot" style="background:#a855f7"></span>roxo=A0 &nbsp;<span class="color-dot" style="background:#92400e"></span>marrom=A1.</p>
+    <table class="pin-table">
+        <tr><th>Pino</th><th>Componente</th><th>Conex&atilde;o</th><th>Observa&ccedil;&atilde;o</th></tr>
+        <tr><td>D2</td><td><span class="color-dot" style="background:#ef4444"></span>Bot&atilde;o Vermelho (CAT+)</td><td>Bot&atilde;o &rarr; GND</td><td>INPUT_PULLUP</td></tr>
+        <tr><td>D3</td><td><span class="color-dot" style="background:#eab308"></span>Bot&atilde;o Amarelo (CAT-)</td><td>Bot&atilde;o &rarr; GND</td><td>INPUT_PULLUP</td></tr>
+        <tr><td>D4</td><td><span class="color-dot" style="background:#22c55e"></span>Bot&atilde;o Verde (PAL+)</td><td>Bot&atilde;o &rarr; GND</td><td>INPUT_PULLUP</td></tr>
+        <tr><td>D5</td><td><span class="color-dot" style="background:#3b82f6"></span>Bot&atilde;o Azul (PAL-)</td><td>Bot&atilde;o &rarr; GND</td><td>INPUT_PULLUP</td></tr>
+        <tr><td>D6</td><td><span class="color-dot" style="background:#1f2937"></span>Bot&atilde;o Preto (FALAR)</td><td>Bot&atilde;o &rarr; GND</td><td>INPUT_PULLUP</td></tr>
+        <tr><td>D7</td><td>Motor vibra&ccedil;&atilde;o</td><td>D7 &rarr; 1k&#8486; &rarr; base 2N2222</td><td>Flyback 1N4148 no motor</td></tr>
+        <tr class="new-row"><td>D8</td><td>DFPlayer BUSY</td><td>BUSY &rarr; D8 (direto)</td><td>LOW = tocando <span class="new-badge">NOVO v3.0</span></td></tr>
+        <tr><td>D10</td><td>DFPlayer TX</td><td>TX &rarr; D10</td><td>SoftwareSerial RX</td></tr>
+        <tr class="new-row"><td>D11</td><td>DFPlayer RX</td><td>D11 &rarr; 1k&#8486; &rarr; RX; RX &rarr; 2k&#8486; &rarr; GND</td><td>Divisor 3.3V <span class="upd-badge">ATUALIZADO v3.0</span></td></tr>
+        <tr><td>A0</td><td>Potenci&ocirc;metro volume</td><td>Wiper (centro)</td><td>0&ndash;1023 &rarr; vol 0&ndash;30</td></tr>
+        <tr class="new-row"><td>A1</td><td>Divisor da bateria</td><td>Vbat &rarr; 100k&#8486; &rarr; A1 &rarr; 33k&#8486; &rarr; GND (+100nF)</td><td>Ref. interna 1.1V <span class="upd-badge">ATUALIZADO v3.0</span></td></tr>
+        <tr><td>A4</td><td>LCD SDA</td><td>M&oacute;dulo I2C</td><td>Dados I2C</td></tr>
+        <tr><td>A5</td><td>LCD SCL</td><td>M&oacute;dulo I2C</td><td>Clock I2C</td></tr>
+    </table>
+    <div class="tip"><strong>Pinos livres para expans&atilde;o:</strong> D9, D12, D13, A2, A3.</div>
 </div>
 
-<!-- ==================== ETAPA 2: Arduino ==================== -->
+<!-- ==================== CASE V3 ==================== -->
 <div class="step">
     <div class="step-header">
         <div class="step-number">2</div>
-        <div class="step-title">Fixar Arduino + TP4056 + Bateria na Base</div>
+        <div class="step-title">Case v3.0 &mdash; Onde Cada Pe&ccedil;a Vai</div>
     </div>
-    <p class="step-desc">Fixe o Arduino no canto inferior-esquerdo. Instale a bateria 18650 no centro e o modulo TP4056 ao lado do Arduino. Conecte a chave on/off.</p>
+    <p class="step-desc">Dimens&otilde;es externas: <strong>150 &times; 100 mm</strong>, altura <strong>40 mm na frente</strong> subindo a <strong>~48 mm atr&aacute;s</strong> (face do LCD inclinada 12&deg;, estilo console). Posi&ccedil;&otilde;es do arquivo <code>case_3d/case_voz_autista_v3.scad</code> (coordenadas absolutas, paredes 2.5 mm).</p>
+
     <div class="diagram-container">
-        <svg width="780" height="420" viewBox="0 0 780 420">
-            <defs><linearGradient id="case1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#bfdbfe"/><stop offset="100%" stop-color="#93c5fd"/></linearGradient></defs>
-            <text x="390" y="22" text-anchor="middle" fill="var(--g700)" font-size="14" font-weight="700">BASE DO CASE (vista de cima)</text>
-            <!-- Case -->
-            <rect x="50" y="40" width="680" height="350" rx="20" fill="url(#case1)" stroke="#60a5fa" stroke-width="2.5"/>
-            <rect x="63" y="53" width="654" height="324" rx="14" fill="#e0f2fe"/>
-            <!-- Aberturas -->
-            <rect x="46" y="130" width="20" height="40" rx="3" fill="#fff" stroke="#60a5fa" stroke-width="2"/>
-            <text x="34" y="155" text-anchor="end" fill="var(--g600)" font-size="9" font-weight="600">USB</text>
-            <rect x="46" y="200" width="20" height="35" rx="3" fill="#fff" stroke="#60a5fa" stroke-width="2"/>
-            <text x="34" y="222" text-anchor="end" fill="var(--g600)" font-size="9" font-weight="600">Carga</text>
-            <rect x="46" y="260" width="20" height="18" rx="3" fill="#fff" stroke="#10b981" stroke-width="2"/>
-            <text x="34" y="273" text-anchor="end" fill="#10b981" font-size="9" font-weight="600">On/Off</text>
-            <rect x="714" y="130" width="20" height="35" rx="3" fill="#fff" stroke="#60a5fa" stroke-width="2"/>
-            <text x="748" y="152" fill="var(--g600)" font-size="9" font-weight="600">Speaker</text>
-            <rect x="714" y="200" width="20" height="24" rx="3" fill="#fff" stroke="#10b981" stroke-width="2"/>
-            <text x="748" y="216" fill="#10b981" font-size="9" font-weight="600">Vol</text>
-
-            <!-- Arduino -->
-            <g filter="url(#sh)">
-                <rect x="85" y="75" width="170" height="200" rx="6" fill="url(#brd)" opacity=".9"/>
-                <rect x="81" y="140" width="18" height="28" rx="3" fill="url(#mtl)"/>
-                <rect x="81" y="210" width="16" height="22" rx="4" fill="#1e293b"/>
-            </g>
-            <text x="170" y="175" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">ARDUINO</text>
-            <text x="170" y="193" text-anchor="middle" fill="#fff" font-size="11">UNO R3</text>
-
-            <!-- TP4056 -->
-            <g filter="url(#sh)">
-                <rect x="85" y="290" width="70" height="40" rx="4" fill="url(#tp4)"/>
-                <rect x="81" y="302" width="8" height="14" rx="2" fill="var(--g300)"/>
-            </g>
-            <text x="120" y="315" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">TP4056</text>
-            <text x="120" y="348" text-anchor="middle" fill="#10b981" font-size="10" font-weight="600">Carregador</text>
-
-            <!-- Bateria 18650 -->
-            <g filter="url(#sh)">
-                <rect x="280" y="140" width="190" height="55" rx="27" fill="url(#bat)"/>
-                <rect x="470" y="152" width="10" height="31" rx="4" fill="#93c5fd"/>
-                <text x="375" y="172" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">BATERIA 18650</text>
-            </g>
-            <text x="375" y="215" text-anchor="middle" fill="#10b981" font-size="10" font-weight="600">3.7V - Centro da base</text>
-
-            <!-- Chave on/off -->
-            <g filter="url(#sh)">
-                <rect x="175" y="296" width="50" height="22" rx="11" fill="var(--g300)" stroke="var(--g400)" stroke-width="1.5"/>
-                <circle cx="210" cy="307" r="8" fill="#10b981"/>
-            </g>
-            <text x="200" y="335" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600">ON/OFF</text>
-
-            <!-- Circuito alimentacao -->
-            <g transform="translate(280, 240)">
-                <rect x="0" y="0" width="320" height="120" rx="10" fill="#fff" stroke="var(--g200)" stroke-width="1.5" filter="url(#sh)"/>
-                <text x="160" y="20" text-anchor="middle" fill="var(--g700)" font-size="11" font-weight="700">Circuito de alimentacao:</text>
-                <text x="20" y="42" fill="var(--g700)" font-size="9" font-family="'JetBrains Mono'">TP4056 OUT+ → Chave ON/OFF → Arduino VIN</text>
-                <text x="20" y="60" fill="var(--g700)" font-size="9" font-family="'JetBrains Mono'">TP4056 OUT- → Arduino GND</text>
-                <text x="20" y="78" fill="var(--g700)" font-size="9" font-family="'JetBrains Mono'">TP4056 B+  → Bateria (+)</text>
-                <text x="20" y="96" fill="var(--g700)" font-size="9" font-family="'JetBrains Mono'">TP4056 B-  → Bateria (-)</text>
-                <text x="20" y="114" fill="var(--g500)" font-size="8">USB do TP4056 = porta de carga (lateral do case)</text>
+        <p>PERFIL LATERAL (cunha) e VISTA SUPERIOR DA BASE</p>
+        <svg width="880" height="640" viewBox="0 0 880 640">
+            <defs>
+                <linearGradient id="cs" x1="0" y1="0" x2="0" y2="100%"><stop offset="0%" stop-color="#dbeafe"/><stop offset="100%" stop-color="#bfdbfe"/></linearGradient>
+                <filter id="sh3" x="-8%" y="-8%" width="120%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".12"/></filter>
+            </defs>
+            <!-- Perfil lateral (2 px/mm): profundidade 100mm = 200px; alturas 40/48mm -->
+            <g transform="translate(60,40)">
+                <text x="100" y="-10" text-anchor="middle" fill="#374151" font-size="12" font-weight="700">PERFIL (lado direito)</text>
+                <!-- frente em x=0 (altura 40mm=80px), tras em x=200 (48mm=96px); base do desenho em y=96 -->
+                <polygon points="0,96 0,16 128,16 200,0 200,96" fill="url(#cs)" stroke="#3b82f6" stroke-width="2"/>
+                <line x1="0" y1="43" x2="200" y2="43" stroke="#60a5fa" stroke-width="1" stroke-dasharray="4,3"/>
+                <text x="100" y="40" text-anchor="middle" fill="#2563eb" font-size="8">divis&atilde;o base/tampa (z=26.5)</text>
+                <line x1="128" y1="16" x2="200" y2="0" stroke="#0f172a" stroke-width="6"/>
+                <text x="178" y="-12" text-anchor="middle" fill="#4b5563" font-size="9">LCD inclinado 12&deg;</text>
+                <circle cx="40" cy="12" r="4" fill="#1f2937"/>
+                <text x="40" y="34" text-anchor="middle" font-size="8" fill="#4b5563">bot&otilde;es</text>
+                <text x="-8" y="60" text-anchor="end" font-size="9" fill="#6b7280">40mm</text>
+                <text x="208" y="50" font-size="9" fill="#6b7280">48mm</text>
+                <text x="100" y="112" text-anchor="middle" font-size="9" fill="#6b7280">frente &larr; 100 mm &rarr; tr&aacute;s</text>
             </g>
 
-            <!-- DFPlayer placeholder -->
-            <rect x="540" y="85" width="85" height="85" rx="5" fill="url(#dfp)" opacity=".3" stroke="#7f1d1d" stroke-width="1" stroke-dasharray="5,3"/>
-            <text x="583" y="135" text-anchor="middle" fill="#991b1b" font-size="10" opacity=".6">DFPlayer</text>
-            <text x="583" y="150" text-anchor="middle" fill="var(--g500)" font-size="8">(Etapa 2)</text>
+            <!-- Vista superior da base: 4 px/mm; 150x100mm => 600x400px; frente embaixo -->
+            <g transform="translate(140,200)">
+                <text x="300" y="-10" text-anchor="middle" fill="#374151" font-size="12" font-weight="700">BASE &mdash; vista superior (frente embaixo)</text>
+                <rect x="0" y="0" width="600" height="400" rx="40" fill="url(#cs)" stroke="#3b82f6" stroke-width="2.5"/>
+                <rect x="10" y="10" width="580" height="380" rx="32" fill="#eff6ff" stroke="#93c5fd" stroke-width="1" stroke-dasharray="4,3"/>
+                <!-- Arduino (6.5,5.5) 68.6x53.4 -> x 26..300, y_svg 400-4*58.9=164 .. 400-4*5.5=378 -->
+                <rect x="26" y="164" width="274" height="214" rx="6" fill="#0ea5e9" filter="url(#sh3)"/>
+                <text x="163" y="262" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">ARDUINO UNO</text>
+                <text x="163" y="280" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="9">(6.5, 5.5) &bull; 68.6 &times; 53.4 &bull; pilares M2.5 de 3 mm</text>
+                <circle cx="87" cy="368" r="4" fill="#fff" stroke="#0c4a6e"/>
+                <circle cx="87" cy="175" r="4" fill="#fff" stroke="#0c4a6e"/>
+                <circle cx="290" cy="348" r="4" fill="#fff" stroke="#0c4a6e"/>
+                <circle cx="290" cy="236" r="4" fill="#fff" stroke="#0c4a6e"/>
+                <!-- Bateria x122-143 y24.5-92.5 -> x 488..572, y 30..302 -->
+                <rect x="488" y="30" width="84" height="272" rx="10" fill="#3b82f6" filter="url(#sh3)"/>
+                <text x="530" y="166" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" transform="rotate(-90,530,166)">BATERIA 18650 (tampa no fundo)</text>
+                <!-- Speaker centro (97.5,40.5) -> (390, 238), r20=80px -->
+                <circle cx="390" cy="238" r="80" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="5,4"/>
+                <circle cx="390" cy="238" r="56" fill="#e2e8f0" stroke="#94a3b8"/>
+                <text x="390" y="234" text-anchor="middle" fill="#4b5563" font-size="10" font-weight="700">SPEAKER &Oslash;40</text>
+                <text x="390" y="248" text-anchor="middle" fill="#6b7280" font-size="8">no FUNDO (grade p/ baixo)</text>
+                <!-- DFPlayer x97.5-118 y77-97.5 -> x 390..472, y 10..92 -->
+                <rect x="390" y="10" width="82" height="82" rx="4" fill="#b91c1c" filter="url(#sh3)"/>
+                <text x="431" y="46" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">DFPlayer</text>
+                <text x="431" y="58" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="7">SD p/ tr&aacute;s</text>
+                <!-- TP4056 x6.5-32.5 y62.5-79.5 -> x 26..130, y 82..150 -->
+                <rect x="26" y="82" width="104" height="68" rx="4" fill="#7c3aed" filter="url(#sh3)"/>
+                <text x="78" y="112" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">TP4056</text>
+                <text x="78" y="126" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="7">&micro;USB p/ esquerda</text>
+                <!-- MT3608 x34.5-51.5 y80.5-91.5 -> x 138..206, y 34..78 -->
+                <rect x="138" y="34" width="68" height="44" rx="4" fill="#0d9488" filter="url(#sh3)"/>
+                <text x="172" y="60" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">MT3608</text>
+                <!-- Perfboard x10.5-30.5 y80-90 -> x 42..122, y 40..80 - desloca p/ nao sobrepor TP no desenho -->
+                <rect x="42" y="36" width="80" height="40" rx="4" fill="#d97706" filter="url(#sh3)"/>
+                <text x="82" y="60" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">DRIVER + DIVISORES</text>
+                <!-- Motor (52.5,72.5) -> (210,110) -->
+                <circle cx="240" cy="110" r="20" fill="#9ca3af" stroke="#6b7280" stroke-width="2" filter="url(#sh3)"/>
+                <text x="240" y="114" text-anchor="middle" fill="#374151" font-size="8" font-weight="700">M</text>
+                <text x="240" y="144" text-anchor="middle" fill="#6b7280" font-size="8">motor coin</text>
+                <!-- aberturas -->
+                <g font-size="9" font-weight="600">
+                    <rect x="-6" y="210" width="12" height="56" fill="#fff" stroke="#0c4a6e"/><text x="-14" y="240" text-anchor="end" fill="#0c4a6e">USB-B</text>
+                    <rect x="-6" y="330" width="12" height="52" fill="#fff" stroke="#0c4a6e"/><text x="-14" y="358" text-anchor="end" fill="#0c4a6e">Jack</text>
+                    <rect x="-6" y="112" width="12" height="40" fill="#fff" stroke="#10b981"/><text x="-14" y="134" text-anchor="end" fill="#10b981">&micro;USB carga</text>
+                    <circle cx="600" cy="338" r="8" fill="#fff" stroke="#10b981" stroke-width="2"/><text x="616" y="342" fill="#10b981">pot. volume (knob &Oslash;20)</text>
+                    <rect x="404" y="-6" width="56" height="12" fill="#fff" stroke="#0c4a6e"/><text x="432" y="-16" text-anchor="middle" fill="#0c4a6e">slot microSD</text>
+                    <rect x="90" y="-6" width="54" height="12" fill="#fff" stroke="#10b981"/><text x="117" y="-16" text-anchor="middle" fill="#10b981">chave on/off (recuada)</text>
+                    <circle cx="56" cy="-30" r="6" fill="none" stroke="#6b7280" stroke-width="2"/><text x="80" y="-26" fill="#6b7280">orelhas p/ cord&atilde;o &Oslash;4</text>
+                    <circle cx="544" cy="-30" r="6" fill="none" stroke="#6b7280" stroke-width="2"/>
+                </g>
+                <text x="300" y="424" text-anchor="middle" fill="#6b7280" font-size="10" font-family="'JetBrains Mono'">150 mm externo</text>
+            </g>
         </svg>
     </div>
-    <div class="warning">
-        <strong>Aten&ccedil;ao:</strong> Respeite a polaridade da bateria 18650. Inversao de polaridade danifica o TP4056 e o Arduino permanentemente.
+
+    <div class="diagram-container">
+        <p>TAMPA &mdash; layout dos bot&otilde;es 2+2+1 e LCD inclinado</p>
+        <svg width="880" height="490" viewBox="0 0 880 490">
+            <g transform="translate(140,40)">
+                <rect x="0" y="0" width="600" height="400" rx="40" fill="#e0e7ff" stroke="#6366f1" stroke-width="2.5"/>
+                <!-- faixa inclinada: y_mm 64..100 -> y_svg 0..144 -->
+                <rect x="14" y="10" width="572" height="134" rx="20" fill="#c7d2fe" stroke="#818cf8" stroke-width="1"/>
+                <text x="64" y="30" fill="#4338ca" font-size="9" font-style="italic">&uarr; face inclinada 12&deg;</text>
+                <!-- LCD janela 73x26 centrada em x=75 -->
+                <rect x="154" y="40" width="292" height="84" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="3"/>
+                <text x="300" y="78" text-anchor="middle" fill="#4ade80" font-size="15" font-family="'JetBrains Mono'">Voz Autista v3.0</text>
+                <text x="300" y="102" text-anchor="middle" fill="#4ade80" font-size="12" font-family="'JetBrains Mono'">&#9654; Eu quero</text>
+                <!-- CAT y=54.5 -> y_svg 182 | PAL y=35 -> 260 | FALAR y=17.5 -> 330 -->
+                <g font-family="'JetBrains Mono'" font-weight="800" font-size="12">
+                    <circle cx="254" cy="182" r="38" fill="none" stroke="#a5b4fc" stroke-width="5"/>
+                    <circle cx="254" cy="182" r="26" fill="#eab308" stroke="#ca8a04" stroke-width="2"/>
+                    <circle cx="366" cy="182" r="38" fill="none" stroke="#a5b4fc" stroke-width="5"/>
+                    <circle cx="366" cy="182" r="26" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+                    <text x="310" y="187" text-anchor="middle" fill="#4338ca">CAT</text>
+                    <text x="196" y="188" text-anchor="middle" fill="#4338ca" font-size="16">&#9660;</text>
+                    <text x="424" y="188" text-anchor="middle" fill="#4338ca" font-size="16">&#9650;</text>
+                    <circle cx="254" cy="260" r="38" fill="none" stroke="#a5b4fc" stroke-width="5"/>
+                    <circle cx="254" cy="260" r="26" fill="#3b82f6" stroke="#2563eb" stroke-width="2"/>
+                    <circle cx="366" cy="260" r="38" fill="none" stroke="#a5b4fc" stroke-width="5"/>
+                    <circle cx="366" cy="260" r="26" fill="#22c55e" stroke="#16a34a" stroke-width="2"/>
+                    <text x="310" y="265" text-anchor="middle" fill="#4338ca">PAL</text>
+                    <text x="196" y="266" text-anchor="middle" fill="#4338ca" font-size="16">&#9664;</text>
+                    <text x="424" y="266" text-anchor="middle" fill="#4338ca" font-size="16">&#9654;</text>
+                    <circle cx="300" cy="330" r="48" fill="none" stroke="#818cf8" stroke-width="6"/>
+                    <circle cx="300" cy="330" r="34" fill="#1f2937" stroke="#111827" stroke-width="2"/>
+                    <text x="216" y="336" text-anchor="middle" fill="#4338ca" font-size="18">&#128172;</text>
+                    <text x="396" y="336" text-anchor="middle" fill="#4338ca">FALAR</text>
+                </g>
+                <text x="300" y="426" text-anchor="middle" fill="#6b7280" font-size="10" font-family="'JetBrains Mono'">an&eacute;is t&aacute;teis 1.2 mm &bull; pictogramas em relevo &bull; canaleta p/ pintar a cor de cada bot&atilde;o &bull; FALAR com adaptador &Oslash;18</text>
+            </g>
+        </svg>
     </div>
+
+    <div class="info"><strong>O case &eacute; a fonte da verdade.</strong> Imprima primeiro e encaixe os componentes <em>a seco</em>. Se algo n&atilde;o encaixar, ajuste <code>tolerance</code> no <code>case_voz_autista_v3.scad</code> e re-imprima a pe&ccedil;a.</div>
 </div>
 
-<!-- ==================== ETAPA 3: DFPlayer + Vibra&ccedil;ao ==================== -->
+<!-- ==================== BOTOES ==================== -->
 <div class="step">
     <div class="step-header">
         <div class="step-number">3</div>
-        <div class="step-title">DFPlayer Mini + Motor de Vibra&ccedil;ao</div>
+        <div class="step-title">Circuito dos Bot&otilde;es</div>
     </div>
-    <p class="step-desc">Instale o DFPlayer no lado direito. Conecte o motor de vibra&ccedil;ao via transistor NPN. O motor fornece feedback tatil nos botoes.</p>
+    <p class="step-desc">Os 5 bot&otilde;es usam o pull-up interno: um terminal vai ao pino digital (fio amarelo), o outro ao GND comum (fio preto).</p>
     <div class="diagram-container">
-        <p>Circuito do motor de vibra&ccedil;ao (NOVO v2.0)</p>
-        <svg width="600" height="180" viewBox="0 0 600 180">
-            <!-- Arduino pin D7 -->
-            <rect x="20" y="65" width="70" height="35" rx="8" fill="url(#brd)"/>
-            <text x="55" y="87" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">D7</text>
-            <text x="55" y="55" text-anchor="middle" fill="#0369a1" font-size="9" font-weight="600">Arduino</text>
-            <!-- Wire -->
-            <line x1="90" y1="82" x2="130" y2="82" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/>
-            <!-- Resistor 1k base -->
-            <rect x="130" y="70" width="55" height="24" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-            <text x="157" y="86" text-anchor="middle" fill="#92400e" font-size="9" font-weight="700">1k&#8486;</text>
-            <!-- Wire to transistor -->
-            <line x1="185" y1="82" x2="230" y2="82" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/>
-            <!-- Transistor 2N2222 -->
-            <g transform="translate(230,55)">
-                <circle cx="25" cy="27" r="22" fill="none" stroke="var(--g400)" stroke-width="1.5"/>
-                <rect x="0" y="12" width="5" height="30" fill="var(--g700)"/>
-                <line x1="5" y1="15" x2="25" y2="5" stroke="var(--g700)" stroke-width="2"/>
-                <line x1="5" y1="39" x2="25" y2="49" stroke="var(--g700)" stroke-width="2"/>
-                <line x1="5" y1="27" x2="25" y2="27" stroke="var(--g700)" stroke-width="2"/>
-                <!-- Arrow -->
-                <polygon points="20,46 25,49 22,43" fill="var(--g700)"/>
-                <text x="25" y="70" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="600">2N2222</text>
+        <svg width="820" height="300" viewBox="0 0 820 300">
+            <rect x="20" y="90" width="200" height="150" rx="10" fill="#0ea5e9"/>
+            <text x="120" y="120" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ARDUINO UNO</text>
+            <g font-family="'JetBrains Mono'" font-size="11" fill="#fff">
+                <text x="210" y="145" text-anchor="end">D2</text>
+                <text x="210" y="165" text-anchor="end">D3</text>
+                <text x="210" y="185" text-anchor="end">D4</text>
+                <text x="210" y="205" text-anchor="end">D5</text>
+                <text x="210" y="225" text-anchor="end">D6</text>
+                <text x="30" y="225">GND</text>
             </g>
-            <text x="242" y="50" fill="var(--g500)" font-size="8">B</text>
-            <text x="265" y="50" fill="var(--g500)" font-size="8">C</text>
-            <text x="265" y="118" fill="var(--g500)" font-size="8">E</text>
-            <!-- Collector to motor -->
-            <line x1="255" y1="60" x2="255" y2="35" stroke="var(--g700)" stroke-width="2"/>
-            <line x1="255" y1="35" x2="330" y2="35" stroke="var(--g700)" stroke-width="2"/>
-            <!-- Motor -->
-            <circle cx="370" cy="35" r="22" fill="var(--g300)" stroke="var(--g500)" stroke-width="2"/>
-            <circle cx="370" cy="35" r="8" fill="var(--g500)"/>
-            <text x="370" y="39" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">M</text>
-            <text x="370" y="70" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="600">Motor</text>
-            <!-- Motor to 5V -->
-            <line x1="392" y1="35" x2="450" y2="35" stroke="#ef4444" stroke-width="2"/>
-            <rect x="450" y="22" width="40" height="26" rx="6" fill="#ef4444"/>
-            <text x="470" y="39" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">5V</text>
-            <!-- Diodo flyback -->
-            <line x1="330" y1="35" x2="330" y2="10" stroke="var(--g500)" stroke-width="1.5"/>
-            <line x1="392" y1="35" x2="392" y2="10" stroke="var(--g500)" stroke-width="1.5"/>
-            <polygon points="330,10 392,10 361,0" fill="none" stroke="var(--g500)" stroke-width="1.5"/>
-            <line x1="330" y1="0" x2="392" y2="0" stroke="var(--g500)" stroke-width="2"/>
-            <text x="361" y="-5" text-anchor="middle" fill="#10b981" font-size="8" font-weight="600">1N4148 (flyback)</text>
-            <!-- Emitter to GND -->
-            <line x1="255" y1="104" x2="255" y2="140" stroke="var(--g700)" stroke-width="2"/>
-            <rect x="235" y="140" width="40" height="22" rx="6" fill="var(--g800)"/>
-            <text x="255" y="155" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">GND</text>
+            <g stroke="#eab308" stroke-width="3" fill="none">
+                <path d="M220,141 H334"/><path d="M220,161 H414"/><path d="M220,181 H494"/><path d="M220,201 H574"/><path d="M220,221 H654"/>
+            </g>
+            <g font-size="10" font-weight="700">
+                <circle cx="350" cy="141" r="16" fill="#ef4444"/><text x="350" y="112" text-anchor="middle" fill="#dc2626">CAT+</text>
+                <circle cx="430" cy="161" r="16" fill="#eab308"/><text x="430" y="132" text-anchor="middle" fill="#ca8a04">CAT-</text>
+                <circle cx="510" cy="181" r="16" fill="#22c55e"/><text x="510" y="152" text-anchor="middle" fill="#16a34a">PAL+</text>
+                <circle cx="590" cy="201" r="16" fill="#3b82f6"/><text x="590" y="172" text-anchor="middle" fill="#2563eb">PAL-</text>
+                <circle cx="670" cy="221" r="16" fill="#1f2937"/><text x="670" y="192" text-anchor="middle" fill="#1f2937">FALAR</text>
+            </g>
+            <g stroke="#1f2937" stroke-width="3" fill="none">
+                <path d="M366,141 H760 V275 H60 V232"/>
+                <path d="M446,161 H760"/><path d="M526,181 H760"/><path d="M606,201 H760"/><path d="M686,221 H760"/>
+            </g>
+            <text x="680" y="292" text-anchor="middle" fill="#4b5563" font-size="10" font-weight="600">GND comum (preto)</text>
         </svg>
-    </div>
-    <div class="diagram-container">
-        <p>Conexao DFPlayer Mini (mesmo da v1.0)</p>
-        <svg width="520" height="90" viewBox="0 0 520 90">
-            <rect x="20" y="25" width="80" height="35" rx="8" fill="url(#brd)"/>
-            <text x="60" y="47" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">D11</text>
-            <line x1="100" y1="42" x2="145" y2="42" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/>
-            <rect x="145" y="30" width="70" height="24" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-            <text x="180" y="46" text-anchor="middle" fill="#92400e" font-size="9" font-weight="700">1k&#8486;</text>
-            <line x1="215" y1="42" x2="270" y2="42" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/>
-            <rect x="270" y="25" width="80" height="35" rx="8" fill="url(#dfp)"/>
-            <text x="310" y="47" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">RX</text>
-            <text x="60" y="18" text-anchor="middle" fill="#0369a1" font-size="9" font-weight="600">Arduino</text>
-            <text x="310" y="18" text-anchor="middle" fill="#991b1b" font-size="9" font-weight="600">DFPlayer</text>
-            <text x="430" y="42" fill="var(--g500)" font-size="9">D10 &#8592; DFPlayer TX</text>
-            <text x="430" y="58" fill="var(--g500)" font-size="9">SPK1/SPK2 &#8594; Speaker</text>
-        </svg>
-    </div>
-    <div class="tip">
-        <strong>Dica:</strong> O diodo 1N4148 protege o transistor contra picos de tensao do motor. Catodo (faixa) voltado para o 5V, anodo para o coletor.
     </div>
 </div>
 
-<!-- ==================== ETAPA 4: Potenciometro + Bateria ==================== -->
+<!-- ==================== LCD ==================== -->
 <div class="step">
     <div class="step-header">
         <div class="step-number">4</div>
-        <div class="step-title">Potenciometro de Volume + Monitor de Bateria <span class="new-badge">NOVO</span></div>
-    </div>
-    <p class="step-desc">Instale o potenciometro na lateral do case. Monte o divisor de tensao para monitorar a bateria.</p>
-    <div class="diagram-container">
-        <p>Potenciometro de volume (A0)</p>
-        <svg width="640" height="180" viewBox="0 0 640 180" preserveAspectRatio="xMidYMid meet">
-            <rect x="30" y="60" width="70" height="35" rx="8" fill="url(#brd)"/>
-            <text x="65" y="82" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">A0</text>
-            <line x1="100" y1="77" x2="195" y2="77" stroke="#f97316" stroke-width="3" stroke-linecap="round"/>
-            <!-- Pot -->
-            <circle cx="225" cy="77" r="32" fill="var(--g100)" stroke="var(--g400)" stroke-width="2.5"/>
-            <circle cx="225" cy="77" r="20" fill="var(--g200)" stroke="var(--g300)" stroke-width="1.5"/>
-            <line x1="225" y1="77" x2="225" y2="51" stroke="var(--g800)" stroke-width="4" stroke-linecap="round"/>
-            <!-- Legs (espaco entre as duas linhas + label) -->
-            <line x1="205" y1="108" x2="205" y2="140" stroke="#ef4444" stroke-width="2"/>
-            <text x="205" y="155" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="700">5V</text>
-            <line x1="245" y1="108" x2="245" y2="140" stroke="var(--g700)" stroke-width="2"/>
-            <text x="245" y="155" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="700">GND</text>
-            <text x="225" y="172" text-anchor="middle" fill="var(--g600)" font-size="10" font-weight="600">10k&#8486; Linear</text>
-            <!-- Info painel -->
-            <g transform="translate(330,40)">
-                <rect x="0" y="0" width="290" height="100" rx="10" fill="#fff" stroke="var(--g200)" stroke-width="1.2"/>
-                <text x="14" y="22" fill="var(--g800)" font-size="11" font-weight="700">Conex&otilde;es do potenci&ocirc;metro:</text>
-                <g font-family="'JetBrains Mono'" font-size="10" fill="var(--g700)">
-                    <text x="14" y="44">Pino central (wiper) &nbsp;&rarr; Arduino A0</text>
-                    <text x="14" y="62">Pino esquerdo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; +5V</text>
-                    <text x="14" y="80">Pino direito &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; GND</text>
-                </g>
-            </g>
-        </svg>
+        <div class="step-title">LCD 16x2 I2C</div>
     </div>
     <div class="diagram-container">
-        <p>Divisor de tensao para bateria (A1)</p>
-        <svg width="640" height="220" viewBox="0 0 640 220" preserveAspectRatio="xMidYMid meet">
-            <!-- Battery -->
-            <rect x="40" y="20" width="80" height="24" rx="12" fill="url(#bat)"/>
-            <text x="80" y="37" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">BAT+</text>
-            <!-- Wire down -->
-            <line x1="80" y1="44" x2="80" y2="64" stroke="#ef4444" stroke-width="2"/>
-            <!-- R1 10k -->
-            <rect x="56" y="64" width="48" height="22" rx="11" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-            <text x="80" y="79" text-anchor="middle" fill="#92400e" font-size="10" font-weight="700">10k&#8486;</text>
-            <!-- Junction -->
-            <line x1="80" y1="86" x2="80" y2="106" stroke="var(--g700)" stroke-width="2"/>
-            <circle cx="80" cy="106" r="4" fill="var(--g700)"/>
-            <!-- Wire to A1 (horizontal longa) -->
-            <line x1="84" y1="106" x2="240" y2="106" stroke="#f97316" stroke-width="3" stroke-linecap="round"/>
-            <text x="158" y="100" text-anchor="middle" fill="#f97316" font-size="10" font-weight="700">jun&ccedil;ao &rarr; A1</text>
-            <rect x="240" y="90" width="70" height="32" rx="8" fill="url(#brd)"/>
-            <text x="275" y="111" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">A1</text>
-            <text x="275" y="84" text-anchor="middle" fill="#0369a1" font-size="9" font-weight="600">Arduino</text>
-            <!-- R2 10k -->
-            <line x1="80" y1="110" x2="80" y2="128" stroke="var(--g700)" stroke-width="2"/>
-            <rect x="56" y="128" width="48" height="22" rx="11" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-            <text x="80" y="143" text-anchor="middle" fill="#92400e" font-size="10" font-weight="700">10k&#8486;</text>
-            <!-- GND -->
-            <line x1="80" y1="150" x2="80" y2="172" stroke="var(--g700)" stroke-width="2"/>
-            <rect x="58" y="172" width="44" height="20" rx="5" fill="var(--g800)"/>
-            <text x="80" y="186" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">GND</text>
-
-            <!-- Painel formula -->
-            <g transform="translate(360,30)">
-                <rect x="0" y="0" width="260" height="170" rx="10" fill="#fff" stroke="var(--g200)" stroke-width="1.2"/>
-                <text x="130" y="22" text-anchor="middle" fill="var(--g800)" font-size="12" font-weight="700">V(A1) = V(bat) / 2</text>
-                <g font-family="'JetBrains Mono'" font-size="10" fill="var(--g700)">
-                    <text x="14" y="48">4.2 V cheio &nbsp;&rarr; 2.1 V &nbsp;&rarr; ADC 430</text>
-                    <text x="14" y="66">3.7 V meio &nbsp;&nbsp;&rarr; 1.85 V &rarr; ADC 380</text>
-                    <text x="14" y="84">3.0 V vazio &nbsp;&rarr; 1.5 V &nbsp;&rarr; ADC 307</text>
-                </g>
-                <text x="14" y="115" fill="var(--g700)" font-size="11" font-weight="600">&Iacute;cone no LCD (canto sup. dir.):</text>
-                <g transform="translate(14,128)" font-family="'JetBrains Mono'" font-size="11" fill="var(--g700)">
-                    <text x="0" y="14"><tspan fill="#22c55e">&#9608;&#9608;</tspan> cheio  &gt; 60%</text>
-                    <text x="0" y="30"><tspan fill="#f59e0b">&#9608;&#9601;</tspan> meio &nbsp;&nbsp;20-60%</text>
-                </g>
-                <g transform="translate(140,128)" font-family="'JetBrains Mono'" font-size="11" fill="var(--g700)">
-                    <text x="0" y="14"><tspan fill="#ef4444">&#9601;&#9601;</tspan> baixo &lt; 20%</text>
-                </g>
+        <svg width="700" height="240" viewBox="0 0 700 240">
+            <rect x="30" y="50" width="190" height="140" rx="10" fill="#0ea5e9"/>
+            <text x="125" y="80" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ARDUINO UNO</text>
+            <g font-family="'JetBrains Mono'" font-size="11" fill="#fff">
+                <text x="210" y="110" text-anchor="end">5V</text>
+                <text x="210" y="130" text-anchor="end">GND</text>
+                <text x="210" y="150" text-anchor="end">A4</text>
+                <text x="210" y="170" text-anchor="end">A5</text>
             </g>
+            <rect x="450" y="50" width="220" height="140" rx="8" fill="#166534"/>
+            <rect x="470" y="70" width="180" height="70" rx="4" fill="#0f172a"/>
+            <text x="560" y="110" text-anchor="middle" fill="#4ade80" font-size="11" font-family="'JetBrains Mono'">Voz Autista v3.0</text>
+            <g font-family="'JetBrains Mono'" font-size="10" fill="#fff">
+                <text x="460" y="110">VCC</text><text x="460" y="130">GND</text><text x="460" y="160">SDA</text><text x="460" y="180">SCL</text>
+            </g>
+            <path d="M220,106 H450" stroke="#ef4444" stroke-width="3"/>
+            <path d="M220,126 H450" stroke="#1f2937" stroke-width="3"/>
+            <path d="M220,146 H400 V156 H450" stroke="#22c55e" stroke-width="3" fill="none"/>
+            <path d="M220,166 H390 V176 H450" stroke="#f97316" stroke-width="3" fill="none"/>
+            <text x="335" y="98" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="600">VCC (vermelho)</text>
+            <text x="320" y="142" text-anchor="middle" fill="#16a34a" font-size="9" font-weight="600">SDA (verde)</text>
+            <text x="310" y="192" text-anchor="middle" fill="#ea580c" font-size="9" font-weight="600">SCL (laranja)</text>
+            <text x="560" y="215" text-anchor="middle" fill="#6b7280" font-size="9">endere&ccedil;o I2C auto-detectado (0x27/0x3F/0x20/0x38)</text>
         </svg>
     </div>
+    <div class="tip"><strong>No case v3.0</strong> o LCD vai por dentro da tampa, na face inclinada de 12&deg;, fixado com 4 parafusos auto-atarraxantes nos bosses impressos.</div>
 </div>
 
-<!-- ==================== ETAPA 5: Botoes ==================== -->
+<!-- ==================== DFPLAYER ==================== -->
 <div class="step">
     <div class="step-header">
         <div class="step-number">5</div>
-        <div class="step-title">Botoes + LCD na Tampa</div>
+        <div class="step-title">DFPlayer Mini + &Aacute;udio <span class="upd-badge">ATUALIZADO v3.0</span></div>
     </div>
-    <p class="step-desc">Instale os 5 botoes e o LCD na tampa, respeitando as posicoes do <code>case_voz_autista.scad</code>: botoes em <strong>y = 80 mm</strong>, primeiro botao em <strong>x = 15 mm</strong>, com espacamento de <strong>28 mm</strong>. Janela do LCD em <strong>(45, 20) mm</strong> com 72&times;25 mm visiveis e rebaixo interno de 1.6 mm para a PCB. INPUT_PULLUP, sem resistor externo.</p>
+    <p class="step-desc">Tr&ecirc;s novidades: o divisor 1k/2k no RX (n&iacute;vel 3.3V), os capacitores de 470&micro;F + 100nF no VCC (anti-reset) e o fio BUSY &rarr; D8 (fim real do &aacute;udio).</p>
     <div class="diagram-container">
-        <svg width="780" height="300" viewBox="0 0 780 300">
-            <rect x="40" y="35" width="700" height="170" rx="18" fill="#bae6fd" stroke="#38bdf8" stroke-width="2.5"/>
-            <text x="390" y="22" text-anchor="middle" fill="var(--g700)" font-size="14" font-weight="700">TAMPA (vista por dentro)</text>
-            <!-- LCD -->
-            <rect x="160" y="55" width="200" height="70" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-            <text x="170" y="80" fill="#4ade80" font-size="10" font-family="'JetBrains Mono'">Cat:Comidas</text>
-            <text x="340" y="80" text-anchor="end" fill="#4ade80" font-size="11" font-family="'JetBrains Mono'">&#9608;&#9608;</text>
-            <text x="170" y="108" fill="#4ade80" font-size="10" font-family="'JetBrains Mono'">&#9654; Suco</text>
-            <text x="340" y="108" text-anchor="end" fill="#fb7185" font-size="10" font-family="'JetBrains Mono'">&#9829;2</text>
-            <!-- Speaker grille -->
-            <circle cx="620" cy="90" r="42" fill="#7dd3fc" stroke="#38bdf8" stroke-width="2"/>
-            <g fill="#bae6fd"><circle cx="605" cy="78" r="3"/><circle cx="618" cy="78" r="3"/><circle cx="631" cy="78" r="3"/><circle cx="598" cy="90" r="3"/><circle cx="611" cy="90" r="3"/><circle cx="624" cy="90" r="3"/><circle cx="637" cy="90" r="3"/><circle cx="605" cy="102" r="3"/><circle cx="618" cy="102" r="3"/><circle cx="631" cy="102" r="3"/></g>
-            <!-- Botoes -->
-            <g transform="translate(80,145)">
-                <g><circle cx="25" cy="25" r="22" fill="#fff" stroke="var(--g300)" stroke-width="2"/><circle cx="25" cy="25" r="16" fill="#ef4444"/><circle cx="21" cy="20" r="5" fill="#fff" opacity=".15"/><text x="25" y="62" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">CAT+ D2</text></g>
-                <g transform="translate(110,0)"><circle cx="25" cy="25" r="22" fill="#fff" stroke="var(--g300)" stroke-width="2"/><circle cx="25" cy="25" r="16" fill="#eab308"/><circle cx="21" cy="20" r="5" fill="#fff" opacity=".15"/><text x="25" y="62" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">CAT- D3</text></g>
-                <g transform="translate(220,0)"><circle cx="25" cy="25" r="22" fill="#fff" stroke="var(--g300)" stroke-width="2"/><circle cx="25" cy="25" r="16" fill="#22c55e"/><circle cx="21" cy="20" r="5" fill="#fff" opacity=".15"/><text x="25" y="62" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">PAL+ D4</text></g>
-                <g transform="translate(330,0)"><circle cx="25" cy="25" r="22" fill="#fff" stroke="var(--g300)" stroke-width="2"/><circle cx="25" cy="25" r="16" fill="#3b82f6"/><circle cx="21" cy="20" r="5" fill="#fff" opacity=".15"/><text x="25" y="62" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">PAL- D5</text></g>
-                <g transform="translate(440,0)"><circle cx="25" cy="25" r="22" fill="#fff" stroke="var(--g300)" stroke-width="2"/><circle cx="25" cy="25" r="16" fill="#374151"/><circle cx="21" cy="20" r="5" fill="#fff" opacity=".08"/><text x="25" y="62" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">VOZ D6</text></g>
+        <svg width="860" height="360" viewBox="0 0 860 360">
+            <rect x="20" y="60" width="190" height="200" rx="10" fill="#0ea5e9"/>
+            <text x="115" y="90" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ARDUINO UNO</text>
+            <g font-family="'JetBrains Mono'" font-size="11" fill="#fff">
+                <text x="200" y="125" text-anchor="end">D10</text>
+                <text x="200" y="155" text-anchor="end">D11</text>
+                <text x="200" y="185" text-anchor="end">D8</text>
+                <text x="200" y="215" text-anchor="end">5V</text>
+                <text x="200" y="240" text-anchor="end">GND</text>
             </g>
+            <rect x="540" y="60" width="180" height="210" rx="8" fill="#b91c1c"/>
+            <text x="630" y="85" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">DFPlayer Mini</text>
+            <g font-family="'JetBrains Mono'" font-size="10" fill="#fff">
+                <text x="550" y="125">TX</text><text x="550" y="155">RX</text><text x="550" y="185">BUSY</text>
+                <text x="550" y="215">VCC</text><text x="550" y="240">GND</text>
+                <text x="712" y="125" text-anchor="end">SPK1</text><text x="712" y="155" text-anchor="end">SPK2</text>
+                <text x="712" y="215" text-anchor="end">SD</text>
+            </g>
+            <path d="M540,121 H210" stroke="#eab308" stroke-width="3"/>
+            <text x="370" y="113" text-anchor="middle" fill="#a16207" font-size="9" font-weight="600">TX &rarr; D10 (amarelo)</text>
+            <path d="M210,151 H300" stroke="#eab308" stroke-width="3"/>
+            <rect x="300" y="143" width="56" height="16" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="328" y="138" text-anchor="middle" fill="#92400e" font-size="9" font-weight="700">1k&#8486;</text>
+            <path d="M356,151 H540" stroke="#eab308" stroke-width="3"/>
+            <circle cx="420" cy="151" r="4" fill="#a16207"/>
+            <path d="M420,151 V200" stroke="#eab308" stroke-width="3"/>
+            <rect x="412" y="200" width="16" height="50" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="446" y="228" fill="#92400e" font-size="9" font-weight="700">2k&#8486;</text>
+            <path d="M420,250 V300 H115 V262" stroke="#1f2937" stroke-width="3" fill="none"/>
+            <text x="500" y="290" fill="#15803d" font-size="9" font-weight="700">NOVO: divisor 1k/2k = 3.3V no RX</text>
+            <path d="M540,181 H210" stroke="#eab308" stroke-width="3" stroke-dasharray="8,4"/>
+            <text x="370" y="174" text-anchor="middle" fill="#a16207" font-size="9" font-weight="600">BUSY &rarr; D8 (NOVO: LOW = tocando)</text>
+            <path d="M210,211 H540" stroke="#ef4444" stroke-width="3"/>
+            <path d="M210,236 H540" stroke="#1f2937" stroke-width="3"/>
+            <g transform="translate(500,211)">
+                <line x1="0" y1="0" x2="0" y2="25" stroke="#374151" stroke-width="2"/>
+                <line x1="-9" y1="8" x2="9" y2="8" stroke="#374151" stroke-width="3"/>
+                <line x1="-9" y1="15" x2="9" y2="15" stroke="#374151" stroke-width="3"/>
+                <text x="-14" y="6" text-anchor="end" fill="#374151" font-size="9" font-weight="700">470&micro;F + 100nF</text>
+                <text x="-14" y="18" text-anchor="end" fill="#6b7280" font-size="8">(perto do m&oacute;dulo)</text>
+            </g>
+            <circle cx="790" cy="135" r="34" fill="#1c1917"/>
+            <circle cx="790" cy="135" r="22" fill="none" stroke="#404040" stroke-width="2"/>
+            <circle cx="790" cy="135" r="8" fill="#292524"/>
+            <path d="M720,121 H756" stroke="#eab308" stroke-width="3"/>
+            <path d="M720,151 H762" stroke="#1f2937" stroke-width="3"/>
+            <text x="790" y="190" text-anchor="middle" fill="#4b5563" font-size="9" font-weight="600">Alto-falante 8&#8486; 2W</text>
+            <text x="790" y="202" text-anchor="middle" fill="#6b7280" font-size="8">(no fundo do case, grade p/ baixo)</text>
+            <text x="430" y="340" text-anchor="middle" fill="#6b7280" font-size="9">microSD FAT32: pastas /01/../07/ com 001.mp3..005.mp3 (35 &aacute;udios)</text>
         </svg>
     </div>
-    <div class="info">
-        <strong>Novo na v2.0 &mdash; Botao FALAR com dois modos:</strong><br>
-        Press curto (&lt;0.8s) = fala a palavra imediatamente<br>
-        Press longo (&gt;0.8s) = adiciona a palavra a uma frase (ate 5 palavras)<br>
-        Cat+ e Cat- juntos = fala a frase inteira<br>
-        Pal+ e Pal- juntos = limpa a frase
-    </div>
+    <div class="warning"><strong>Polaridade do 470&micro;F:</strong> perna longa (+) no VCC, faixa (-) no GND. Invertido, o capacitor estoura.</div>
 </div>
 
-<!-- ==================== ETAPA 6: Aberturas laterais ==================== -->
+<!-- ==================== MOTOR ==================== -->
 <div class="step">
     <div class="step-header">
         <div class="step-number">6</div>
-        <div class="step-title">Aberturas Laterais &mdash; Onde Cada Cabo / Bot&atilde;o Sai do Case</div>
+        <div class="step-title">Motor de Vibra&ccedil;&atilde;o (D7)</div>
     </div>
-    <p class="step-desc">O case 3D j&aacute; tem todas as aberturas pre-moldadas. <strong>N&atilde;o fure nada manualmente</strong>. Use estas vistas para orientar o m&oacute;dulo certo na lateral certa.</p>
-
-    <!-- ===== LATERAL ESQUERDA ===== -->
+    <p class="step-desc">Sem mudan&ccedil;as el&eacute;tricas na v3.0 &mdash; circuito revisado e confirmado: base com 1k&#8486; (Ib &asymp; 4.3 mA, satura&ccedil;&atilde;o garantida p/ 80 mA do motor) e 1N4148 em antiparalelo com o motor.</p>
     <div class="diagram-container">
-        <p>LATERAL ESQUERDA (vista de fora) &mdash; escala 4 mm/px</p>
-        <svg width="820" height="260" viewBox="0 0 820 260" preserveAspectRatio="xMidYMid meet">
-            <defs>
-                <linearGradient id="side_grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#bfdbfe"/>
-                    <stop offset="100%" stop-color="#93c5fd"/>
-                </linearGradient>
-            </defs>
-            <!-- Case lateral 115mm largura x 32mm altura, escala 5px/mm. Posicionado em (120, 50), tamanho 575x160 -->
-            <rect x="120" y="50" width="575" height="160" rx="8" fill="url(#side_grad)" stroke="#3b82f6" stroke-width="2"/>
-            <text x="410" y="32" text-anchor="middle" fill="var(--g800)" font-size="13" font-weight="700">LATERAL ESQUERDA &mdash; face 115 &times; 32 mm (vista de fora)</text>
-
-            <!-- Origem interior em px (132, 60). Altura interna 30mm=150px. Fundo da base em y=210, topo em y=60 -->
-            <!-- USB Arduino: y_face=20mm (centro da abertura em y_face=27mm), z=5mm, w=14mm, h=12mm. px: x=132+(20-7)*5=197, y=210-(5+12)*5=125 -->
-            <rect x="197" y="125" width="70" height="60" rx="2" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
-            <text x="232" y="200" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="700">USB Arduino</text>
-            <text x="232" y="213" text-anchor="middle" fill="var(--g500)" font-size="9">14 &times; 12 mm  @ z = 5</text>
-
-            <!-- Jack alim: y_face=40mm, z=3, w=12, h=11. px: x=132+(40-6)*5=302, y=210-14*5=140 -->
-            <rect x="302" y="140" width="60" height="55" rx="2" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
-            <text x="332" y="210" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="700">Jack alim.</text>
-            <text x="332" y="223" text-anchor="middle" fill="var(--g500)" font-size="9">12 &times; 11 mm  @ z = 3</text>
-
-            <!-- micro-USB TP4056: y_face=66.5mm, z=5, w=10, h=4. px: x=132+(66.5-5)*5=440, y=210-9*5=165 -->
-            <rect x="440" y="165" width="50" height="20" rx="2" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
-            <text x="465" y="200" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">micro-USB TP4056</text>
-            <text x="465" y="213" text-anchor="middle" fill="#059669" font-size="9">10 &times; 4 mm  @ z = 5  (carga)</text>
-
-            <!-- Chave slide on/off: y_face=85mm, z=20, w=13, h=5. px: x=132+(85-6.5)*5=525, y=210-22.5*5=98 -->
-            <rect x="525" y="98" width="65" height="25" rx="3" fill="#fff" stroke="#10b981" stroke-width="2"/>
-            <circle cx="568" cy="110" r="9" fill="#10b981"/>
-            <text x="557" y="88" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">Chave on/off</text>
-            <text x="557" y="140" text-anchor="middle" fill="#059669" font-size="9">13 &times; 5 mm  @ z = 20</text>
-
-            <!-- Cotas verticais Z (texto centralizado, rotacionado) -->
-            <g font-family="'JetBrains Mono'" font-size="10" fill="var(--g600)">
-                <line x1="100" y1="210" x2="100" y2="60" stroke="var(--g500)" stroke-width="1"/>
-                <line x1="96" y1="210" x2="104" y2="210" stroke="var(--g500)"/>
-                <line x1="96" y1="60" x2="104" y2="60" stroke="var(--g500)"/>
-                <!-- Texto vertical com text-anchor middle e em x=88 (espaco no viewBox) -->
-                <text x="88" y="135" text-anchor="middle" transform="rotate(-90,88,135)">altura 32 mm (base + fundo)</text>
-                <text x="116" y="216" fill="var(--g500)" font-size="8" text-anchor="start">z=0 (fundo)</text>
-                <text x="116" y="62" fill="var(--g500)" font-size="8" text-anchor="start">z=30 (topo)</text>
+        <svg width="700" height="330" viewBox="0 0 700 330">
+            <rect x="20" y="100" width="170" height="120" rx="10" fill="#0ea5e9"/>
+            <text x="105" y="130" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ARDUINO</text>
+            <g font-family="'JetBrains Mono'" font-size="11" fill="#fff">
+                <text x="180" y="165" text-anchor="end">D7</text>
+                <text x="180" y="200" text-anchor="end">GND</text>
             </g>
-        </svg>
-    </div>
-
-    <!-- ===== LATERAL DIREITA ===== -->
-    <div class="diagram-container">
-        <p>LATERAL DIREITA (vista de fora) &mdash; escala 4 mm/px</p>
-        <svg width="820" height="260" viewBox="0 0 820 260" preserveAspectRatio="xMidYMid meet">
-            <rect x="120" y="50" width="575" height="160" rx="8" fill="url(#side_grad)" stroke="#3b82f6" stroke-width="2"/>
-            <text x="410" y="32" text-anchor="middle" fill="var(--g800)" font-size="13" font-weight="700">LATERAL DIREITA &mdash; face 115 &times; 32 mm (vista de fora)</text>
-
-            <!-- Slot microSD: y_face=12mm, z=8, w=14, h=4. px: x=132+(12-7)*5=157, y=210-10*5=160 -->
-            <rect x="157" y="160" width="70" height="20" rx="2" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
-            <text x="192" y="200" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="700">Slot microSD</text>
-            <text x="192" y="213" text-anchor="middle" fill="var(--g500)" font-size="9">14 &times; 4 mm  @ z = 8</text>
-
-            <!-- Pot volume: y_face=70mm, z=15, diam=7. px: x=132+70*5=482, y=210-15*5=135 (raio 17.5) -->
-            <circle cx="482" cy="135" r="17.5" fill="#fff" stroke="#10b981" stroke-width="2"/>
-            <circle cx="482" cy="135" r="13" fill="var(--g200)" stroke="var(--g400)" stroke-width="1"/>
-            <line x1="482" y1="135" x2="482" y2="121" stroke="var(--g700)" stroke-width="3" stroke-linecap="round"/>
-            <text x="482" y="180" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">Potenciometro Volume</text>
-            <text x="482" y="193" text-anchor="middle" fill="#059669" font-size="9">furo &Oslash;7 mm  @ z = 15</text>
-
-            <!-- Nota speaker -->
-            <text x="630" y="120" text-anchor="middle" fill="var(--g500)" font-size="10" font-style="italic">(speaker fica na TAMPA,</text>
-            <text x="630" y="134" text-anchor="middle" fill="var(--g500)" font-size="10" font-style="italic">n&atilde;o nesta face)</text>
-
-            <!-- Cotas verticais Z -->
-            <g font-family="'JetBrains Mono'" font-size="10" fill="var(--g600)">
-                <line x1="100" y1="210" x2="100" y2="60" stroke="var(--g500)" stroke-width="1"/>
-                <line x1="96" y1="210" x2="104" y2="210" stroke="var(--g500)"/>
-                <line x1="96" y1="60" x2="104" y2="60" stroke="var(--g500)"/>
-                <text x="88" y="135" text-anchor="middle" transform="rotate(-90,88,135)">altura 32 mm (base + fundo)</text>
+            <path d="M190,161 H260" stroke="#eab308" stroke-width="3"/>
+            <rect x="260" y="153" width="56" height="16" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="288" y="148" text-anchor="middle" fill="#92400e" font-size="9" font-weight="700">1k&#8486;</text>
+            <path d="M316,161 H384" stroke="#eab308" stroke-width="3"/>
+            <circle cx="420" cy="161" r="36" fill="none" stroke="#1f2937" stroke-width="2.5"/>
+            <line x1="404" y1="140" x2="404" y2="182" stroke="#1f2937" stroke-width="3"/>
+            <line x1="384" y1="161" x2="404" y2="161" stroke="#1f2937" stroke-width="2.5"/>
+            <line x1="404" y1="150" x2="436" y2="128" stroke="#1f2937" stroke-width="2.5"/>
+            <line x1="404" y1="172" x2="436" y2="194" stroke="#1f2937" stroke-width="2.5"/>
+            <polygon points="436,194 424,190 430,182" fill="#1f2937"/>
+            <text x="470" y="160" fill="#1f2937" font-size="11" font-weight="700">2N2222</text>
+            <text x="470" y="175" fill="#6b7280" font-size="8">(TO-92: E-B-C, face plana p/ voc&ecirc;)</text>
+            <path d="M436,128 V70 H520" stroke="#1f2937" stroke-width="3" fill="none"/>
+            <circle cx="552" cy="70" r="26" fill="#9ca3af" stroke="#6b7280" stroke-width="2.5"/>
+            <text x="552" y="75" text-anchor="middle" fill="#374151" font-size="11" font-weight="800">M</text>
+            <path d="M578,70 H640 V30 H300 V62" stroke="#ef4444" stroke-width="3" fill="none"/>
+            <text x="300" y="22" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="700">+5V</text>
+            <path d="M520,70 V112 H640 V70" stroke="#374151" stroke-width="2" fill="none"/>
+            <g transform="translate(566,104)">
+                <polygon points="0,0 0,16 14,8" fill="#1f2937"/>
+                <line x1="14" y1="0" x2="14" y2="16" stroke="#1f2937" stroke-width="3"/>
             </g>
+            <text x="580" y="140" text-anchor="middle" fill="#374151" font-size="9" font-weight="700">1N4148</text>
+            <text x="580" y="152" text-anchor="middle" fill="#6b7280" font-size="8">catodo (faixa) p/ +5V</text>
+            <path d="M436,194 V250 H105 V224" stroke="#1f2937" stroke-width="3" fill="none"/>
+            <text x="270" y="266" text-anchor="middle" fill="#4b5563" font-size="9" font-weight="600">Emissor &rarr; GND</text>
+            <text x="350" y="306" text-anchor="middle" fill="#6b7280" font-size="9">D7 HIGH &rarr; transistor satura &rarr; motor vibra 60 ms &rarr; 1N4148 absorve o pico reverso da bobina</text>
         </svg>
-    </div>
-
-    <div class="info">
-        <strong>Coordenadas Z</strong> (altura desde o fundo interno da base): a base interna tem 30 mm. Pontos comuns:
-        <ul style="margin: 6px 0 0 18px; line-height: 1.6">
-            <li><strong>z = 3 mm</strong> &mdash; jack de alimenta&ccedil;ao do Arduino (mais baixo)</li>
-            <li><strong>z = 5 mm</strong> &mdash; porta USB do Arduino e micro-USB do TP4056</li>
-            <li><strong>z = 8 mm</strong> &mdash; slot do microSD do DFPlayer</li>
-            <li><strong>z = 15 mm</strong> &mdash; potenci&ocirc;metro de volume (centro da face)</li>
-            <li><strong>z = 20 mm</strong> &mdash; chave slide on/off (parte superior, f&aacute;cil de alcan&ccedil;ar)</li>
-        </ul>
     </div>
 </div>
 
-<!-- ==================== ETAPA 7: Diagrama completo ==================== -->
+<!-- ==================== BATERIA / ENERGIA ==================== -->
 <div class="step">
     <div class="step-header">
         <div class="step-number">7</div>
-        <div class="step-title">Diagrama Esquematico Completo v2.0</div>
+        <div class="step-title">Bateria e Alimenta&ccedil;&atilde;o <span class="upd-badge">ATUALIZADO v3.0</span></div>
     </div>
-    <p class="step-desc">Todas as conexoes do circuito. Componentes novos marcados com &#9733;.</p>
-
-    <table class="pin-table">
-        <tr><th>Pino</th><th>Conecta a</th><th>Cor</th><th>Fun&ccedil;ao</th></tr>
-        <tr><td><strong>D2</strong></td><td>Botao Vermelho → GND</td><td><span class="color-dot" style="background:#ef4444"></span>Vermelho</td><td>Categoria +</td></tr>
-        <tr><td><strong>D3</strong></td><td>Botao Amarelo → GND</td><td><span class="color-dot" style="background:#eab308"></span>Amarelo</td><td>Categoria -</td></tr>
-        <tr><td><strong>D4</strong></td><td>Botao Verde → GND</td><td><span class="color-dot" style="background:#22c55e"></span>Verde</td><td>Palavra +</td></tr>
-        <tr><td><strong>D5</strong></td><td>Botao Azul → GND</td><td><span class="color-dot" style="background:#3b82f6"></span>Azul</td><td>Palavra -</td></tr>
-        <tr><td><strong>D6</strong></td><td>Botao Preto → GND</td><td><span class="color-dot" style="background:#6b7280"></span>Cinza</td><td>FALAR (curto/longo)</td></tr>
-        <tr class="new-row"><td><strong>D7 &#9733;</strong></td><td>1k&#8486; → 2N2222 base</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>Motor vibra&ccedil;ao</td></tr>
-        <tr><td><strong>D10</strong></td><td>DFPlayer TX</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>Receber dados audio</td></tr>
-        <tr><td><strong>D11</strong></td><td>1k&#8486; → DFPlayer RX</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>Enviar comandos audio</td></tr>
-        <tr class="new-row"><td><strong>A0 &#9733;</strong></td><td>Pot. 10k&#8486; (wiper)</td><td><span class="color-dot" style="background:#a855f7"></span>Roxo</td><td>Volume</td></tr>
-        <tr class="new-row"><td><strong>A1 &#9733;</strong></td><td>Divisor tensao 10k+10k</td><td><span class="color-dot" style="background:#f97316"></span>Laranja</td><td>Monitor bateria</td></tr>
-        <tr><td><strong>A4</strong></td><td>LCD SDA</td><td><span class="color-dot" style="background:#22c55e"></span>Verde</td><td>I2C dados</td></tr>
-        <tr><td><strong>A5</strong></td><td>LCD SCL</td><td><span class="color-dot" style="background:#f97316"></span>Laranja</td><td>I2C clock</td></tr>
-        <tr><td><strong>5V</strong></td><td>LCD, DFPlayer, Pot, Motor</td><td><span class="color-dot" style="background:#ef4444"></span>Vermelho</td><td>Alimenta&ccedil;ao</td></tr>
-        <tr><td><strong>GND</strong></td><td>Todos os componentes</td><td><span class="color-dot" style="background:#1e293b"></span>Preto</td><td>Terra comum</td></tr>
-    </table>
-</div>
-
-<!-- ==================== ETAPA 8: CIRCUITO REAL ==================== -->
-<div class="step">
-    <div class="step-header">
-        <div class="step-number" style="background:linear-gradient(135deg,#f59e0b,#d97706)">8</div>
-        <div class="step-title">Circuito Esquematico Completo v2.0</div>
-    </div>
-    <p class="step-desc">Diagrama funcional completo do circuito real. Cores dos fios correspondem a funcao: <span style="color:#ef4444;font-weight:600">vermelho=5V</span>, <span style="color:#1e293b;font-weight:600;background:#e5e7eb;padding:0 4px;border-radius:3px">preto=GND</span>, <span style="color:#06b6d4;font-weight:600">ciano=digital</span>, <span style="color:#f97316;font-weight:600">laranja=analogico</span>, <span style="color:#a855f7;font-weight:600">roxo=I2C</span>.</p>
-
+    <p class="step-desc">Duas mudan&ccedil;as: o divisor de medi&ccedil;&atilde;o virou <strong>100k/33k + 100nF</strong> (lido com a refer&ecirc;ncia interna de 1.1V) e entrou o <strong>boost MT3608</strong> para entregar 5V est&aacute;veis a partir da 18650.</p>
     <div class="diagram-container">
-        <p>ESQUEMATICO COMPLETO — Voz Autista v2.0</p>
-        <svg width="920" height="750" viewBox="0 0 920 750">
-            <defs>
-                <linearGradient id="ard" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0369a1"/></linearGradient>
-                <linearGradient id="dfp2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
-                <linearGradient id="lcd2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#166534"/><stop offset="100%" stop-color="#14532d"/></linearGradient>
-                <linearGradient id="bat2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
-                <linearGradient id="tp42" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#5b21b6"/></linearGradient>
-                <filter id="sh2" x="-4%" y="-4%" width="110%" height="115%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".1"/></filter>
-                <marker id="arrowR" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0,6 2,0 4" fill="#ef4444"/></marker>
-                <marker id="arrowB" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0,6 2,0 4" fill="#1e293b"/></marker>
-                <marker id="arrowC" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0,6 2,0 4" fill="#06b6d4"/></marker>
-                <marker id="arrowO" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0,6 2,0 4" fill="#f97316"/></marker>
-                <marker id="arrowP" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0,6 2,0 4" fill="#a855f7"/></marker>
-            </defs>
-
-            <!-- ====== TITULO ====== -->
-            <text x="460" y="22" text-anchor="middle" fill="var(--g800)" font-size="15" font-weight="800">CIRCUITO COMPLETO — VOZ AUTISTA v2.0</text>
-            <text x="460" y="38" text-anchor="middle" fill="var(--g500)" font-size="10">Todos os componentes e conexoes do hardware real</text>
-
-            <!-- ====== BARRAS DE ALIMENTACAO ====== -->
-            <line x1="50" y1="60" x2="870" y2="60" stroke="#ef4444" stroke-width="3" stroke-linecap="round" opacity=".25"/>
-            <text x="55" y="56" fill="#ef4444" font-size="9" font-weight="700">+5V</text>
-            <line x1="50" y1="700" x2="870" y2="700" stroke="#1e293b" stroke-width="3" stroke-linecap="round" opacity=".25"/>
-            <text x="55" y="716" fill="var(--g500)" font-size="9" font-weight="700">GND</text>
-
-            <!-- ====== ARDUINO UNO (CENTRO) ====== -->
-            <g filter="url(#sh2)">
-                <rect x="320" y="200" width="240" height="330" rx="10" fill="url(#ard)"/>
-                <rect x="315" y="290" width="20" height="40" rx="4" fill="#d1d5db" stroke="#9ca3af" stroke-width="1"/>
-                <rect x="315" y="390" width="18" height="30" rx="4" fill="#1e293b"/>
+        <p>Cadeia de alimenta&ccedil;&atilde;o</p>
+        <svg width="860" height="170" viewBox="0 0 860 170">
+            <g font-size="10" font-weight="700">
+                <rect x="20" y="50" width="120" height="56" rx="12" fill="#3b82f6"/><text x="80" y="74" text-anchor="middle" fill="#fff">BATERIA</text><text x="80" y="90" text-anchor="middle" fill="#bfdbfe" font-size="8">18650 3.0-4.2V</text>
+                <rect x="190" y="50" width="120" height="56" rx="8" fill="#7c3aed"/><text x="250" y="74" text-anchor="middle" fill="#fff">TP4056</text><text x="250" y="90" text-anchor="middle" fill="#ddd6fe" font-size="8">carga + prote&ccedil;&atilde;o</text>
+                <rect x="360" y="50" width="100" height="56" rx="8" fill="#6b7280"/><text x="410" y="74" text-anchor="middle" fill="#fff">CHAVE</text><text x="410" y="90" text-anchor="middle" fill="#e5e7eb" font-size="8">on/off (recuada)</text>
+                <rect x="510" y="50" width="120" height="56" rx="8" fill="#0d9488"/><text x="570" y="74" text-anchor="middle" fill="#fff">MT3608</text><text x="570" y="90" text-anchor="middle" fill="#ccfbf1" font-size="8">boost &rarr; 5.0V</text>
+                <rect x="680" y="50" width="160" height="56" rx="8" fill="#0ea5e9"/><text x="760" y="74" text-anchor="middle" fill="#fff">RAIL 5V</text><text x="760" y="90" text-anchor="middle" fill="#e0f2fe" font-size="8">Arduino + LCD + DFPlayer + pot + motor</text>
             </g>
-            <text x="440" y="230" text-anchor="middle" fill="#fff" font-size="18" font-weight="800">ARDUINO UNO R3</text>
-            <text x="440" y="248" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10">ATmega328P</text>
-
-            <!-- Pinos digitais (lado esquerdo do Arduino) -->
-            <g font-size="10" font-weight="600" font-family="'JetBrains Mono',monospace">
-                <rect x="325" y="270" width="40" height="18" rx="3" fill="rgba(0,0,0,.2)"/><text x="345" y="283" text-anchor="middle" fill="#fff">D2</text>
-                <rect x="325" y="295" width="40" height="18" rx="3" fill="rgba(0,0,0,.2)"/><text x="345" y="308" text-anchor="middle" fill="#fff">D3</text>
-                <rect x="325" y="320" width="40" height="18" rx="3" fill="rgba(0,0,0,.2)"/><text x="345" y="333" text-anchor="middle" fill="#fff">D4</text>
-                <rect x="325" y="345" width="40" height="18" rx="3" fill="rgba(0,0,0,.2)"/><text x="345" y="358" text-anchor="middle" fill="#fff">D5</text>
-                <rect x="325" y="370" width="40" height="18" rx="3" fill="rgba(0,0,0,.2)"/><text x="345" y="383" text-anchor="middle" fill="#fff">D6</text>
-                <rect x="325" y="395" width="40" height="18" rx="3" fill="rgba(0,0,0,.15)"/><text x="345" y="408" text-anchor="middle" fill="#86efac">D7</text>
-                <rect x="325" y="430" width="40" height="18" rx="3" fill="rgba(0,0,0,.2)"/><text x="345" y="443" text-anchor="middle" fill="#fff">D10</text>
-                <rect x="325" y="455" width="40" height="18" rx="3" fill="rgba(0,0,0,.2)"/><text x="345" y="468" text-anchor="middle" fill="#fff">D11</text>
+            <g stroke="#ef4444" stroke-width="4">
+                <line x1="140" y1="70" x2="190" y2="70"/><line x1="310" y1="70" x2="360" y2="70"/><line x1="460" y1="70" x2="510" y2="70"/><line x1="630" y1="70" x2="680" y2="70"/>
             </g>
-
-            <!-- Pinos analogicos e power (lado direito) -->
-            <g font-size="10" font-weight="600" font-family="'JetBrains Mono',monospace">
-                <rect x="515" y="270" width="40" height="18" rx="3" fill="rgba(0,0,0,.15)"/><text x="535" y="283" text-anchor="middle" fill="#fdba74">A0</text>
-                <rect x="515" y="295" width="40" height="18" rx="3" fill="rgba(0,0,0,.15)"/><text x="535" y="308" text-anchor="middle" fill="#fdba74">A1</text>
-                <rect x="515" y="335" width="40" height="18" rx="3" fill="rgba(0,0,0,.15)"/><text x="535" y="348" text-anchor="middle" fill="#d8b4fe">A4</text>
-                <rect x="515" y="360" width="40" height="18" rx="3" fill="rgba(0,0,0,.15)"/><text x="535" y="373" text-anchor="middle" fill="#d8b4fe">A5</text>
-                <rect x="515" y="405" width="40" height="18" rx="3" fill="rgba(0,0,0,.2)"/><text x="535" y="418" text-anchor="middle" fill="#fca5a5">5V</text>
-                <rect x="515" y="430" width="40" height="18" rx="3" fill="rgba(0,0,0,.2)"/><text x="535" y="443" text-anchor="middle" fill="#d1d5db">GND</text>
-                <rect x="515" y="475" width="40" height="18" rx="3" fill="rgba(0,0,0,.2)"/><text x="535" y="488" text-anchor="middle" fill="#fca5a5">VIN</text>
+            <g stroke="#1f2937" stroke-width="4">
+                <line x1="140" y1="92" x2="190" y2="92"/><line x1="310" y1="92" x2="510" y2="92"/><line x1="630" y1="92" x2="680" y2="92"/>
             </g>
-
-            <!-- ====== 5 BOTOES (ESQUERDA) ====== -->
-            <text x="130" y="220" text-anchor="middle" fill="var(--g600)" font-size="11" font-weight="700">BOTOES (INPUT_PULLUP)</text>
-            <text x="130" y="234" text-anchor="middle" fill="var(--g400)" font-size="8">Sem resistor externo</text>
-
-            <!-- Botao Cat+ D2 -->
-            <rect x="75" y="264" width="55" height="26" rx="8" fill="#ef4444" filter="url(#sh2)"/>
-            <text x="103" y="281" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">Cat+</text>
-            <line x1="130" y1="277" x2="325" y2="279" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
-            <line x1="75" y1="277" x2="40" y2="277" stroke="#1e293b" stroke-width="1.5"/>
-            <line x1="40" y1="277" x2="40" y2="700" stroke="#1e293b" stroke-width="1.5"/>
-
-            <!-- Botao Cat- D3 -->
-            <rect x="75" y="294" width="55" height="26" rx="8" fill="#eab308" filter="url(#sh2)"/>
-            <text x="103" y="311" text-anchor="middle" fill="#1a1a00" font-size="9" font-weight="700">Cat-</text>
-            <line x1="130" y1="304" x2="325" y2="304" stroke="#ca8a04" stroke-width="2" stroke-linecap="round"/>
-            <line x1="75" y1="307" x2="48" y2="307" stroke="#1e293b" stroke-width="1.5"/>
-            <line x1="48" y1="307" x2="48" y2="700" stroke="#1e293b" stroke-width="1.5"/>
-
-            <!-- Botao Pal+ D4 -->
-            <rect x="75" y="324" width="55" height="26" rx="8" fill="#22c55e" filter="url(#sh2)"/>
-            <text x="103" y="341" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">Pal+</text>
-            <line x1="130" y1="329" x2="325" y2="329" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
-            <line x1="75" y1="337" x2="56" y2="337" stroke="#1e293b" stroke-width="1.5"/>
-            <line x1="56" y1="337" x2="56" y2="700" stroke="#1e293b" stroke-width="1.5"/>
-
-            <!-- Botao Pal- D5 -->
-            <rect x="75" y="354" width="55" height="26" rx="8" fill="#3b82f6" filter="url(#sh2)"/>
-            <text x="103" y="371" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">Pal-</text>
-            <line x1="130" y1="354" x2="325" y2="354" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
-            <line x1="75" y1="367" x2="64" y2="367" stroke="#1e293b" stroke-width="1.5"/>
-            <line x1="64" y1="367" x2="64" y2="700" stroke="#1e293b" stroke-width="1.5"/>
-
-            <!-- Botao FALAR D6 -->
-            <rect x="75" y="384" width="55" height="26" rx="8" fill="#374151" filter="url(#sh2)"/>
-            <text x="103" y="401" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">FALAR</text>
-            <line x1="130" y1="379" x2="325" y2="379" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/>
-            <line x1="75" y1="397" x2="72" y2="397" stroke="#1e293b" stroke-width="1.5"/>
-            <line x1="72" y1="397" x2="72" y2="700" stroke="#1e293b" stroke-width="1.5"/>
-
-            <!-- ====== LCD 16x2 I2C (ACIMA) ====== -->
-            <g filter="url(#sh2)">
-                <rect x="350" y="80" width="200" height="80" rx="6" fill="url(#lcd2)"/>
-                <rect x="362" y="90" width="176" height="45" rx="3" fill="#0f172a"/>
-                <text x="450" y="112" text-anchor="middle" fill="#4ade80" font-size="9" font-family="'JetBrains Mono'">Voz Autista v2.0</text>
-                <text x="450" y="126" text-anchor="middle" fill="#4ade80" font-size="8" font-family="'JetBrains Mono'">&#9654; Eu quero</text>
-            </g>
-            <text x="450" y="178" text-anchor="middle" fill="var(--g700)" font-size="11" font-weight="700">LCD 16x2 I2C</text>
-            <text x="450" y="192" text-anchor="middle" fill="var(--g500)" font-size="9">(auto-detect: 0x27/0x3F/0x20/0x38)</text>
-
-            <!-- LCD wires — SDA -->
-            <line x1="390" y1="160" x2="390" y2="185" stroke="#a855f7" stroke-width="2"/>
-            <line x1="390" y1="185" x2="570" y2="185" stroke="#a855f7" stroke-width="2"/>
-            <line x1="570" y1="185" x2="570" y2="344" stroke="#a855f7" stroke-width="2"/>
-            <line x1="555" y1="344" x2="570" y2="344" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arrowP)"/>
-            <text x="578" y="342" fill="#a855f7" font-size="8" font-weight="600">SDA</text>
-
-            <!-- LCD wires — SCL -->
-            <line x1="420" y1="160" x2="420" y2="180" stroke="#a855f7" stroke-width="2"/>
-            <line x1="420" y1="180" x2="580" y2="180" stroke="#a855f7" stroke-width="2"/>
-            <line x1="580" y1="180" x2="580" y2="369" stroke="#a855f7" stroke-width="2"/>
-            <line x1="555" y1="369" x2="580" y2="369" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arrowP)"/>
-            <text x="588" y="367" fill="#a855f7" font-size="8" font-weight="600">SCL</text>
-
-            <!-- LCD VCC -->
-            <line x1="460" y1="160" x2="460" y2="175" stroke="#ef4444" stroke-width="2"/>
-            <line x1="460" y1="175" x2="590" y2="175" stroke="#ef4444" stroke-width="2"/>
-            <line x1="590" y1="175" x2="590" y2="414" stroke="#ef4444" stroke-width="1.5"/>
-            <line x1="555" y1="414" x2="590" y2="414" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
-
-            <!-- LCD GND -->
-            <line x1="500" y1="160" x2="500" y2="170" stroke="#1e293b" stroke-width="2"/>
-            <line x1="500" y1="170" x2="600" y2="170" stroke="#1e293b" stroke-width="2"/>
-            <line x1="600" y1="170" x2="600" y2="439" stroke="#1e293b" stroke-width="1.5"/>
-            <line x1="555" y1="439" x2="600" y2="439" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
-
-            <!-- ====== POTENCIOMETRO VOLUME (DIREITA ACIMA) ====== -->
-            <g filter="url(#sh2)" transform="translate(700,250)">
-                <circle cx="35" cy="35" r="30" fill="var(--g100)" stroke="var(--g400)" stroke-width="2.5"/>
-                <circle cx="35" cy="35" r="18" fill="var(--g200)" stroke="var(--g300)" stroke-width="1.5"/>
-                <line x1="35" y1="35" x2="35" y2="12" stroke="var(--g800)" stroke-width="4" stroke-linecap="round"/>
-            </g>
-            <text x="735" y="330" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="700">Pot. 10k&#8486;</text>
-            <text x="735" y="344" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600">(Volume)</text>
-
-            <!-- Pot wire SIG -> A0 -->
-            <line x1="700" y1="285" x2="640" y2="285" stroke="#f97316" stroke-width="2"/>
-            <line x1="640" y1="285" x2="640" y2="265" stroke="#f97316" stroke-width="2"/>
-            <line x1="555" y1="265" x2="640" y2="265" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arrowO)"/>
-            <rect x="592" y="248" width="60" height="14" rx="3" fill="#fff" stroke="#f97316" stroke-width="1"/>
-            <text x="622" y="259" text-anchor="middle" fill="#f97316" font-size="10" font-weight="700">SIG &rarr; A0</text>
-            <!-- Pot 5V -->
-            <line x1="715" y1="310" x2="715" y2="60" stroke="#ef4444" stroke-width="1.5"/>
-            <circle cx="715" cy="60" r="3" fill="#ef4444"/>
-            <!-- Pot GND -->
-            <line x1="755" y1="310" x2="755" y2="700" stroke="#1e293b" stroke-width="1.5"/>
-
-            <!-- ====== DIVISOR TENSAO BATERIA (DIREITA) ====== -->
-            <g transform="translate(800,260)">
-                <text x="35" y="-8" text-anchor="middle" fill="var(--g700)" font-size="9" font-weight="700">Div. Tensao</text>
-                <text x="35" y="4" text-anchor="middle" fill="#10b981" font-size="8">(Bateria)</text>
-                <!-- BAT+ wire from top -->
-                <line x1="35" y1="12" x2="35" y2="24" stroke="#ef4444" stroke-width="2"/>
-                <text x="5" y="22" text-anchor="end" fill="#ef4444" font-size="8" font-weight="600">BAT+</text>
-                <!-- R1 10k -->
-                <rect x="10" y="24" width="50" height="18" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-                <text x="35" y="37" text-anchor="middle" fill="#92400e" font-size="8" font-weight="700">10k&#8486;</text>
-                <!-- Junction -->
-                <circle cx="35" cy="52" r="4" fill="#f97316"/>
-                <line x1="35" y1="42" x2="35" y2="60" stroke="var(--g700)" stroke-width="2"/>
-                <!-- R2 10k -->
-                <rect x="10" y="60" width="50" height="18" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-                <text x="35" y="73" text-anchor="middle" fill="#92400e" font-size="8" font-weight="700">10k&#8486;</text>
-                <!-- GND -->
-                <line x1="35" y1="78" x2="35" y2="440" stroke="#1e293b" stroke-width="1.5"/>
-            </g>
-            <!-- Wire junction to A1 -->
-            <line x1="800" y1="312" x2="660" y2="312" stroke="#f97316" stroke-width="2"/>
-            <line x1="660" y1="312" x2="660" y2="290" stroke="#f97316" stroke-width="2"/>
-            <line x1="555" y1="290" x2="660" y2="290" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arrowO)"/>
-            <rect x="592" y="273" width="80" height="14" rx="3" fill="#fff" stroke="#f97316" stroke-width="1"/>
-            <text x="632" y="284" text-anchor="middle" fill="#f97316" font-size="10" font-weight="700">jun&ccedil;ao &rarr; A1</text>
-
-            <!-- ====== DFPLAYER MINI (ABAIXO CENTRO) ====== -->
-            <g filter="url(#sh2)">
-                <rect x="370" y="570" width="110" height="90" rx="6" fill="url(#dfp2)"/>
-                <rect x="385" y="635" width="80" height="18" rx="3" fill="#292524"/>
-                <text x="425" y="647" text-anchor="middle" fill="#666" font-size="7">microSD</text>
-            </g>
-            <text x="425" y="598" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">DFPlayer</text>
-            <text x="425" y="614" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="9">Mini MP3</text>
-            <text x="425" y="678" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="700">DFPlayer Mini</text>
-
-            <!-- DFPlayer: D11 -> 1k -> RX  (rota pelo centro-direita, fora da area do motor) -->
-            <line x1="325" y1="464" x2="305" y2="464" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/>
-            <line x1="305" y1="464" x2="305" y2="570" stroke="#06b6d4" stroke-width="2"/>
-            <rect x="280" y="500" width="50" height="18" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-            <text x="305" y="513" text-anchor="middle" fill="#92400e" font-size="9" font-weight="700">1k&#8486;</text>
-            <line x1="305" y1="570" x2="370" y2="570" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arrowC)"/>
-            <text x="338" y="565" text-anchor="middle" fill="#06b6d4" font-size="10" font-weight="700">D11&rarr;1k&rarr;RX</text>
-
-            <!-- DFPlayer: D10 <- TX  (rota pela esquerda, longe do motor) -->
-            <line x1="325" y1="439" x2="270" y2="439" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/>
-            <line x1="270" y1="439" x2="270" y2="615" stroke="#06b6d4" stroke-width="2"/>
-            <line x1="270" y1="615" x2="370" y2="615" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arrowC)"/>
-            <text x="320" y="610" text-anchor="middle" fill="#06b6d4" font-size="10" font-weight="700">TX&rarr;D10</text>
-
-            <!-- DFPlayer VCC -->
-            <line x1="480" y1="580" x2="520" y2="580" stroke="#ef4444" stroke-width="2"/>
-            <line x1="520" y1="580" x2="520" y2="60" stroke="#ef4444" stroke-width="1.5"/>
-            <circle cx="520" cy="60" r="3" fill="#ef4444"/>
-            <text x="508" y="575" fill="#ef4444" font-size="8" font-weight="600">VCC</text>
-
-            <!-- DFPlayer GND -->
-            <line x1="480" y1="640" x2="530" y2="640" stroke="#1e293b" stroke-width="2"/>
-            <line x1="530" y1="640" x2="530" y2="700" stroke="#1e293b" stroke-width="1.5"/>
-            <text x="508" y="648" fill="var(--g500)" font-size="8" font-weight="600">GND</text>
-
-            <!-- ====== SPEAKER ====== -->
-            <g filter="url(#sh2)">
-                <circle cx="620" cy="620" r="35" fill="var(--g200)" stroke="var(--g400)" stroke-width="2"/>
-                <circle cx="620" cy="620" r="22" fill="var(--g300)"/>
-                <circle cx="620" cy="620" r="8" fill="var(--g500)"/>
-            </g>
-            <text x="620" y="668" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="700">Speaker 8&#8486; 2W</text>
-            <line x1="480" y1="610" x2="585" y2="610" stroke="var(--g600)" stroke-width="2"/>
-            <text x="540" y="603" fill="var(--g600)" font-size="8" font-weight="600">SPK1/SPK2</text>
-
-            <!-- ====== MOTOR VIBRACAO (ESQUERDA ABAIXO) ====== -->
-            <g transform="translate(80,490)">
-                <text x="80" y="-10" text-anchor="middle" fill="var(--g700)" font-size="10" font-weight="700">Motor Vibracao</text>
-                <text x="80" y="2" text-anchor="middle" fill="#10b981" font-size="8">(via transistor NPN)</text>
-
-                <!-- Wire from D7 -->
-                <line x1="165" y1="30" x2="245" y2="-86" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round"/>
-                <text x="215" y="-72" fill="#06b6d4" font-size="8" font-weight="600">D7</text>
-
-                <!-- Resistor 1k base -->
-                <rect x="110" y="21" width="55" height="18" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-                <text x="137" y="34" text-anchor="middle" fill="#92400e" font-size="8" font-weight="700">1k&#8486;</text>
-                <line x1="110" y1="30" x2="95" y2="30" stroke="#06b6d4" stroke-width="2"/>
-
-                <!-- Transistor 2N2222 -->
-                <circle cx="75" cy="55" r="20" fill="#f8fafc" stroke="var(--g400)" stroke-width="1.5"/>
-                <rect x="55" y="42" width="5" height="26" fill="var(--g700)"/>
-                <line x1="60" y1="44" x2="75" y2="35" stroke="var(--g700)" stroke-width="2.5"/>
-                <line x1="60" y1="68" x2="75" y2="77" stroke="var(--g700)" stroke-width="2.5"/>
-                <polygon points="70,74 75,77 72,70" fill="var(--g700)"/>
-                <text x="75" y="58" text-anchor="middle" fill="var(--g600)" font-size="7" font-weight="700">NPN</text>
-                <text x="75" y="90" text-anchor="middle" fill="var(--g700)" font-size="8" font-weight="600">2N2222</text>
-
-                <!-- B C E labels -->
-                <text x="48" y="33" fill="var(--g500)" font-size="8" font-weight="600">B</text>
-                <text x="84" y="32" fill="var(--g500)" font-size="8" font-weight="600">C</text>
-                <text x="84" y="82" fill="var(--g500)" font-size="8" font-weight="600">E</text>
-
-                <!-- Collector to Motor -->
-                <line x1="75" y1="35" x2="75" y2="12" stroke="var(--g700)" stroke-width="2"/>
-                <line x1="75" y1="12" x2="35" y2="12" stroke="var(--g700)" stroke-width="2"/>
-
-                <!-- Motor -->
-                <circle cx="12" cy="12" r="16" fill="var(--g300)" stroke="var(--g500)" stroke-width="2"/>
-                <text x="12" y="16" text-anchor="middle" fill="var(--g600)" font-size="9" font-weight="700">M</text>
-
-                <!-- 1N4148 flyback diode — in parallel with motor -->
-                <line x1="35" y1="12" x2="35" y2="-5" stroke="var(--g500)" stroke-width="1.5"/>
-                <line x1="75" y1="12" x2="75" y2="-5" stroke="var(--g500)" stroke-width="1.5"/>
-                <!-- Diode symbol: triangle + bar -->
-                <polygon points="42,-5 68,-5 55,-14" fill="none" stroke="#10b981" stroke-width="1.5"/>
-                <line x1="42" y1="-14" x2="68" y2="-14" stroke="#10b981" stroke-width="2"/>
-                <text x="55" y="-20" text-anchor="middle" fill="#10b981" font-size="8" font-weight="600">1N4148</text>
-                <text x="55" y="-30" text-anchor="middle" fill="var(--g500)" font-size="7">(faixa p/ +5V)</text>
-
-                <!-- 5V to motor -->
-                <line x1="-4" y1="12" x2="-20" y2="12" stroke="#ef4444" stroke-width="2"/>
-                <line x1="-20" y1="12" x2="-20" y2="-430" stroke="#ef4444" stroke-width="1.5"/>
-                <circle cx="-20" cy="-430" r="3" fill="#ef4444"/>
-
-                <!-- GND from emitter -->
-                <line x1="75" y1="77" x2="75" y2="210" stroke="#1e293b" stroke-width="1.5"/>
-            </g>
-
-            <!-- ====== ALIMENTACAO (DIREITA ABAIXO) ====== -->
-            <g transform="translate(650,560)">
-                <rect x="0" y="0" width="250" height="130" rx="12" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1.5" filter="url(#sh2)"/>
-                <text x="125" y="20" text-anchor="middle" fill="var(--g800)" font-size="11" font-weight="700">ALIMENTACAO</text>
-
-                <!-- Battery -->
-                <rect x="15" y="32" width="85" height="24" rx="12" fill="url(#bat2)"/>
-                <rect x="100" y="38" width="5" height="12" rx="2" fill="#93c5fd"/>
-                <text x="55" y="48" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">18650 3.7V</text>
-
-                <!-- TP4056 -->
-                <rect x="15" y="65" width="70" height="25" rx="4" fill="url(#tp42)"/>
-                <rect x="11" y="72" width="8" height="12" rx="2" fill="var(--g300)"/>
-                <text x="50" y="82" text-anchor="middle" fill="#fff" font-size="8" font-weight="600">TP4056</text>
-                <text x="8" y="96" fill="var(--g500)" font-size="7">USB</text>
-
-                <!-- Switch -->
-                <rect x="115" y="68" width="42" height="18" rx="9" fill="var(--g300)" stroke="var(--g400)" stroke-width="1.5"/>
-                <circle cx="143" cy="77" r="6" fill="#10b981"/>
-                <text x="136" y="99" text-anchor="middle" fill="#10b981" font-size="8" font-weight="600">ON/OFF</text>
-
-                <!-- Flow arrows -->
-                <line x1="105" y1="44" x2="105" y2="65" stroke="var(--g400)" stroke-width="1.5" marker-end="url(#arrowB)"/>
-                <line x1="85" y1="77" x2="113" y2="77" stroke="var(--g400)" stroke-width="1.5" marker-end="url(#arrowB)"/>
-                <line x1="159" y1="77" x2="205" y2="77" stroke="var(--g400)" stroke-width="1.5" marker-end="url(#arrowB)"/>
-                <text x="220" y="81" fill="#ef4444" font-size="10" font-weight="700">VIN</text>
-
-                <!-- Flow description -->
-                <text x="15" y="118" fill="var(--g600)" font-size="8" font-family="'JetBrains Mono'">BAT → TP4056 → Chave → Arduino VIN</text>
-            </g>
-
-            <!-- ====== LEGENDA ====== -->
-            <g transform="translate(20,730)">
-                <text x="0" y="0" fill="var(--g700)" font-size="10" font-weight="700">LEGENDA:</text>
-                <line x1="80" y1="-4" x2="105" y2="-4" stroke="#ef4444" stroke-width="3"/>
-                <text x="110" y="0" fill="var(--g600)" font-size="9">5V / VCC</text>
-                <line x1="170" y1="-4" x2="195" y2="-4" stroke="#1e293b" stroke-width="3"/>
-                <text x="200" y="0" fill="var(--g600)" font-size="9">GND</text>
-                <line x1="240" y1="-4" x2="265" y2="-4" stroke="#06b6d4" stroke-width="3"/>
-                <text x="270" y="0" fill="var(--g600)" font-size="9">Digital</text>
-                <line x1="325" y1="-4" x2="350" y2="-4" stroke="#f97316" stroke-width="3"/>
-                <text x="355" y="0" fill="var(--g600)" font-size="9">Analogico</text>
-                <line x1="425" y1="-4" x2="450" y2="-4" stroke="#a855f7" stroke-width="3"/>
-                <text x="455" y="0" fill="var(--g600)" font-size="9">I2C</text>
-                <line x1="490" y1="-4" x2="515" y2="-4" stroke="var(--g600)" stroke-width="2" stroke-dasharray="4,3"/>
-                <text x="520" y="0" fill="var(--g600)" font-size="9">Interno</text>
-                <rect x="570" y="-12" width="15" height="15" rx="3" fill="#ecfdf5" stroke="#10b981" stroke-width="1"/>
-                <text x="590" y="0" fill="#10b981" font-size="9">Novo v2.0</text>
+            <text x="250" y="132" text-anchor="middle" fill="#6b7280" font-size="9">micro-USB de carga acess&iacute;vel pela lateral esquerda</text>
+            <text x="570" y="132" text-anchor="middle" fill="#b91c1c" font-size="9" font-weight="700">ajuste o trimpot p/ 5.0V ANTES de ligar ao Arduino!</text>
+        </svg>
+    </div>
+    <div class="diagram-container">
+        <p>Divisor de medi&ccedil;&atilde;o (A1) &mdash; 100k/33k <span class="new-badge">v3.0</span></p>
+        <svg width="640" height="290" viewBox="0 0 640 290">
+            <text x="110" y="40" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="700">Bateria (+)</text>
+            <path d="M110,50 V80" stroke="#ef4444" stroke-width="3"/>
+            <rect x="94" y="80" width="32" height="56" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="150" y="112" fill="#92400e" font-size="10" font-weight="700">100k&#8486;</text>
+            <path d="M110,136 V170" stroke="#92400e" stroke-width="3"/>
+            <circle cx="110" cy="170" r="5" fill="#92400e"/>
+            <path d="M110,170 H320" stroke="#92400e" stroke-width="3"/>
+            <text x="215" y="162" text-anchor="middle" fill="#92400e" font-size="10" font-weight="700">A1 (marrom)</text>
+            <rect x="320" y="158" width="90" height="24" rx="6" fill="#0ea5e9"/>
+            <text x="365" y="174" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">Arduino A1</text>
+            <path d="M110,170 V200" stroke="#92400e" stroke-width="3"/>
+            <rect x="94" y="200" width="32" height="46" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="146" y="226" fill="#92400e" font-size="10" font-weight="700">33k&#8486;</text>
+            <path d="M110,246 V268" stroke="#1f2937" stroke-width="3"/>
+            <text x="142" y="266" fill="#374151" font-size="10" font-weight="700">GND</text>
+            <path d="M200,170 V210" stroke="#374151" stroke-width="2"/>
+            <line x1="190" y1="210" x2="210" y2="210" stroke="#374151" stroke-width="3"/>
+            <line x1="190" y1="218" x2="210" y2="218" stroke="#374151" stroke-width="3"/>
+            <path d="M200,218 V250 H110" stroke="#1f2937" stroke-width="2" fill="none"/>
+            <text x="240" y="218" fill="#374151" font-size="9" font-weight="700">100nF</text>
+            <g fill="#4b5563" font-size="10">
+                <text x="440" y="80" font-weight="700" fill="#1f2937">Como funciona:</text>
+                <text x="440" y="102">V_A1 = Vbat &times; 33/133</text>
+                <text x="440" y="122">4.2V &rarr; 1.042V &rarr; ADC ~969 (100%)</text>
+                <text x="440" y="142">3.0V &rarr; 0.744V &rarr; ADC ~692 (0%)</text>
+                <text x="440" y="170" font-weight="700" fill="#15803d">Lido com analogReference(INTERNAL)</text>
+                <text x="440" y="188" fill="#15803d">= 1.1V absoluto, n&atilde;o depende do VCC</text>
+                <text x="440" y="214">Dreno: ~32&micro;A (era ~210&micro;A na v2.0)</text>
             </g>
         </svg>
     </div>
-
-    <div class="info">
-        <strong>Este diagrama mostra o circuito real do hardware.</strong> A simulacao Wokwi (pasta <code style="background:var(--g100);padding:2px 6px;border-radius:4px">wokwi_simulacao/</code>) usa componentes substitutos: buzzer em D9 (no lugar do DFPlayer Mini), LED em D7 (no lugar do motor+transistor) e nao inclui o circuito de bateria. A pinagem dos botoes (D2-D6), LCD I2C (A4/A5) e potenciometro (A0) e identica em ambos.
-    </div>
-
-    <table class="pin-table" style="margin-top:20px">
-        <tr><th>Pino Arduino</th><th>Componente</th><th>Cor do Fio</th><th>Notas</th></tr>
-        <tr><td><strong>D2</strong></td><td>Botao Vermelho (Cat+) → GND</td><td><span class="color-dot" style="background:#ef4444"></span>Vermelho</td><td>INPUT_PULLUP</td></tr>
-        <tr><td><strong>D3</strong></td><td>Botao Amarelo (Cat-) → GND</td><td><span class="color-dot" style="background:#eab308"></span>Amarelo</td><td>INPUT_PULLUP</td></tr>
-        <tr><td><strong>D4</strong></td><td>Botao Verde (Pal+) → GND</td><td><span class="color-dot" style="background:#22c55e"></span>Verde</td><td>INPUT_PULLUP</td></tr>
-        <tr><td><strong>D5</strong></td><td>Botao Azul (Pal-) → GND</td><td><span class="color-dot" style="background:#3b82f6"></span>Azul</td><td>INPUT_PULLUP</td></tr>
-        <tr><td><strong>D6</strong></td><td>Botao Preto (FALAR) → GND</td><td><span class="color-dot" style="background:#6b7280"></span>Cinza</td><td>INPUT_PULLUP</td></tr>
-        <tr class="new-row"><td><strong>D7</strong></td><td>1k&#8486; → 2N2222 Base</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>Controla motor vibracao</td></tr>
-        <tr><td><strong>D9</strong></td><td>Buzzer (so Wokwi)</td><td><span class="color-dot" style="background:#92400e"></span>Marrom</td><td>Simula DFPlayer</td></tr>
-        <tr><td><strong>D10</strong></td><td>DFPlayer TX</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>SoftwareSerial RX</td></tr>
-        <tr><td><strong>D11</strong></td><td>1k&#8486; → DFPlayer RX</td><td><span class="color-dot" style="background:#06b6d4"></span>Ciano</td><td>SoftwareSerial TX</td></tr>
-        <tr class="new-row"><td><strong>A0</strong></td><td>Potenciometro (wiper)</td><td><span class="color-dot" style="background:#a855f7"></span>Roxo</td><td>analogRead 0-1023</td></tr>
-        <tr class="new-row"><td><strong>A1</strong></td><td>Divisor tensao (10k+10k)</td><td><span class="color-dot" style="background:#f97316"></span>Laranja</td><td>V(bat)/2 → ADC</td></tr>
-        <tr><td><strong>A4</strong></td><td>LCD SDA</td><td><span class="color-dot" style="background:#22c55e"></span>Verde</td><td>I2C dados</td></tr>
-        <tr><td><strong>A5</strong></td><td>LCD SCL</td><td><span class="color-dot" style="background:#f97316"></span>Laranja</td><td>I2C clock</td></tr>
-        <tr><td><strong>5V</strong></td><td>LCD VCC, Pot VCC, Motor 5V, DFPlayer VCC</td><td><span class="color-dot" style="background:#ef4444"></span>Vermelho</td><td>Barramento 5V</td></tr>
-        <tr><td><strong>GND</strong></td><td>Todos componentes + botoes</td><td><span class="color-dot" style="background:#1e293b"></span>Preto</td><td>Terra comum</td></tr>
-        <tr><td><strong>VIN</strong></td><td>TP4056 OUT+ (via chave)</td><td><span class="color-dot" style="background:#ef4444"></span>Vermelho</td><td>Alimentacao 3.7-5V</td></tr>
-    </table>
+    <div class="warning"><strong>N&atilde;o reaproveite os 10k&#8486; da v2.0 aqui.</strong> O firmware v3.0 espera 100k (lado da bateria) e 33k (lado do GND). Trocados entre si, o medidor fica sempre cheio ou sempre vazio.</div>
 </div>
 
-<!-- ==================== ETAPA 9: Produto final ==================== -->
+<!-- ==================== MONTAGEM ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">8</div>
+        <div class="step-title">Montagem no Case v3.0 &mdash; Passo a Passo</div>
+    </div>
+    <ul class="checklist">
+        <li><strong>Pot&ecirc;ncia primeiro (fora do case):</strong> 18650 &rarr; TP4056 &rarr; chave &rarr; MT3608. Ajuste o trimpot at&eacute; medir 5.0V na sa&iacute;da. S&oacute; ent&atilde;o conecte ao 5V do Arduino.</li>
+        <li><strong>Perfboard:</strong> monte o driver (2N2222 + 1k + 1N4148), o divisor da bateria (100k/33k + 100nF) e o divisor do RX (1k/2k) numa placinha ~20&times;10 mm.</li>
+        <li><strong>Base:</strong> Arduino nos 4 pilares M2.5 (USB-B e jack pela esquerda); TP4056 nos clipes (&micro;USB pela esquerda); MT3608 e perfboard nos cantos de reten&ccedil;&atilde;o; DFPlayer nos clipes (SD pela traseira); alto-falante no fundo sob os 3 postes (&iacute;m&atilde; p/ cima, som sai pela grade); motor no suporte anelar; chave na moldura recuada da traseira; potenci&ocirc;metro no furo da direita + knob impresso.</li>
+        <li><strong>Tampa:</strong> bot&otilde;es no layout 2+2+1 (CAT- amarelo / CAT+ vermelho em cima, PAL- azul / PAL+ verde no meio, FALAR preto embaixo com o adaptador &Oslash;18 impresso); LCD na face inclinada com 4 parafusos auto-atarraxantes nos bosses.</li>
+        <li><strong>Fia&ccedil;&atilde;o:</strong> siga a tabela de pinagem (etapa 1) com as cores padronizadas. GND comum a tudo (Arduino, TP4056, MT3608, DFPlayer, divisores, emissor do 2N2222).</li>
+        <li><strong>Fechar:</strong> cord&atilde;o nas orelhas traseiras (se for usar); tampa sobre o rim (clique nos bumps); 2 parafusos M3 (frente-direita e tr&aacute;s-centro); 18650 pela tampa do fundo (s&iacute;mbolos +/- em relevo); p&eacute;s de borracha nos rebaixos.</li>
+        <li><strong>Teste a seco antes de fechar de vez:</strong> LCD, navega&ccedil;&atilde;o, &aacute;udio, vibra&ccedil;&atilde;o, &iacute;cone de bateria e frase composta.</li>
+    </ul>
+    <div class="warning"><strong>Aten&ccedil;&atilde;o:</strong> respeite a polaridade da 18650. Invers&atilde;o danifica o TP4056 e o Arduino permanentemente.</div>
+</div>
+
+<!-- ==================== TROUBLESHOOT ==================== -->
 <div class="step">
     <div class="step-header">
         <div class="step-number">9</div>
-        <div class="step-title">Montagem Final + Vista 3D</div>
-    </div>
-    <p class="step-desc">Organize os fios, teste o circuito e feche o case com os 4 parafusos M3.</p>
-
-    <div class="diagram-container">
-        <svg width="820" height="420" viewBox="0 0 820 420">
-            <text x="410" y="22" text-anchor="middle" fill="var(--g800)" font-size="16" font-weight="800">PRODUTO FINAL v2.0</text>
-            <!-- 3D Case -->
-            <polygon points="150,95 610,60 700,135 240,170" fill="#7dd3fc" stroke="#38bdf8" stroke-width="2.5"/>
-            <polygon points="150,95 150,200 240,270 240,170" fill="#38bdf8" stroke="#0ea5e9" stroke-width="2"/>
-            <polygon points="240,170 240,270 700,230 700,135" fill="#bae6fd" stroke="#38bdf8" stroke-width="2"/>
-            <polygon points="150,95 610,60 615,62 155,97" fill="#fff" opacity=".3"/>
-            <!-- LCD -->
-            <polygon points="280,78 490,68 502,95 292,105" fill="#0f172a" stroke="#1e293b" stroke-width="2"/>
-            <text x="392" y="85" text-anchor="middle" fill="#4ade80" font-size="8" font-family="'JetBrains Mono'">Cat:Comidas</text>
-            <text x="392" y="97" text-anchor="middle" fill="#4ade80" font-size="7" font-family="'JetBrains Mono'">&#9654; Suco</text>
-            <!-- Buttons -->
-            <ellipse cx="258" cy="135" rx="10" ry="7" fill="#ef4444" stroke="#dc2626" stroke-width="1.5"/>
-            <ellipse cx="305" cy="131" rx="10" ry="7" fill="#eab308" stroke="#ca8a04" stroke-width="1.5"/>
-            <ellipse cx="352" cy="127" rx="10" ry="7" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
-            <ellipse cx="399" cy="123" rx="10" ry="7" fill="#3b82f6" stroke="#2563eb" stroke-width="1.5"/>
-            <ellipse cx="446" cy="119" rx="10" ry="7" fill="#374151" stroke="#1f2937" stroke-width="1.5"/>
-            <!-- Speaker grille -->
-            <ellipse cx="610" cy="100" rx="28" ry="20" fill="#38bdf8" stroke="#0ea5e9" stroke-width="1.5"/>
-            <g fill="#7dd3fc" opacity=".8"><ellipse cx="600" cy="94" rx="2" ry="1.5"/><ellipse cx="610" cy="94" rx="2" ry="1.5"/><ellipse cx="620" cy="94" rx="2" ry="1.5"/><ellipse cx="595" cy="103" rx="2" ry="1.5"/><ellipse cx="605" cy="103" rx="2" ry="1.5"/><ellipse cx="615" cy="103" rx="2" ry="1.5"/><ellipse cx="625" cy="103" rx="2" ry="1.5"/></g>
-            <!-- Screws -->
-            <circle cx="193" cy="112" r="4" fill="url(#mtl)" stroke="var(--g400)" stroke-width="1"/>
-            <circle cx="218" cy="155" r="4" fill="url(#mtl)" stroke="var(--g400)" stroke-width="1"/>
-            <circle cx="645" cy="80" r="4" fill="url(#mtl)" stroke="var(--g400)" stroke-width="1"/>
-            <circle cx="668" cy="125" r="4" fill="url(#mtl)" stroke="var(--g400)" stroke-width="1"/>
-            <!-- Side openings -->
-            <rect x="148" y="133" width="5" height="22" rx="1.5" fill="#0f172a"/><text x="130" y="148" text-anchor="end" fill="var(--g600)" font-size="8" font-weight="500">USB</text>
-            <rect x="148" y="163" width="5" height="18" rx="1.5" fill="#0f172a"/><text x="130" y="175" text-anchor="end" fill="#10b981" font-size="8" font-weight="500">Carga</text>
-            <rect x="148" y="188" width="5" height="10" rx="1" fill="#0f172a"/><text x="130" y="196" text-anchor="end" fill="#10b981" font-size="8" font-weight="500">On/Off</text>
-            <rect x="664" y="155" width="5" height="10" rx="1" fill="#0f172a"/><text x="682" y="164" fill="var(--g600)" font-size="8">Speaker</text>
-            <!-- Volume knob -->
-            <circle cx="672" cy="180" r="8" fill="var(--g300)" stroke="var(--g400)" stroke-width="1.5"/>
-            <line x1="672" y1="180" x2="672" y2="174" stroke="var(--g700)" stroke-width="2" stroke-linecap="round"/>
-            <text x="693" y="184" fill="#10b981" font-size="8" font-weight="500">Vol</text>
-            <!-- Dimensions -->
-            <g stroke="var(--g400)" stroke-width="1" stroke-dasharray="4,3" fill="var(--g500)" font-size="10" font-weight="500">
-                <line x1="240" y1="285" x2="700" y2="245"/><text x="460" y="275" text-anchor="middle">170 mm</text>
-                <line x1="150" y1="215" x2="240" y2="285"/><text x="177" y="260" transform="rotate(50,177,260)">110 mm</text>
-                <line x1="710" y1="135" x2="710" y2="235"/><text x="730" y="185">42 mm</text>
-            </g>
-
-            <!-- Exploded view -->
-            <text x="410" y="320" text-anchor="middle" fill="var(--g800)" font-size="13" font-weight="700">VISTA EXPLODIDA</text>
-            <!-- Lid -->
-            <rect x="130" y="340" width="560" height="14" rx="7" fill="#7dd3fc" stroke="#38bdf8" stroke-width="2"/>
-            <text x="700" y="351" fill="#0284c7" font-size="9" font-weight="600">Tampa</text>
-            <rect x="210" y="354" width="80" height="10" rx="2" fill="url(#lcd)"/>
-            <circle cx="350" cy="359" r="5" fill="#ef4444"/><circle cx="368" cy="359" r="5" fill="#eab308"/><circle cx="386" cy="359" r="5" fill="#22c55e"/><circle cx="404" cy="359" r="5" fill="#3b82f6"/><circle cx="422" cy="359" r="5" fill="#374151"/>
-            <circle cx="550" cy="359" r="12" fill="url(#spk)" stroke="#292524" stroke-width="1"/>
-            <!-- Base -->
-            <rect x="130" y="385" width="560" height="35" rx="7" fill="url(#case1)" stroke="#60a5fa" stroke-width="2"/>
-            <text x="700" y="407" fill="#2563eb" font-size="9" font-weight="600">Base</text>
-            <rect x="150" y="392" width="95" height="22" rx="4" fill="url(#brd)"/><text x="197" y="407" text-anchor="middle" fill="#fff" font-size="8" font-weight="600">Arduino</text>
-            <rect x="260" y="395" width="55" height="16" rx="3" fill="url(#dfp)"/><text x="287" y="407" text-anchor="middle" fill="#fff" font-size="7" font-weight="600">DFPlayer</text>
-            <rect x="340" y="393" width="120" height="20" rx="10" fill="url(#bat)"/><text x="400" y="407" text-anchor="middle" fill="#fff" font-size="7" font-weight="600">Bateria 18650</text>
-            <rect x="480" y="396" width="40" height="14" rx="3" fill="url(#tp4)"/><text x="500" y="407" text-anchor="middle" fill="#fff" font-size="6" font-weight="600">TP4056</text>
-        </svg>
-    </div>
-
-    <ul class="checklist">
-        <li>Bateria 18650 conectada ao TP4056 (polaridade correta!)</li>
-        <li>Chave on/off entre TP4056 OUT+ e Arduino VIN</li>
-        <li>Inserir cartao microSD no DFPlayer Mini com 35 MP3s em 7 pastas (/01/ a /07/)</li>
-        <li>Potenciometro montado na lateral (furo 7mm)</li>
-        <li>Motor vibracao colado perto do speaker</li>
-        <li>Todos os fios sem curto-circuito</li>
-        <li>Testar ANTES de fechar o case</li>
-        <li>Parafusos M3 nos 4 cantos</li>
-    </ul>
-</div>
-
-<!-- ==================== ETAPA 10: Teste ==================== -->
-<div class="step">
-    <div class="step-header">
-        <div class="step-number">10</div>
-        <div class="step-title">Teste e Verifica&ccedil;ao</div>
+        <div class="step-title">Resolu&ccedil;&atilde;o de Problemas</div>
     </div>
     <div class="two-col">
         <div>
-            <h4 style="margin-bottom:12px;color:var(--g700)">Checklist de testes:</h4>
-            <ul class="checklist">
-                <li>LCD acende com "Voz Autista v2.0"</li>
-                <li>Navega 7 categorias com botoes</li>
-                <li>Navega 5 palavras por categoria</li>
-                <li>FALAR curto reproduz audio</li>
-                <li>FALAR longo adiciona a frase</li>
-                <li>Cat+Cat- juntos fala frase</li>
-                <li>Potenciometro ajusta volume</li>
-                <li>Icone bateria aparece no LCD</li>
-                <li>Vibracao funciona ao pressionar</li>
-                <li>Sleep apos 2 min de inatividade</li>
-                <li>Botao acorda do sleep</li>
-            </ul>
+            <div class="troubleshoot-item"><div class="problem">LCD fraco mesmo ajustando contraste</div><div class="solution">Sa&iacute;da do MT3608 em 5.0V? Bateria carregada?</div></div>
+            <div class="troubleshoot-item"><div class="problem">DFPlayer reseta ou clica ao tocar</div><div class="solution">Confira o 470&micro;F + 100nF no VCC do m&oacute;dulo (e a polaridade do eletrol&iacute;tico).</div></div>
+            <div class="troubleshoot-item"><div class="problem">Frase composta atropela as palavras</div><div class="solution">Fio BUSY &rarr; D8 solto. O firmware usa timeout de 8 s como fallback.</div></div>
+            <div class="troubleshoot-item"><div class="problem">Medidor de bateria n&atilde;o muda</div><div class="solution">Divisor 100k/33k correto? Me&ccedil;a A1: deve dar Vbat &times; 0.248.</div></div>
         </div>
         <div>
-            <h4 style="margin-bottom:12px;color:var(--g700)">Problemas comuns:</h4>
-            <div class="troubleshoot-item"><div class="problem">LCD nao acende</div><div class="solution">Auto-detect tenta 0x27, 0x3F, 0x20, 0x38. Veja Serial Monitor.</div></div>
-            <div class="troubleshoot-item"><div class="problem">Sem audio</div><div class="solution">SD FAT32? Pastas /01/ a /07/ com 001-005.mp3? Resistor 1k no D11?</div></div>
-            <div class="troubleshoot-item"><div class="problem">Sem vibracao</div><div class="solution">Cheque transistor 2N2222 (BCE), resistor 1k na base, diodo 1N4148.</div></div>
-            <div class="troubleshoot-item"><div class="problem">Volume nao muda</div><div class="solution">Pot conectado? Wiper no A0? Outros pinos em 5V e GND?</div></div>
-            <div class="troubleshoot-item"><div class="problem">Bateria mostra 0%</div><div class="solution">Divisor 10k+10k conectado? Bateria carregada? A1 lendo?</div></div>
-            <div class="troubleshoot-item"><div class="problem">Frase nao funciona</div><div class="solution">Segure FALAR &gt;0.8s para adicionar. Max 5 palavras.</div></div>
-            <div class="troubleshoot-item"><div class="problem">Nao carrega bateria</div><div class="solution">TP4056 micro-USB conectado? LED vermelho = carregando, azul = cheio.</div></div>
+            <div class="troubleshoot-item"><div class="problem">Medidor sempre cheio ou sempre vazio</div><div class="solution">100k e 33k trocados entre si. O 100k vai no lado da bateria.</div></div>
+            <div class="troubleshoot-item"><div class="problem">Motor n&atilde;o vibra</div><div class="solution">2N2222 &eacute; E-B-C (face plana p/ voc&ecirc;); 1k na base; 1N4148 com catodo no +5V.</div></div>
+            <div class="troubleshoot-item"><div class="problem">Sem &aacute;udio</div><div class="solution">SD FAT32 com /01/../07/ e 001.mp3..005.mp3; falante em SPK1/SPK2; volume no m&iacute;nimo?</div></div>
+            <div class="troubleshoot-item"><div class="problem">Bot&atilde;o n&atilde;o responde</div><div class="solution">Confira o pino e o GND comum. Teste continuidade com mult&iacute;metro.</div></div>
         </div>
-    </div>
-</div>
-
-<!-- ==================== SD Card ==================== -->
-<div class="step">
-    <div class="step-header">
-        <div class="step-number gold">+</div>
-        <div class="step-title">Cartao microSD &mdash; 7 Categorias, 35 Arquivos</div>
-    </div>
-    <p class="step-desc">Formate em FAT32. Crie 7 pastas. Copie os MP3s UM POR UM em ordem numerica.</p>
-    <div class="diagram-container">
-        <svg width="700" height="380" viewBox="0 0 700 380">
-            <g font-family="'JetBrains Mono',monospace" font-size="11">
-                <!-- Cat 1 -->
-                <rect x="10" y="5" width="220" height="120" rx="8" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1"/>
-                <text x="120" y="25" text-anchor="middle" fill="var(--primary)" font-weight="700" font-family="Inter">&#128193; /01/ Necessidades</text>
-                <text x="25" y="45" fill="var(--g700)">001.mp3 → Eu quero</text>
-                <text x="25" y="62" fill="var(--g700)">002.mp3 → Comer</text>
-                <text x="25" y="79" fill="var(--g700)">003.mp3 → Beber</text>
-                <text x="25" y="96" fill="var(--g700)">004.mp3 → Banheiro</text>
-                <text x="25" y="113" fill="var(--g700)">005.mp3 → Dormir</text>
-                <!-- Cat 2 -->
-                <rect x="240" y="5" width="220" height="120" rx="8" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1"/>
-                <text x="350" y="25" text-anchor="middle" fill="#92400e" font-weight="700" font-family="Inter">&#128193; /02/ Sentimentos</text>
-                <text x="255" y="45" fill="var(--g700)">001.mp3 → Feliz</text>
-                <text x="255" y="62" fill="var(--g700)">002.mp3 → Triste</text>
-                <text x="255" y="79" fill="var(--g700)">003.mp3 → Bravo</text>
-                <text x="255" y="96" fill="var(--g700)">004.mp3 → Calmo</text>
-                <text x="255" y="113" fill="var(--g700)">005.mp3 → Medo</text>
-                <!-- Cat 3 -->
-                <rect x="470" y="5" width="220" height="120" rx="8" fill="var(--success-light)" stroke="var(--success)" stroke-width="1"/>
-                <text x="580" y="25" text-anchor="middle" fill="#065f46" font-weight="700" font-family="Inter">&#128193; /03/ Acoes</text>
-                <text x="485" y="45" fill="var(--g700)">001.mp3 → Brincar</text>
-                <text x="485" y="62" fill="var(--g700)">002.mp3 → Ajuda</text>
-                <text x="485" y="79" fill="var(--g700)">003.mp3 → Sair</text>
-                <text x="485" y="96" fill="var(--g700)">004.mp3 → Parar</text>
-                <text x="485" y="113" fill="var(--g700)">005.mp3 → Ir</text>
-                <!-- Cat 4 -->
-                <rect x="10" y="135" width="220" height="120" rx="8" fill="#fce7f3" stroke="#ec4899" stroke-width="1"/>
-                <text x="120" y="155" text-anchor="middle" fill="#9d174d" font-weight="700" font-family="Inter">&#128193; /04/ Comidas</text>
-                <text x="25" y="175" fill="var(--g700)">001.mp3 → Agua</text>
-                <text x="25" y="192" fill="var(--g700)">002.mp3 → Suco</text>
-                <text x="25" y="209" fill="var(--g700)">003.mp3 → Leite</text>
-                <text x="25" y="226" fill="var(--g700)">004.mp3 → Pao</text>
-                <text x="25" y="243" fill="var(--g700)">005.mp3 → Fruta</text>
-                <!-- Cat 5 -->
-                <rect x="240" y="135" width="220" height="120" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1"/>
-                <text x="350" y="155" text-anchor="middle" fill="#5b21b6" font-weight="700" font-family="Inter">&#128193; /05/ Lugares</text>
-                <text x="255" y="175" fill="var(--g700)">001.mp3 → Casa</text>
-                <text x="255" y="192" fill="var(--g700)">002.mp3 → Escola</text>
-                <text x="255" y="209" fill="var(--g700)">003.mp3 → Parque</text>
-                <text x="255" y="226" fill="var(--g700)">004.mp3 → Medico</text>
-                <text x="255" y="243" fill="var(--g700)">005.mp3 → Banho</text>
-                <!-- Cat 6 -->
-                <rect x="470" y="135" width="220" height="120" rx="8" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
-                <text x="580" y="155" text-anchor="middle" fill="#713f12" font-weight="700" font-family="Inter">&#128193; /06/ Pessoas</text>
-                <text x="485" y="175" fill="var(--g700)">001.mp3 → Mamae</text>
-                <text x="485" y="192" fill="var(--g700)">002.mp3 → Papai</text>
-                <text x="485" y="209" fill="var(--g700)">003.mp3 → Vovo</text>
-                <text x="485" y="226" fill="var(--g700)">004.mp3 → Professor</text>
-                <text x="485" y="243" fill="var(--g700)">005.mp3 → Amigo</text>
-                <!-- Cat 7 -->
-                <rect x="10" y="265" width="220" height="120" rx="8" fill="var(--danger-light)" stroke="var(--danger)" stroke-width="1"/>
-                <text x="120" y="285" text-anchor="middle" fill="#991b1b" font-weight="700" font-family="Inter">&#128193; /07/ Saude</text>
-                <text x="25" y="305" fill="var(--g700)">001.mp3 → Doi</text>
-                <text x="25" y="322" fill="var(--g700)">002.mp3 → Enjoo</text>
-                <text x="25" y="339" fill="var(--g700)">003.mp3 → Frio</text>
-                <text x="25" y="356" fill="var(--g700)">004.mp3 → Calor</text>
-                <text x="25" y="373" fill="var(--g700)">005.mp3 → Cansado</text>
-            </g>
-            <!-- Config info -->
-            <g transform="translate(250, 275)">
-                <rect x="0" y="0" width="440" height="100" rx="10" fill="#fff" stroke="var(--g200)" stroke-width="1.5"/>
-                <text x="220" y="22" text-anchor="middle" fill="var(--g800)" font-size="12" font-weight="700" font-family="Inter">Personalizar categorias:</text>
-                <text x="15" y="45" fill="var(--g600)" font-size="10" font-family="Inter">1. Edite o array categories[] no arquivo .ino</text>
-                <text x="15" y="63" fill="var(--g600)" font-size="10" font-family="Inter">2. Crie a pasta /0X/ correspondente no SD</text>
-                <text x="15" y="81" fill="var(--g600)" font-size="10" font-family="Inter">3. Grave os MP3s como 001.mp3 a 005.mp3</text>
-                <text x="15" y="96" fill="var(--g500)" font-size="9" font-family="Inter">Copie UM POR UM em ordem! O DFPlayer usa ordem de gravacao.</text>
-            </g>
-        </svg>
     </div>
 </div>
 
 <footer>
-    <p style="font-weight:600;color:var(--g700);margin-bottom:8px">Manual de Montagem v2.0 &mdash; Voz Autista</p>
-    <p>Comunicador Assistivo &bull; 7 Categorias &bull; 35 Palavras &bull; Frases Compostas &bull; Bateria Recarregavel</p>
-    <p style="margin-top:12px">Simule em <a href="https://wokwi.com">wokwi.com</a> com os arquivos da pasta <code style="background:var(--g100);padding:2px 6px;border-radius:4px">wokwi_simulacao/</code></p>
+    <p><strong>Voz Autista v3.0</strong> &mdash; Comunicador assistivo de baixo custo (~R$128)</p>
+    <p>Arquivos: <code>voz_autista_maker_code.ino</code> &bull; <code>case_3d/case_voz_autista_v3.scad</code> &bull; <code>case_3d/visualizar_circuito_3d.html</code> &bull; <code>wokwi_simulacao/</code> &bull; <code>GUIA_IMPLEMENTACAO.md</code></p>
 </footer>
 
 </div>

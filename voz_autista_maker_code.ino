@@ -1,29 +1,35 @@
 // ============================================================
-// Voz Autista v2.0 - Comunicador Assistivo
+// Voz Autista v3.0 - Comunicador Assistivo
 // Dispositivo de Comunicação para pessoas com autismo
 // ============================================================
 //
-// MELHORIAS v2.0:
-//   - 7 categorias com 35 palavras (era 3 com 15)
-//   - Controle de volume por potenciômetro (A0)
-//   - Detecção automática do endereço I2C do LCD
-//   - Monitoramento de bateria com ícone no LCD (A1)
-//   - Modo frase composta (empilhar palavras)
-//   - Feedback tátil por vibração (D7)
-//   - Modo sleep após inatividade
-//   - Seção de configuração fácil de editar
+// MELHORIAS v3.0 (circuito):
+//   - Divisor da bateria: 100kΩ+33kΩ + leitura com referência
+//     interna 1.1V (corrige leitura ratiométrica e reduz dreno
+//     da 18650 de ~210µA para ~32µA)
+//   - DFPlayer RX protegido por divisor 1kΩ/2kΩ (lógica 3.3V)
+//   - Capacitor 470µF + 100nF no VCC do DFPlayer (anti-reset)
+//   - DFPlayer BUSY → D8: frases compostas esperam o áudio real
+//     terminar (sem delay fixo)
+//   - Alimentação: 18650 → TP4056 → chave → boost MT3608 → 5V
+//     (rail 5V estável: LCD com contraste cheio, 16MHz em spec)
 //
-// PINAGEM:
+// MELHORIAS v2.0 (mantidas):
+//   - 7 categorias com 35 palavras, volume por potenciômetro,
+//     auto-detecção I2C, frase composta, vibração, sleep
+//
+// PINAGEM v3.0 (pinos idênticos à v2.0 + D8 novo):
 //   D2  → Botão Vermelho (Cat+)     → GND
 //   D3  → Botão Amarelo  (Cat-)     → GND
 //   D4  → Botão Verde    (Pal+)     → GND
 //   D5  → Botão Azul     (Pal-)     → GND
 //   D6  → Botão Preto    (FALAR)    → GND
-//   D7  → Transistor NPN → Motor vibração
+//   D7  → 1kΩ → Base 2N2222 → Motor vibração (flyback 1N4148)
+//   D8  ← DFPlayer BUSY (LOW = tocando)                  [NOVO]
 //   D10 ← DFPlayer TX
-//   D11 → 1kΩ → DFPlayer RX
+//   D11 → 1kΩ → DFPlayer RX → 2kΩ → GND  (divisor p/ 3.3V) [ATUALIZADO]
 //   A0  ← Potenciômetro (volume)
-//   A1  ← Divisor tensão bateria (10k+10k)
+//   A1  ← Divisor bateria 100kΩ/33kΩ + 100nF (ref 1.1V)   [ATUALIZADO]
 //   A4  → LCD SDA (I2C)
 //   A5  → LCD SCL (I2C)
 //
@@ -98,8 +104,9 @@ const int btnWordUp    = 4;   // Verde    - Palavra +
 const int btnWordDown  = 5;   // Azul     - Palavra -
 const int btnSpeak     = 6;   // Preto    - FALAR
 const int pinVibrate   = 7;   // Motor de vibração
+const int pinBusy      = 8;   // DFPlayer BUSY (LOW = tocando)   [v3.0]
 const int pinVolume    = A0;  // Potenciômetro de volume
-const int pinBattery   = A1;  // Divisor de tensão da bateria
+const int pinBattery   = A1;  // Divisor de tensão da bateria (100k/33k)
 
 // --- Tempos (ms) ---
 const unsigned long DEBOUNCE_DELAY   = 250;
@@ -108,7 +115,8 @@ const unsigned long SLEEP_TIMEOUT    = 120000; // 2 min para dormir
 const unsigned long VOLUME_INTERVAL  = 500;    // Intervalo leitura volume
 const unsigned long BATTERY_INTERVAL = 10000;  // Intervalo leitura bateria
 const int VIBRATE_MS = 60;                     // Duração vibração (ms)
-const int PHRASE_DELAY = 1300;                 // Pausa entre palavras da frase
+const int PHRASE_DELAY = 250;                  // Pausa entre palavras APÓS o áudio
+                                               // terminar (v3.0: fim real via BUSY)
 
 // --- Tamanho máximo da frase composta ---
 const int MAX_PHRASE = 5;
@@ -175,6 +183,9 @@ void setup() {
   pinMode(btnSpeak,    INPUT_PULLUP);
   pinMode(pinVibrate,  OUTPUT);
   digitalWrite(pinVibrate, LOW);
+  // BUSY do DFPlayer: pull-up interno garante leitura HIGH ("parado")
+  // se o fio estiver desconectado - o fallback por timeout assume o resto
+  pinMode(pinBusy, INPUT_PULLUP);
 
   // Detecta endereço I2C do LCD
   byte lcdAddr = detectI2C();
@@ -194,7 +205,7 @@ void setup() {
   lcd->setCursor(2, 0);
   lcd->print(F("Voz Autista"));
   lcd->setCursor(2, 1);
-  lcd->print(F("v2.0  Maker"));
+  lcd->print(F("v3.0  Maker"));
   Serial.print(F("LCD I2C addr: 0x"));
   Serial.println(lcdAddr, HEX);
 
@@ -495,6 +506,9 @@ void speakPhrase() {
     }
 
     if (i < phraseCount - 1) {
+      // v3.0: espera o MP3 terminar de verdade (BUSY em D8) em vez
+      // de pausa fixa - a frase soa natural com áudios de qualquer duração
+      waitAudioEnd(8000);
       delay(PHRASE_DELAY);
     }
   }
@@ -532,12 +546,36 @@ void updateVolume() {
 
 // ===================== BATERIA =====================
 int readBattery() {
-  // Divisor de tensão: 10kΩ + 10kΩ → metade da voltagem
-  // 18650: 4.2V (cheio) → 2.1V no A1 → ADC ~430
-  //        3.0V (vazio) → 1.5V no A1 → ADC ~307
+  // v3.0: divisor 100kΩ (Vbat→A1) + 33kΩ (A1→GND) + 100nF em A1,
+  // lido contra a REFERÊNCIA INTERNA de 1.1V do ATmega328.
+  //
+  // Por que não medir contra VCC (DEFAULT)? Porque com bateria o
+  // próprio VCC varia com a carga - a leitura ratiométrica ficaria
+  // constante e o medidor nunca mudaria. A ref. interna é absoluta.
+  //
+  // 18650: 4.2V (cheia) → 4.2×33/133 = 1.042V → ADC ~969
+  //        3.0V (vazia) → 3.0×33/133 = 0.744V → ADC ~692
+  // O 100nF compensa a impedância alta do divisor para o ADC.
+  analogReference(INTERNAL);     // 1.1V
+  analogRead(pinBattery);        // descarta 1ª leitura (ref estabilizando)
+  delay(2);
   int raw = analogRead(pinBattery);
-  int pct = map(raw, 307, 430, 0, 100);
+  analogReference(DEFAULT);      // volta p/ VCC (potenciômetro de volume)
+  analogRead(pinVolume);         // descarta leitura de transição
+  int pct = map(raw, 692, 969, 0, 100);
   return constrain(pct, 0, 100);
+}
+
+// ===================== ÁUDIO - ESPERA FIM (v3.0) =====================
+// O pino BUSY do DFPlayer fica LOW enquanto um MP3 toca.
+// Espera o áudio terminar, com timeout de segurança (fio solto, etc).
+void waitAudioEnd(unsigned long timeoutMs) {
+  if (!dfPlayerReady) { delay(800); return; }
+  unsigned long t0 = millis();
+  delay(200);  // o DFPlayer demora ~150ms para baixar o BUSY
+  while (digitalRead(pinBusy) == LOW && (millis() - t0) < timeoutMs) {
+    delay(10);
+  }
 }
 
 // ===================== VIBRAÇÃO =====================

@@ -1,7 +1,21 @@
-# Como Simular o "Voz Autista v2.0" no Wokwi
+# Como Simular o "Voz Autista v3.0" no Wokwi
 
 > **Atalho:** abra `abrir_no_wokwi.html` no navegador deste projeto para uma pagina com
 > botoes "Copiar diagram.json" / "Copiar sketch.ino" e o link direto para o Wokwi em branco.
+
+## O que mudou da v2.0 para a v3.0 (simulacao)
+
+| Item | v2.0 | v3.0 |
+|------|------|------|
+| Bateria em A1 | Potenciometro direto no pino | Pot como "fonte variavel" + **divisor real 100k/33k** + leitura com referencia interna 1.1V (identico ao hardware) |
+| Vibracao em D7 | LED + resistor 220 direto | **Driver real**: D7 -> 1k -> base do 2N2222; LED como carga indicadora |
+| D11 (DFPlayer RX) | Resistor 1k solto | **Divisor 1k/2k** (nivel 3.3V, igual ao hardware) |
+| Labels | Minimos | Labels em portugues por bloco funcional |
+| Cores dos fios | Variadas | Padronizadas: vermelho=VCC, preto=GND, amarelo (gold)=digital, verde=SDA, laranja=SCL, roxo=A0, marrom=A1 |
+
+A **pinagem nao mudou** (D2-D6 botoes, D7 vibracao, D10/D11 DFPlayer, A0 volume,
+A1 bateria, A4/A5 I2C). O hardware real v3.0 ganhou o fio **BUSY -> D8** (nao usado
+na simulacao, pois o buzzer toca de forma sincrona).
 
 ## Metodo 1 - Pagina assistente (mais rapido, recomendado)
 
@@ -20,186 +34,93 @@
 4. No editor de codigo, substitua todo o conteudo pelo arquivo `sketch.ino`
 5. Clique na aba **"diagram.json"** (parte inferior do editor)
 6. Substitua todo o conteudo pelo arquivo `diagram.json`
-7. Clique no botao verde **"Play"** para iniciar a simulacao
+7. Clique no botao verde **"Play"**
 
 ## Metodo 3 - Links raw do GitHub (para compartilhar com terceiros)
-
-Estes links sempre apontam para a versao mais recente empurrada para `main`:
 
 - `diagram.json`: https://raw.githubusercontent.com/joao-ped/Project_auts/main/wokwi_simulacao/diagram.json
 - `sketch.ino`:   https://raw.githubusercontent.com/joao-ped/Project_auts/main/wokwi_simulacao/sketch.ino
 
-Mande os 2 links para qualquer pessoa - ela abre, copia, cola no Wokwi e simula.
+## Metodo 4 - Gist + URL direta
 
-## Metodo 4 - Gist + URL direta (opcional, 1 clique para abrir)
-
-Se voce criar um GitHub Gist contendo `diagram.json` + `sketch.ino`, o Wokwi consegue
-abrir o projeto direto pela URL:
-
+Crie um Gist publico com os 2 arquivos e abra:
 ```
 https://wokwi.com/projects/new/gist/<GIST_ID>
 ```
 
-Passos:
-1. Va em https://gist.github.com (logado)
-2. Crie um gist publico com os 2 arquivos (mesmos nomes: `diagram.json` e `sketch.ino`)
-3. Pegue o ID do gist (parte final da URL apos `/gists/`)
-4. Acesse `https://wokwi.com/projects/new/gist/SEU_ID` - abre direto, sem copy/paste
+## Componentes da simulacao v3.0
 
-## Metodo 5 - Montar manualmente
-
-### Componentes para adicionar:
 - 1x Arduino Uno
 - 1x LCD 16x2 (modo I2C)
 - 5x Push Button (vermelho, amarelo, verde, azul, preto)
-- 1x Buzzer (simula DFPlayer + alto-falante)
-- 1x LED verde (simula motor de vibracao)
-- 2x Potenciometro (volume e bateria)
-- 1x Resistor 1k ohm (referencia conexao DFPlayer)
+- 1x Buzzer (substitui DFPlayer + alto-falante - o Wokwi nao tem DFPlayer)
+- 1x Transistor NPN 2N2222 + 1x Resistor 1k (base) - driver de vibracao real
+- 1x LED verde + 1x Resistor 220 (carga indicadora no lugar do motor coin)
+- 2x Potenciometro (volume em A0; "bateria" alimentando o divisor)
+- 1x Resistor 100k + 1x Resistor 33k (divisor de tensao da bateria, em A1)
+- 1x Resistor 1k + 1x Resistor 2k (divisor do RX do DFPlayer, em D11)
+- 1x microSD (somente referencia visual)
 
-### Conexoes:
-| De                | Para              | Funcao                       |
-|-------------------|-------------------|------------------------------|
-| Arduino D2        | Botao Vermelho    | Categoria + (avancar)        |
-| Arduino D3        | Botao Amarelo     | Categoria - (voltar)         |
-| Arduino D4        | Botao Verde       | Palavra + (avancar)          |
-| Arduino D5        | Botao Azul        | Palavra - (voltar)           |
-| Arduino D6        | Botao Preto       | FALAR (curto/longo)          |
-| Outro lado botoes | Arduino GND       | Todos os 5 botoes            |
-| Arduino D7        | LED verde (anodo) | Feedback vibracao            |
-| LED verde (catodo)| Arduino GND       | Terra LED                    |
-| Arduino D9        | Buzzer (+)        | Saida de audio               |
-| Buzzer (-)        | Arduino GND       | Terra buzzer                 |
-| Arduino A0        | Pot volume (SIG)  | Controle de volume           |
-| Pot volume (VCC)  | Arduino 5V        | Alimentacao pot              |
-| Pot volume (GND)  | Arduino GND       | Terra pot                    |
-| Arduino A1        | Pot bateria (SIG) | Simulacao bateria            |
-| Pot bateria (VCC) | Arduino 5V        | Alimentacao pot              |
-| Pot bateria (GND) | Arduino GND       | Terra pot                    |
-| Arduino A4        | LCD SDA           | Dados I2C                    |
-| Arduino A5        | LCD SCL           | Clock I2C                    |
-| Arduino 5V        | LCD VCC           | Alimentacao LCD              |
-| Arduino GND       | LCD GND           | Terra LCD                    |
-| Arduino D11       | Resistor 1k       | Ref. TX para DFPlayer        |
+> **Nota:** o diodo flyback 1N4148 do motor existe **apenas no hardware real**
+> (o Wokwi nao tem o componente e o LED nao gera tensao reversa). O label no
+> diagrama lembra disso.
 
-## Funcionalidades v2.0
+## Conexoes principais
 
-### Navegacao basica
-- **Botao Vermelho (Cat+)**: Avanca para a proxima categoria
-- **Botao Amarelo (Cat-)**: Volta para a categoria anterior
-- **Botao Verde (Pal+)**: Avanca para a proxima palavra
-- **Botao Azul (Pal-)**: Volta para a palavra anterior
-- **Botao Preto (FALAR)**: Pressao curta = fala palavra; pressao longa (>800ms) = adiciona a frase
+| De                  | Para                       | Cor      | Funcao                      |
+|---------------------|----------------------------|----------|-----------------------------|
+| D2..D6              | Botoes (outro lado -> GND) | amarelo  | Navegacao + FALAR           |
+| D7                  | R 1k -> base 2N2222        | amarelo  | Driver de vibracao          |
+| 5V -> R220 -> LED   | coletor do 2N2222          | vermelho | Carga (motor no real)       |
+| Emissor 2N2222      | GND                        | preto    | Referencia                  |
+| D9                  | Buzzer                     | amarelo  | Audio (so simulacao)        |
+| D11                 | R 1k -> R 2k -> GND        | amarelo  | Divisor RX DFPlayer (3.3V)  |
+| Pot volume SIG      | A0                         | roxo     | Volume                      |
+| Pot bateria SIG     | R 100k -> A1               | marrom   | "18650" simulada            |
+| A1                  | R 33k -> GND               | marrom   | Perna de baixo do divisor   |
+| LCD SDA / SCL       | A4 / A5                    | verde/laranja | I2C                    |
 
-### Frase composta (NOVO v2.0)
-1. Navegue ate a palavra desejada
-2. **Segure FALAR por mais de 800ms** para adicionar a palavra ao buffer de frase
-3. Repita para ate 5 palavras
-4. **Pressione Cat+ e Cat- juntos** para falar a frase inteira em sequencia
-5. **Pressione Pal+ e Pal- juntos** para limpar a frase
-6. O icone de coracao + numero aparece no canto inferior direito quando ha palavras na frase
+## Como testar o medidor de bateria (v3.0)
 
-### Controle de volume (NOVO v2.0)
-- Gire o **potenciometro de volume** (A0) para ajustar
-- Faixa: 0 (mudo) a 30 (maximo)
-- No simulador, controla a duracao dos tons do buzzer
+1. Rode a simulacao e espere a tela principal
+2. Gire o **pot da bateria**:
+   - Wiper em ~4.2V -> icone de bateria cheia
+   - Wiper em ~3.5V -> icone meio
+   - Wiper em ~3.0V -> icone vazio
+3. O icone atualiza a cada 10 s (BATTERY_INTERVAL)
 
-### Monitoramento de bateria (NOVO v2.0)
-- O **potenciometro de bateria** (A1) simula a tensao da bateria
-- Icone no canto superior direito (posicao 15,0) do LCD:
-  - Bateria cheia (>60%)
-  - Bateria media (20-60%)
-  - Bateria baixa (<20%)
+> A leitura usa `analogReference(INTERNAL)` (1.1V). O simulador AVR do Wokwi
+> suporta a referencia interna; se notar valores estranhos, confira no Serial
+> Monitor os valores brutos (4.2V da bateria => ADC ~969).
 
-### Feedback de vibracao (NOVO v2.0)
-- O **LED verde** pisca brevemente (60ms) em cada acao de botao
-- No hardware real, e um motor de vibracao no pino D7
+## Funcionalidades (iguais desde a v2.0)
 
-### Modo sleep (NOVO v2.0)
-- Apos **2 minutos** sem pressionar nenhum botao, o LCD apaga a backlight
-- Qualquer botao reativa o display
+- **Cat+ / Cat-**: navega categorias | **Pal+ / Pal-**: navega palavras
+- **FALAR curto**: fala a palavra | **FALAR longo (>800ms)**: adiciona a frase
+- **Cat+ e Cat- juntos**: fala a frase | **Pal+ e Pal- juntos**: limpa a frase
+- Sleep apos 2 min; qualquer botao acorda
+- 7 categorias x 5 palavras (tons unicos no buzzer para diferenciar)
 
-### Caracteres customizados no LCD
-- Char 0: Seta de selecao
-- Char 1: Icone de alto-falante (falando)
-- Char 2: Bateria cheia
-- Char 3: Bateria media
-- Char 4: Bateria baixa
-- Char 5: Coracao (indicador de frase ativa)
+## Circuito real (hardware) vs simulacao v3.0
 
-## 7 Categorias e 35 palavras
+| Aspecto       | Simulacao (Wokwi)                  | Hardware Real v3.0                          |
+|---------------|------------------------------------|---------------------------------------------|
+| Audio         | Buzzer em D9, tons                 | DFPlayer Mini (D10 TX / D11 RX) + falante 2W |
+| Fim do audio  | Sincrono (tone + delay)            | Pino BUSY do DFPlayer -> D8                  |
+| Vibracao      | 2N2222 + LED como carga            | 2N2222 + motor coin + 1N4148 antiparalelo    |
+| Bateria       | Pot -> divisor 100k/33k -> A1      | 18650 -> divisor 100k/33k + 100nF -> A1      |
+| Alimentacao   | 5V ideal do simulador              | 18650 -> TP4056 -> chave -> boost MT3608     |
+| Decoupling    | Nao necessario                     | 470uF + 100nF no VCC do DFPlayer             |
+| SD Card       | Visual                             | microSD FAT32 com 35 MP3s                    |
+| I2C LCD       | Sempre 0x27                        | Auto-detecta (0x27/0x3F/0x20/0x38)           |
+| Case          | N/A                                | Impressao 3D v3.0 (cunha, botoes 2+2+1)      |
 
-| #  | Categoria     | Palavras                                  |
-|----|---------------|-------------------------------------------|
-| 1  | Necessidades  | Eu quero, Comer, Beber, Banheiro, Dormir  |
-| 2  | Sentimentos   | Feliz, Triste, Bravo, Calmo, Medo         |
-| 3  | Acoes         | Brincar, Ajuda, Sair, Parar, Ir           |
-| 4  | Comidas       | Agua, Suco, Leite, Pao, Fruta             |
-| 5  | Lugares       | Casa, Escola, Parque, Medico, Banho        |
-| 6  | Pessoas       | Mamae, Papai, Vovo, Professor, Amigo       |
-| 7  | Saude         | Doi, Enjoo, Frio, Calor, Cansado          |
+## Estrutura do cartao SD (hardware real)
 
-## Tons de simulacao (Hz)
-
-Cada palavra tem um tom unico no buzzer para diferenciar na simulacao:
-
-```
-Necessidades: 262, 294, 330, 349, 392
-Sentimentos:  440, 494, 523, 587, 659
-Acoes:        698, 784, 880, 988, 1047
-Comidas:      1100, 1175, 1250, 1320, 1400
-Lugares:      300, 350, 400, 450, 500
-Pessoas:      550, 600, 650, 700, 750
-Saude:        800, 850, 900, 950, 1000
-```
-
-## Circuito real (hardware) vs simulacao
-
-| Aspecto          | Simulacao (Wokwi)            | Hardware Real                  |
-|------------------|------------------------------|--------------------------------|
-| Audio            | Buzzer com tons diferentes   | DFPlayer Mini + alto-falante   |
-| Pinos audio      | D9 (buzzer)                  | D10/D11 (SoftwareSerial)       |
-| Vibracao         | LED verde (D7)               | Motor vibracao via transistor  |
-| Volume           | Potenciometro A0 (sim)       | Potenciometro A0 (real)        |
-| Bateria          | Potenciometro A1 (sim)       | Divisor tensao 10k+10k (A1)   |
-| SD Card          | Nao necessario               | microSD FAT32 com MP3s         |
-| Resistor 1k      | Referencia visual            | Entre D11 e DFPlayer RX       |
-| I2C LCD          | Sempre 0x27                  | Auto-detecta (0x27/0x3F)      |
-| Alimentacao      | Simulada                     | USB ou bateria 18650           |
-| Case             | N/A                          | Impressao 3D (PLA/PETG)       |
-
-## Preparacao do cartao SD (hardware real)
-
-Formatar microSD em FAT32 e criar a estrutura de pastas:
-```
-/01/001.mp3  ->  "Eu quero"     /04/001.mp3  ->  "Agua"
-/01/002.mp3  ->  "Comer"        /04/002.mp3  ->  "Suco"
-/01/003.mp3  ->  "Beber"        /04/003.mp3  ->  "Leite"
-/01/004.mp3  ->  "Banheiro"     /04/004.mp3  ->  "Pao"
-/01/005.mp3  ->  "Dormir"       /04/005.mp3  ->  "Fruta"
-/02/001.mp3  ->  "Feliz"        /05/001.mp3  ->  "Casa"
-/02/002.mp3  ->  "Triste"       /05/002.mp3  ->  "Escola"
-/02/003.mp3  ->  "Bravo"        /05/003.mp3  ->  "Parque"
-/02/004.mp3  ->  "Calmo"        /05/004.mp3  ->  "Medico"
-/02/005.mp3  ->  "Medo"         /05/005.mp3  ->  "Banho"
-/03/001.mp3  ->  "Brincar"      /06/001.mp3  ->  "Mamae"
-/03/002.mp3  ->  "Ajuda"        /06/002.mp3  ->  "Papai"
-/03/003.mp3  ->  "Sair"         /06/003.mp3  ->  "Vovo"
-/03/004.mp3  ->  "Parar"        /06/004.mp3  ->  "Professor"
-/03/005.mp3  ->  "Ir"           /06/005.mp3  ->  "Amigo"
-                                /07/001.mp3  ->  "Doi"
-                                /07/002.mp3  ->  "Enjoo"
-                                /07/003.mp3  ->  "Frio"
-                                /07/004.mp3  ->  "Calor"
-                                /07/005.mp3  ->  "Cansado"
-```
+Identica a v2.0 - 7 pastas `/01/../07/` com `001.mp3..005.mp3`
+(ver `GUIA_IMPLEMENTACAO.md`, secao 7).
 
 ## Dica: Serial Monitor
 
-Abra o Serial Monitor (115200 baud) para ver:
-- Categoria e palavra selecionada
-- Alteracoes de volume
-- Palavras adicionadas a frase
-- Frase completa falada
-- Eventos de sleep/wake
-- Endereco I2C detectado
+Abra o Serial Monitor (115200 baud) para ver categoria/palavra, volume,
+frases, sleep/wake e o endereco I2C detectado.
