@@ -58,6 +58,10 @@
         .checklist{list-style:none;margin:16px 0}
         .checklist li{padding:10px 16px;margin:6px 0;background:var(--success-light);border-radius:8px;border:1px solid #a7f3d0;font-size:.95em;display:flex;align-items:center;gap:10px}
         .checklist li::before{content:'✓';background:var(--success);color:#fff;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8em;font-weight:700;flex-shrink:0}
+        .steps-ol{counter-reset:s;list-style:none;margin:16px 0}
+        .steps-ol li{counter-increment:s;padding:12px 16px 12px 54px;margin:8px 0;background:var(--g50);border:1px solid var(--g200);border-radius:10px;position:relative;font-size:.95em}
+        .steps-ol li::before{content:counter(s);position:absolute;left:14px;top:13px;background:var(--primary);color:#fff;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8em}
+        .steps-ol li strong:first-child{color:var(--g900)}
         .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
         .troubleshoot-item{padding:14px 18px;margin:8px 0;background:var(--accent-light);border-radius:10px;border:1px solid #fde68a}
         .troubleshoot-item .problem{font-weight:600;color:#92400e;margin-bottom:4px}
@@ -535,28 +539,244 @@
     <div class="warning"><strong>N&atilde;o reaproveite os 10k&#8486; da v2.0 aqui.</strong> O firmware v3.0 espera 100k (lado da bateria) e 33k (lado do GND). Trocados entre si, o medidor fica sempre cheio ou sempre vazio.</div>
 </div>
 
-<!-- ==================== MONTAGEM ==================== -->
+<!-- ==================== FERRAMENTAS E PREPARACAO ==================== -->
 <div class="step">
     <div class="step-header">
         <div class="step-number">8</div>
-        <div class="step-title">Montagem no Case v3.0 &mdash; Passo a Passo</div>
+        <div class="step-title">Montagem &mdash; Ferramentas e Prepara&ccedil;&atilde;o</div>
     </div>
+    <p class="step-desc">A montagem completa est&aacute; detalhada nas etapas 8 a 14, na ordem em que deve ser feita. Antes de pegar o ferro de solda, separe as ferramentas e prepare cart&atilde;o, firmware e case. O <strong>mult&iacute;metro n&atilde;o &eacute; opcional</strong>: sem ele n&atilde;o d&aacute; para calibrar o MT3608 com seguran&ccedil;a (etapa 10).</p>
+    <div class="materials-grid">
+        <div class="material-item"><span class="qty">1x</span>Ferro de solda 25&ndash;40W ponta fina</div>
+        <div class="material-item"><span class="qty">1x</span>Estanho 0.8&ndash;1.0 mm c/ fluxo</div>
+        <div class="material-item"><span class="qty">1x</span>Mult&iacute;metro (obrigat&oacute;rio)</div>
+        <div class="material-item"><span class="qty">1x</span>Alicate de corte + decapador</div>
+        <div class="material-item"><span class="qty">1x</span>Chave Phillips PH0/PH1</div>
+        <div class="material-item"><span class="qty">~</span>Termo-retr&aacute;til ou fita isolante</div>
+        <div class="material-item"><span class="qty">1x</span>Pistola de cola quente</div>
+        <div class="material-item"><span class="qty">1x</span>Perfboard (recorte 20&times;10 mm)</div>
+        <div class="material-item"><span class="qty">1x</span>Protoboard 400 pts (p/ teste, opcional)</div>
+        <div class="material-item"><span class="qty">1x</span>PC com Arduino IDE + cabo USB-B</div>
+    </div>
+    <ol class="steps-ol">
+        <li><strong>Cart&atilde;o microSD:</strong> formate em <strong>FAT32</strong>. Crie as pastas <code>01</code> a <code>07</code> na raiz e, dentro de cada uma, os arquivos <code>001.mp3</code> a <code>005.mp3</code> (zeros &agrave; esquerda obrigat&oacute;rios). Copie as pastas <em>em ordem</em> (01 primeiro, 07 por &uacute;ltimo) &mdash; o DFPlayer indexa pela ordem de grava&ccedil;&atilde;o.</li>
+        <li><strong>Firmware:</strong> na Arduino IDE, instale as bibliotecas <code>DFRobotDFPlayerMini</code> e <code>LiquidCrystal_I2C</code> (Gerenciador de Bibliotecas). Abra <code>voz_autista_maker_code.ino</code>, selecione placa &ldquo;Arduino Uno&rdquo; e a porta COM, e grave pelo USB-B. Fa&ccedil;a isso <strong>antes</strong> de parafusar o Arduino no case &mdash; na bancada qualquer erro &eacute; f&aacute;cil de corrigir.</li>
+        <li><strong>Teste em bancada (recomendado):</strong> monte o circuito inteiro na protoboard, alimentado s&oacute; pelo cabo USB (sem bateria nesta fase), e confira LCD, bot&otilde;es, &aacute;udio e vibra&ccedil;&atilde;o. Um erro na protoboard custa 1 minuto; dentro do case fechado custa a tarde.</li>
+        <li><strong>Impress&atilde;o do case:</strong> 3 arquivos em <code>case_3d/</code>: <code>exportar_base.scad</code> (sem suporte), <code>exportar_tampa.scad</code> (invertida, suporte s&oacute; sob a rampa do LCD) e <code>exportar_tampa_bateria.scad</code> (tampa + knob + adaptador FALAR, deitados, sem suporte). PLA ou PETG, camada 0.2 mm, 25% giroide.</li>
+        <li><strong>Encaixe a seco:</strong> antes de soldar qualquer fio, posicione cada m&oacute;dulo no seu lugar do case (etapa 2) sem fixar. Se algo for&ccedil;ar, ajuste <code>tolerance</code> no <code>.scad</code> e reimprima s&oacute; aquela pe&ccedil;a.</li>
+    </ol>
+    <div class="tip"><strong>Dica de solda para iniciantes:</strong> estanhe a ponta do fio e o terminal separadamente, depois junte os dois com o ferro por 1&ndash;2 s. Solda boa &eacute; brilhante e em formato de vulc&atilde;o; solda fosca e em bolinha &eacute; solda fria &mdash; reaque&ccedil;a.</div>
+</div>
+
+<!-- ==================== PERFBOARD ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">9</div>
+        <div class="step-title">Solda da Perfboard (driver + divisores)</div>
+    </div>
+    <p class="step-desc">Tr&ecirc;s mini-circuitos numa &uacute;nica placa perfurada de at&eacute; <strong>20&times;10 mm</strong> (&asymp;7&times;4 furos de passo 2.54), que encaixa nos cantos de reten&ccedil;&atilde;o da base. Para caber, monte os resistores <strong>em p&eacute;</strong> (uma perna dobrada por cima do corpo).</p>
+    <div class="diagram-container">
+        <p>Vista superior da placa &mdash; 3 zonas</p>
+        <svg width="860" height="330" viewBox="0 0 860 330">
+            <rect x="130" y="70" width="600" height="190" rx="8" fill="#f3d9a4" stroke="#b45309" stroke-width="2.5"/>
+            <g fill="#92400e" opacity=".28">
+                <circle cx="160" cy="95" r="3"/><circle cx="160" cy="235" r="3"/><circle cx="700" cy="95" r="3"/><circle cx="700" cy="235" r="3"/>
+                <circle cx="430" cy="95" r="3"/><circle cx="430" cy="235" r="3"/>
+            </g>
+            <line x1="330" y1="78" x2="330" y2="252" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,5"/>
+            <line x1="530" y1="78" x2="530" y2="252" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,5"/>
+            <g font-size="11" font-weight="800" fill="#78350f" text-anchor="middle">
+                <text x="230" y="62">ZONA A &mdash; DRIVER</text>
+                <text x="430" y="62">ZONA B &mdash; RX 3.3V</text>
+                <text x="630" y="62">ZONA C &mdash; BATERIA</text>
+            </g>
+            <!-- ZONA A: driver -->
+            <rect x="155" y="120" width="52" height="16" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="181" y="115" text-anchor="middle" fill="#92400e" font-size="9" font-weight="700">1k&#8486;</text>
+            <circle cx="262" cy="160" r="24" fill="#374151"/>
+            <text x="262" y="156" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">2N2222</text>
+            <text x="262" y="168" text-anchor="middle" fill="#d1d5db" font-size="7">E &bull; B &bull; C</text>
+            <g transform="translate(240,210)">
+                <polygon points="0,0 0,14 12,7" fill="#1f2937"/><line x1="12" y1="0" x2="12" y2="14" stroke="#1f2937" stroke-width="3"/>
+            </g>
+            <text x="285" y="222" fill="#1f2937" font-size="8" font-weight="700">1N4148 (faixa p/ +5V)</text>
+            <path d="M130,128 H155" stroke="#eab308" stroke-width="3"/><text x="124" y="132" text-anchor="end" fill="#a16207" font-size="9" font-weight="700">D7</text>
+            <path d="M207,128 H238 V143" stroke="#1f2937" stroke-width="2" fill="none"/>
+            <path d="M262,184 V260" stroke="#1f2937" stroke-width="3"/><text x="262" y="276" text-anchor="middle" fill="#374151" font-size="9" font-weight="700">E &rarr; GND</text>
+            <path d="M286,160 H310 V70" stroke="#eab308" stroke-width="3" fill="none"/><text x="310" y="40" text-anchor="middle" fill="#a16207" font-size="9" font-weight="700">C &rarr; motor (&minus;)</text>
+            <path d="M170,70 V40" stroke="#ef4444" stroke-width="3"/><text x="170" y="30" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="700">+5V &rarr; motor (+)</text>
+            <!-- ZONA B: rx -->
+            <rect x="362" y="105" width="18" height="52" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="396" y="128" fill="#92400e" font-size="9" font-weight="700">1k&#8486;</text>
+            <rect x="412" y="165" width="18" height="52" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="446" y="192" fill="#92400e" font-size="9" font-weight="700">2k&#8486;</text>
+            <path d="M371,70 V105" stroke="#eab308" stroke-width="3"/><text x="371" y="40" text-anchor="middle" fill="#a16207" font-size="9" font-weight="700">D11</text>
+            <circle cx="421" cy="161" r="4" fill="#a16207"/>
+            <path d="M371,157 H421 V165" stroke="#eab308" stroke-width="3" fill="none"/>
+            <path d="M421,161 H470 V70" stroke="#eab308" stroke-width="3" fill="none"/><text x="470" y="40" text-anchor="middle" fill="#a16207" font-size="9" font-weight="700">n&oacute; RX &rarr; RX do DFPlayer</text>
+            <path d="M421,217 V260" stroke="#1f2937" stroke-width="3"/><text x="421" y="276" text-anchor="middle" fill="#374151" font-size="9" font-weight="700">GND</text>
+            <!-- ZONA C: bateria -->
+            <rect x="562" y="95" width="18" height="52" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="598" y="118" fill="#92400e" font-size="9" font-weight="700">100k&#8486;</text>
+            <rect x="562" y="175" width="18" height="52" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="598" y="200" fill="#92400e" font-size="9" font-weight="700">33k&#8486;</text>
+            <line x1="652" y1="150" x2="672" y2="150" stroke="#374151" stroke-width="3"/>
+            <line x1="652" y1="158" x2="672" y2="158" stroke="#374151" stroke-width="3"/>
+            <text x="662" y="142" text-anchor="middle" fill="#374151" font-size="8" font-weight="700">100nF</text>
+            <path d="M571,70 V95" stroke="#ef4444" stroke-width="3"/><text x="571" y="40" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="700">Vbat (VIN+ do boost)</text>
+            <circle cx="571" cy="161" r="4" fill="#92400e"/>
+            <path d="M571,147 V175" stroke="#92400e" stroke-width="3"/>
+            <path d="M571,161 H730 H750" stroke="#92400e" stroke-width="3"/><text x="758" y="165" fill="#92400e" font-size="9" font-weight="700">A1</text>
+            <path d="M662,158 V161" stroke="#374151" stroke-width="2"/>
+            <path d="M662,150 V120 H571" stroke="#374151" stroke-width="2" fill="none"/>
+            <path d="M662,161 V240 H571 M571,227 V260" stroke="#1f2937" stroke-width="3" fill="none"/>
+            <text x="571" y="276" text-anchor="middle" fill="#374151" font-size="9" font-weight="700">GND</text>
+            <text x="430" y="310" text-anchor="middle" fill="#6b7280" font-size="10">8 fios saem da placa: D7, D11, A1, Vbat, +5V, GND, n&oacute; RX e coletor (motor &minus;)</text>
+        </svg>
+    </div>
+    <ol class="steps-ol">
+        <li><strong>Zona A (driver do motor):</strong> solde o 2N2222 com a <strong>face plana virada para voc&ecirc;</strong> (pernas E&ndash;B&ndash;C da esquerda p/ direita). O 1k&#8486; liga o fio de D7 &agrave; perna B (base). A perna E (emissor) vai ao GND da placa. A perna C (coletor) recebe o fio <strong>preto do motor (&minus;)</strong>. O fio <strong>vermelho do motor (+)</strong> vai ao +5V. O 1N4148 fica em paralelo com o motor: <strong>faixa (catodo) no lado do +5V</strong>, anodo no coletor.</li>
+        <li><strong>Zona B (divisor do RX):</strong> 1k&#8486; do fio de D11 at&eacute; o n&oacute; central; 2k&#8486; do n&oacute; central ao GND. Do n&oacute; central sai o fio amarelo que vai ao pino <strong>RX do DFPlayer</strong>.</li>
+        <li><strong>Zona C (medi&ccedil;&atilde;o da bateria):</strong> 100k&#8486; do fio Vbat (puxado do VIN+ do MT3608, <em>depois</em> da chave) at&eacute; o n&oacute; A1; 33k&#8486; do n&oacute; A1 ao GND; 100nF tamb&eacute;m entre o n&oacute; A1 e o GND (cer&acirc;mico, sem polaridade). Do n&oacute; A1 sai o <strong>fio marrom</strong> para o pino A1.</li>
+        <li><strong>Barramento GND:</strong> emende os tr&ecirc;s GNDs (E do transistor, 2k, 33k/100nF) numa &uacute;nica trilha de estanho na borda da placa, com <strong>um &uacute;nico fio preto</strong> de volta ao GND do Arduino.</li>
+        <li><strong>Confer&ecirc;ncia:</strong> com o mult&iacute;metro em continuidade, confirme: D7&ndash;base s&oacute; atrav&eacute;s do 1k; n&oacute; RX <em>n&atilde;o</em> tem continuidade direta com D11 nem com GND; n&oacute; A1 idem. Procure pontes de solda acidentais entre furos vizinhos &mdash; &eacute; o defeito mais comum.</li>
+    </ol>
+    <div class="warning"><strong>Os dois 1k&#8486; n&atilde;o s&atilde;o intercambi&aacute;veis com o 2k&#8486;:</strong> leia o c&oacute;digo de cores antes de soldar (1k = marrom-preto-vermelho; 2k = vermelho-preto-vermelho; 33k = laranja-laranja-laranja; 100k = marrom-preto-amarelo) ou me&ccedil;a com o mult&iacute;metro.</div>
+</div>
+
+<!-- ==================== ENERGIA ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">10</div>
+        <div class="step-title">Cadeia de Energia + Calibra&ccedil;&atilde;o dos 5.0V</div>
+    </div>
+    <p class="step-desc">Monte e calibre <strong>fora do case, sem o Arduino conectado</strong>. O MT3608 sai de f&aacute;brica com a sa&iacute;da em qualquer valor &mdash; pode passar de 20V, o suficiente para queimar tudo.</p>
+    <ol class="steps-ol">
+        <li><strong>Bateria &rarr; TP4056:</strong> solde a c&eacute;lula nos pads <code>B+</code> e <code>B&minus;</code> (vermelho/preto, ~6 cm). Use 18650 <strong>com abas sold&aacute;veis</strong> ou um suporte com contatos &mdash; <strong>nunca solde direto no corpo de uma c&eacute;lula sem abas</strong>: o calor danifica a qu&iacute;mica e &eacute; perigoso.</li>
+        <li><strong>TP4056 &rarr; chave:</strong> fio vermelho do <code>OUT+</code> at&eacute; o terminal <strong>central</strong> da chave deslizante (~8 cm).</li>
+        <li><strong>Chave &rarr; MT3608:</strong> de um terminal lateral da chave at&eacute; o <code>VIN+</code> do boost (~6 cm). O <code>OUT&minus;</code> do TP4056 vai direto ao <code>VIN&minus;</code> (preto).</li>
+        <li><strong>Deriva&ccedil;&atilde;o Vbat:</strong> do pr&oacute;prio <code>VIN+</code> do boost, puxe o fio Vbat que alimenta o 100k&#8486; da perfboard (etapa 9). Por ficar <em>depois</em> da chave, o divisor n&atilde;o drena nada com o aparelho desligado.</li>
+        <li><strong>CALIBRA&Ccedil;&Atilde;O:</strong> ligue a chave. Mult&iacute;metro em DC nos pads <code>VOUT+</code>/<code>VOUT&minus;</code>. Gire o trimpot azul com chave de fenda pequena at&eacute; ler <strong>5.0V</strong> (&plusmn;0.05V). O trimpot &eacute; multivolta: as primeiras 5&ndash;10 voltas podem n&atilde;o mudar nada &mdash; continue girando. Anti-hor&aacute;rio reduz a tens&atilde;o na maioria dos m&oacute;dulos.</li>
+        <li><strong>Confirma&ccedil;&atilde;o:</strong> espere 1 minuto e me&ccedil;a de novo. Desligue e ligue a chave e me&ccedil;a uma terceira vez. S&oacute; prossiga com 5.0V est&aacute;veis nas tr&ecirc;s leituras.</li>
+        <li><strong>Conex&atilde;o ao rail:</strong> <code>VOUT+</code> &rarr; pino <strong>5V</strong> do Arduino (n&atilde;o use o VIN); <code>VOUT&minus;</code> &rarr; GND. Do mesmo ponto derivam o VCC do LCD, do DFPlayer (com os capacitores), do potenci&ocirc;metro e o motor (+) da perfboard.</li>
+        <li><strong>Carga de teste:</strong> plugue um cabo micro-USB no TP4056: LED vermelho = carregando, LED azul/verde = completa. A carga funciona com a chave desligada.</li>
+    </ol>
+    <div class="warning"><strong>USB + bateria ao mesmo tempo:</strong> como o boost alimenta o pino 5V diretamente, <strong>desligue a chave sempre que for plugar o cabo USB-B</strong> para reprogramar o Arduino. Os dois 5V em conflito podem danificar a porta USB do computador.</div>
+    <div class="info"><strong>Por que pelo pino 5V e n&atilde;o pelo VIN?</strong> O VIN passa pelo regulador linear do Arduino, que precisa de &ge;6.6V e desperdi&ccedil;a energia em calor. O boost j&aacute; entrega 5V regulados &mdash; direto no rail, a autonomia chega a ~14h.</div>
+</div>
+
+<!-- ==================== BASE ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">11</div>
+        <div class="step-title">Montagem da Base (nesta ordem)</div>
+    </div>
+    <p class="step-desc">Com a perfboard pronta (etapa 9) e a energia calibrada (etapa 10), fixe os m&oacute;dulos na base impressa. A ordem importa: os m&oacute;dulos do fundo entram antes dos que ficam por cima dos fios. Posi&ccedil;&otilde;es no desenho da etapa 2.</p>
+    <ol class="steps-ol">
+        <li><strong>Arduino Uno:</strong> sobre os 4 pilares de 3 mm, com USB-B e jack apontando para as janelas da <strong>esquerda</strong>. Parafusos M2.5 em X (um de cada canto alternado), sem for&ccedil;ar &mdash; rosca em pl&aacute;stico espana f&aacute;cil. Teste plugando o cabo USB-B por fora: deve entrar sem prender.</li>
+        <li><strong>TP4056:</strong> deslize sob os clipes com o micro-USB encostado na janela esquerda. Teste o cabo de carga por fora antes de prosseguir.</li>
+        <li><strong>MT3608:</strong> nos cantos de reten&ccedil;&atilde;o, com o <strong>trimpot virado para cima</strong> &mdash; permite recalibrar com o case aberto, sem desmontar.</li>
+        <li><strong>Perfboard:</strong> nos cantos de reten&ccedil;&atilde;o dela, componentes para cima.</li>
+        <li><strong>DFPlayer:</strong> nos clipes, com o slot do microSD alinhado &agrave; janela traseira. Insira e remova o cart&atilde;o por fora algumas vezes &mdash; o clique da mola deve funcionar atrav&eacute;s da parede.</li>
+        <li><strong>Alto-falante:</strong> cone para <strong>baixo</strong>, sobre a grade do fundo, preso pelos 3 postes curvos. Um pingo de cola quente em cada poste; n&atilde;o cole o cone nem a borda de borracha.</li>
+        <li><strong>Motor coin:</strong> no suporte anelar, usando a fita dupla-face que j&aacute; vem no motor. Pingo de cola quente sobre os fios a 1 cm do motor (al&iacute;vio de tra&ccedil;&atilde;o &mdash; esses fios s&atilde;o finos e arrancam f&aacute;cil).</li>
+        <li><strong>Chave deslizante:</strong> por dentro da moldura recuada da traseira, alavanca para fora. Fixe com cola quente pelo lado de dentro.</li>
+        <li><strong>Potenci&ocirc;metro:</strong> eixo pelo furo da parede direita, porca apertada por fora, knob &Oslash;20 impresso pressionado no eixo (a meia-lua do furo trava a rota&ccedil;&atilde;o).</li>
+        <li><strong>Bateria fica para o fim:</strong> a 18650 s&oacute; entra na etapa 14, pela tampa do fundo, depois de tudo testado.</li>
+    </ol>
+    <div class="tip"><strong>Cola quente com modera&ccedil;&atilde;o:</strong> use pingos pequenos e s&oacute; nos pontos indicados. Tudo que for colado demais vira problema na primeira manuten&ccedil;&atilde;o.</div>
+</div>
+
+<!-- ==================== TAMPA ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">12</div>
+        <div class="step-title">Montagem da Tampa</div>
+    </div>
+    <ol class="steps-ol">
+        <li><strong>Bot&otilde;es (de dentro p/ fora):</strong> corpo do bot&atilde;o de 12 mm por dentro, rosca atravessa o furo &Oslash;14, porca aperta por fora (fica escondida no anel t&aacute;til). Posi&ccedil;&otilde;es com a tampa vista de cima, LCD para tr&aacute;s: fileira de cima <span class="color-dot" style="background:#eab308"></span><strong>amarelo &agrave; esquerda (CAT&minus;)</strong> e <span class="color-dot" style="background:#ef4444"></span><strong>vermelho &agrave; direita (CAT+)</strong>; fileira do meio <span class="color-dot" style="background:#3b82f6"></span><strong>azul &agrave; esquerda (PAL&minus;)</strong> e <span class="color-dot" style="background:#22c55e"></span><strong>verde &agrave; direita (PAL+)</strong>; embaixo, central, <span class="color-dot" style="background:#1f2937"></span><strong>preto (FALAR)</strong>.</li>
+        <li><strong>Adaptador FALAR:</strong> encaixe o adaptador &Oslash;18 impresso sobre o cap do bot&atilde;o preto, com um pingo m&iacute;nimo de cola. &Eacute; ele que faz o FALAR ser maior que os outros sob o dedo.</li>
+        <li><strong>LCD:</strong> por dentro da tampa, contra a rampa de 12&deg;, tela alinhada &agrave; janela 73&times;26. O backpack I2C fica voltado para dentro do case. 4 parafusos auto-atarraxantes nos bosses &mdash; aperte at&eacute; encostar e mais 1/4 de volta, n&atilde;o mais (o PCB do LCD trinca).</li>
+        <li><strong>Solda dos bot&otilde;es:</strong> cada bot&atilde;o recebe um fio amarelo (sinal) num terminal e o GND no outro. Para o GND, fa&ccedil;a um <strong>encadeamento</strong>: peda&ccedil;os de 5 cm de fio preto ligando bot&atilde;o a bot&atilde;o, e um &uacute;nico fio de 20 cm do &uacute;ltimo bot&atilde;o ao GND do Arduino. Termo-retr&aacute;til em cada terminal.</li>
+        <li><strong>Pintura dos an&eacute;is (opcional):</strong> a canaleta de 0.6 mm no topo de cada anel t&aacute;til aceita tinta acr&iacute;lica na cor do bot&atilde;o &mdash; refor&ccedil;o visual sem depender s&oacute; do cap.</li>
+    </ol>
+    <div class="warning"><strong>Confira duas vezes a posi&ccedil;&atilde;o das cores antes de soldar.</strong> O firmware associa D2=vermelho, D3=amarelo, D4=verde, D5=azul, D6=preto. Bot&atilde;o na posi&ccedil;&atilde;o errada = navega&ccedil;&atilde;o invertida para o usu&aacute;rio, e ressoldagem com a tampa j&aacute; fechada.</div>
+</div>
+
+<!-- ==================== FIACAO ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">13</div>
+        <div class="step-title">Fia&ccedil;&atilde;o Completa (tabela de fios)</div>
+    </div>
+    <p class="step-desc">Todos os fios, com cor e comprimento sugerido. Os fios da tampa t&ecirc;m <strong>20 cm</strong> de prop&oacute;sito: d&aacute; para apoiar a tampa aberta ao lado da base e mexer em tudo sem desconectar nada (&ldquo;dobradi&ccedil;a de servi&ccedil;o&rdquo;).</p>
+    <table class="pin-table">
+        <tr><th>Bloco</th><th>De</th><th>Para</th><th>Cor</th><th>Compr.</th></tr>
+        <tr><td rowspan="6">Tampa</td><td>D2</td><td>Bot&atilde;o vermelho (CAT+)</td><td><span class="color-dot" style="background:#eab308"></span>amarelo</td><td>20 cm</td></tr>
+        <tr><td>D3</td><td>Bot&atilde;o amarelo (CAT&minus;)</td><td><span class="color-dot" style="background:#eab308"></span>amarelo</td><td>20 cm</td></tr>
+        <tr><td>D4</td><td>Bot&atilde;o verde (PAL+)</td><td><span class="color-dot" style="background:#eab308"></span>amarelo</td><td>20 cm</td></tr>
+        <tr><td>D5</td><td>Bot&atilde;o azul (PAL&minus;)</td><td><span class="color-dot" style="background:#eab308"></span>amarelo</td><td>20 cm</td></tr>
+        <tr><td>D6</td><td>Bot&atilde;o preto (FALAR)</td><td><span class="color-dot" style="background:#eab308"></span>amarelo</td><td>20 cm</td></tr>
+        <tr><td>GND</td><td>Encadeado entre os 5 bot&otilde;es</td><td><span class="color-dot" style="background:#1f2937"></span>preto</td><td>4&times;5 + 20 cm</td></tr>
+        <tr><td rowspan="4">LCD (tampa)</td><td>5V</td><td>LCD VCC</td><td><span class="color-dot" style="background:#ef4444"></span>vermelho</td><td>20 cm</td></tr>
+        <tr><td>GND</td><td>LCD GND</td><td><span class="color-dot" style="background:#1f2937"></span>preto</td><td>20 cm</td></tr>
+        <tr><td>A4</td><td>LCD SDA</td><td><span class="color-dot" style="background:#22c55e"></span>verde</td><td>20 cm</td></tr>
+        <tr><td>A5</td><td>LCD SCL</td><td><span class="color-dot" style="background:#f97316"></span>laranja</td><td>20 cm</td></tr>
+        <tr><td rowspan="6">DFPlayer</td><td>DFP TX</td><td>D10</td><td><span class="color-dot" style="background:#eab308"></span>amarelo</td><td>12 cm</td></tr>
+        <tr><td>Perfboard (n&oacute; RX)</td><td>DFP RX</td><td><span class="color-dot" style="background:#eab308"></span>amarelo</td><td>10 cm</td></tr>
+        <tr><td>DFP BUSY</td><td>D8</td><td><span class="color-dot" style="background:#eab308"></span>amarelo</td><td>12 cm</td></tr>
+        <tr><td>5V (rail)</td><td>DFP VCC (com 470&micro;F+100nF no m&oacute;dulo)</td><td><span class="color-dot" style="background:#ef4444"></span>vermelho</td><td>10 cm</td></tr>
+        <tr><td>GND</td><td>DFP GND</td><td><span class="color-dot" style="background:#1f2937"></span>preto</td><td>10 cm</td></tr>
+        <tr><td>DFP SPK1 / SPK2</td><td>Alto-falante (sem polaridade)</td><td>&mdash;</td><td>10 cm</td></tr>
+        <tr><td rowspan="3">Volume</td><td>5V (rail)</td><td>Pot terminal 1</td><td><span class="color-dot" style="background:#ef4444"></span>vermelho</td><td>12 cm</td></tr>
+        <tr><td>Pot wiper (centro)</td><td>A0</td><td><span class="color-dot" style="background:#a855f7"></span>roxo</td><td>12 cm</td></tr>
+        <tr><td>Pot terminal 3</td><td>GND</td><td><span class="color-dot" style="background:#1f2937"></span>preto</td><td>12 cm</td></tr>
+        <tr><td rowspan="5">Perfboard</td><td>D7</td><td>Entrada do 1k (base)</td><td><span class="color-dot" style="background:#eab308"></span>amarelo</td><td>8 cm</td></tr>
+        <tr><td>D11</td><td>Entrada do 1k (RX)</td><td><span class="color-dot" style="background:#eab308"></span>amarelo</td><td>8 cm</td></tr>
+        <tr><td>N&oacute; A1</td><td>A1</td><td><span class="color-dot" style="background:#92400e"></span>marrom</td><td>8 cm</td></tr>
+        <tr><td>MT3608 VIN+ (p&oacute;s-chave)</td><td>Entrada do 100k (Vbat)</td><td><span class="color-dot" style="background:#ef4444"></span>vermelho</td><td>8 cm</td></tr>
+        <tr><td>5V + GND (rail)</td><td>+5V e GND da placa</td><td><span class="color-dot" style="background:#ef4444"></span>verm. + <span class="color-dot" style="background:#1f2937"></span>preto</td><td>8 cm</td></tr>
+        <tr><td rowspan="5">Energia</td><td>C&eacute;lula 18650 (abas)</td><td>TP4056 B+ / B&minus;</td><td><span class="color-dot" style="background:#ef4444"></span>verm. + <span class="color-dot" style="background:#1f2937"></span>preto</td><td>6 cm</td></tr>
+        <tr><td>TP4056 OUT+</td><td>Chave (terminal central)</td><td><span class="color-dot" style="background:#ef4444"></span>vermelho</td><td>8 cm</td></tr>
+        <tr><td>Chave (lateral)</td><td>MT3608 VIN+</td><td><span class="color-dot" style="background:#ef4444"></span>vermelho</td><td>6 cm</td></tr>
+        <tr><td>TP4056 OUT&minus;</td><td>MT3608 VIN&minus;</td><td><span class="color-dot" style="background:#1f2937"></span>preto</td><td>12 cm</td></tr>
+        <tr><td>MT3608 VOUT+ / VOUT&minus;</td><td>Pino 5V e GND do Arduino</td><td><span class="color-dot" style="background:#ef4444"></span>verm. + <span class="color-dot" style="background:#1f2937"></span>preto</td><td>10 cm</td></tr>
+    </table>
     <ul class="checklist">
-        <li><strong>Pot&ecirc;ncia primeiro (fora do case):</strong> 18650 &rarr; TP4056 &rarr; chave &rarr; MT3608. Ajuste o trimpot at&eacute; medir 5.0V na sa&iacute;da. S&oacute; ent&atilde;o conecte ao 5V do Arduino.</li>
-        <li><strong>Perfboard:</strong> monte o driver (2N2222 + 1k + 1N4148), o divisor da bateria (100k/33k + 100nF) e o divisor do RX (1k/2k) numa placinha ~20&times;10 mm.</li>
-        <li><strong>Base:</strong> Arduino nos 4 pilares M2.5 (USB-B e jack pela esquerda); TP4056 nos clipes (&micro;USB pela esquerda); MT3608 e perfboard nos cantos de reten&ccedil;&atilde;o; DFPlayer nos clipes (SD pela traseira); alto-falante no fundo sob os 3 postes (&iacute;m&atilde; p/ cima, som sai pela grade); motor no suporte anelar; chave na moldura recuada da traseira; potenci&ocirc;metro no furo da direita + knob impresso.</li>
-        <li><strong>Tampa:</strong> bot&otilde;es no layout 2+2+1 (CAT- amarelo / CAT+ vermelho em cima, PAL- azul / PAL+ verde no meio, FALAR preto embaixo com o adaptador &Oslash;18 impresso); LCD na face inclinada com 4 parafusos auto-atarraxantes nos bosses.</li>
-        <li><strong>Fia&ccedil;&atilde;o:</strong> siga a tabela de pinagem (etapa 1) com as cores padronizadas. GND comum a tudo (Arduino, TP4056, MT3608, DFPlayer, divisores, emissor do 2N2222).</li>
-        <li><strong>Fechar:</strong> cord&atilde;o nas orelhas traseiras (se for usar); tampa sobre o rim (clique nos bumps); 2 parafusos M3 (frente-direita e tr&aacute;s-centro); 18650 pela tampa do fundo (s&iacute;mbolos +/- em relevo); p&eacute;s de borracha nos rebaixos.</li>
-        <li><strong>Teste a seco antes de fechar de vez:</strong> LCD, navega&ccedil;&atilde;o, &aacute;udio, vibra&ccedil;&atilde;o, &iacute;cone de bateria e frase composta.</li>
+        <li>Estanhe as pontas antes de soldar e cubra cada emenda com termo-retr&aacute;til.</li>
+        <li>O GND &eacute; comum a TUDO: Arduino, TP4056, MT3608, DFPlayer, LCD, pot, perfboard e bot&otilde;es. Sem o GND comum, nada se entende.</li>
+        <li>Passe os fios da tampa pelo lado traseiro esquerdo (&aacute;rea livre entre DFPlayer e chave) e prenda o feixe com uma abra&ccedil;adeira &mdash; longe do alto-falante e do eixo do potenci&ocirc;metro.</li>
+        <li>Sobrou fio? Dobre o excesso em &ldquo;S&rdquo; e prenda com fita dupla face no piso &mdash; nunca enrolado sobre o DFPlayer (ru&iacute;do no &aacute;udio).</li>
     </ul>
+</div>
+
+<!-- ==================== FECHAMENTO E TESTE ==================== -->
+<div class="step">
+    <div class="step-header">
+        <div class="step-number">14</div>
+        <div class="step-title">Fechamento e Teste Final</div>
+    </div>
+    <p class="step-desc">Teste tudo com o case ainda aberto (tampa apoiada ao lado, gra&ccedil;as aos fios de 20 cm). S&oacute; feche depois do checklist completo.</p>
+    <ol class="steps-ol">
+        <li><strong>Chave OFF.</strong> Insira a 18650 pela tampa do fundo respeitando os s&iacute;mbolos <strong>+/&minus; em relevo</strong> no pl&aacute;stico. Feche a tampa da bateria (2 clipes).</li>
+        <li><strong>Ligar:</strong> a tela deve mostrar o splash &ldquo;Voz Autista v3.0&rdquo; e depois a primeira categoria, com o &iacute;cone de bateria no canto. LCD apagado? V&aacute; &agrave; etapa 15.</li>
+        <li><strong>Navega&ccedil;&atilde;o:</strong> CAT+ e CAT&minus; trocam a categoria; PAL+ e PAL&minus; trocam a palavra. Cada toque deve dar uma vibra&ccedil;&atilde;o curta.</li>
+        <li><strong>&Aacute;udio:</strong> toque FALAR em 2&ndash;3 palavras de categorias diferentes. O &aacute;udio deve sair limpo pela grade do fundo, sem cliques nem resets.</li>
+        <li><strong>Frase composta:</strong> monte uma frase de 3 palavras e reproduza. As palavras devem sair <strong>em sequ&ecirc;ncia, sem atropelo</strong> &mdash; &eacute; o teste do fio BUSY&rarr;D8.</li>
+        <li><strong>Volume:</strong> gire o knob durante uma fala, de m&iacute;nimo a m&aacute;ximo.</li>
+        <li><strong>Bateria:</strong> o &iacute;cone deve condizer com a carga da c&eacute;lula. Com o mult&iacute;metro: tens&atilde;o no pino A1 = Vbat &times; 0.248 (ex.: 4.0V na c&eacute;lula &rarr; ~0.99V em A1).</li>
+        <li><strong>Carga:</strong> micro-USB no TP4056 &rarr; LED vermelho acende. Desconecte antes de seguir.</li>
+        <li><strong>Fechar:</strong> cord&atilde;o nas orelhas traseiras (se for usar &mdash; depois de fechado os furos ficam dif&iacute;ceis de alcan&ccedil;ar); conduza o feixe de fios para dentro, assente a tampa sobre o rim at&eacute; o clique dos bumps; 2 parafusos M3 (frente-direita e tr&aacute;s-centro); p&eacute;s de borracha nos 4 rebaixos do fundo.</li>
+        <li><strong>Teste p&oacute;s-fechamento:</strong> repita os itens 2&ndash;6 com o case fechado. Som abafado? Confira se os p&eacute;s de borracha est&atilde;o no lugar &mdash; s&atilde;o eles que afastam a grade da mesa.</li>
+    </ol>
     <div class="warning"><strong>Aten&ccedil;&atilde;o:</strong> respeite a polaridade da 18650. Invers&atilde;o danifica o TP4056 e o Arduino permanentemente.</div>
+    <div class="info"><strong>Manuten&ccedil;&atilde;o futura:</strong> troca de bateria &eacute; pela tampa do fundo, sem abrir o case. Trocar &aacute;udios &eacute; pelo slot do SD na traseira. Reprogramar &eacute; pelo USB-B na lateral esquerda (chave OFF!). O case s&oacute; precisa ser aberto para reparo.</div>
 </div>
 
 <!-- ==================== TROUBLESHOOT ==================== -->
 <div class="step">
     <div class="step-header">
-        <div class="step-number">9</div>
+        <div class="step-number">15</div>
         <div class="step-title">Resolu&ccedil;&atilde;o de Problemas</div>
     </div>
     <div class="two-col">
@@ -565,12 +785,14 @@
             <div class="troubleshoot-item"><div class="problem">DFPlayer reseta ou clica ao tocar</div><div class="solution">Confira o 470&micro;F + 100nF no VCC do m&oacute;dulo (e a polaridade do eletrol&iacute;tico).</div></div>
             <div class="troubleshoot-item"><div class="problem">Frase composta atropela as palavras</div><div class="solution">Fio BUSY &rarr; D8 solto. O firmware usa timeout de 8 s como fallback.</div></div>
             <div class="troubleshoot-item"><div class="problem">Medidor de bateria n&atilde;o muda</div><div class="solution">Divisor 100k/33k correto? Me&ccedil;a A1: deve dar Vbat &times; 0.248.</div></div>
+            <div class="troubleshoot-item"><div class="problem">N&atilde;o consigo gravar o firmware pelo USB-B</div><div class="solution">Desligue a chave da bateria antes de plugar o USB (os dois 5V entram em conflito). Confira porta COM e placa &ldquo;Arduino Uno&rdquo;.</div></div>
         </div>
         <div>
             <div class="troubleshoot-item"><div class="problem">Medidor sempre cheio ou sempre vazio</div><div class="solution">100k e 33k trocados entre si. O 100k vai no lado da bateria.</div></div>
             <div class="troubleshoot-item"><div class="problem">Motor n&atilde;o vibra</div><div class="solution">2N2222 &eacute; E-B-C (face plana p/ voc&ecirc;); 1k na base; 1N4148 com catodo no +5V.</div></div>
             <div class="troubleshoot-item"><div class="problem">Sem &aacute;udio</div><div class="solution">SD FAT32 com /01/../07/ e 001.mp3..005.mp3; falante em SPK1/SPK2; volume no m&iacute;nimo?</div></div>
             <div class="troubleshoot-item"><div class="problem">Bot&atilde;o n&atilde;o responde</div><div class="solution">Confira o pino e o GND comum. Teste continuidade com mult&iacute;metro.</div></div>
+            <div class="troubleshoot-item"><div class="problem">Trimpot do MT3608 parece n&atilde;o fazer nada</div><div class="solution">&Eacute; multivolta: gire 5&ndash;10 voltas antes de a tens&atilde;o come&ccedil;ar a mudar. Me&ccedil;a sempre em VOUT com a chave ligada.</div></div>
         </div>
     </div>
 </div>
