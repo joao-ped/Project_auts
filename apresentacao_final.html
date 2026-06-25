@@ -197,6 +197,9 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
 /* ===== CHROME: progress, home, nav ===== */
 .progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,#2563eb,#7c3aed,#f59e0b);z-index:120;transition:width .4s}
 .topbar{position:fixed;top:16px;left:16px;z-index:130}
+.topbar-right{position:fixed;top:16px;right:16px;z-index:130}
+.topbar-right .home-link{cursor:pointer;font-family:inherit}
+.topbar-right .home-link:hover{transform:translateX(2px)}
 .home-link{display:inline-flex;align-items:center;gap:8px;background:rgba(10,15,30,.7);border:1px solid var(--line);backdrop-filter:blur(10px);color:var(--ink);text-decoration:none;font-weight:600;font-size:.82em;padding:8px 15px;border-radius:100px;transition:background .2s,transform .2s}
 .home-link:hover{background:rgba(255,255,255,.1);transform:translateX(-2px)}
 
@@ -243,6 +246,13 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     In&iacute;cio
   </a>
+</div>
+
+<div class="topbar-right">
+  <button type="button" class="home-link" id="fsBtn" onclick="toggleFs()" aria-label="Alternar tela cheia">
+    <svg id="fsIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M16 21h3a2 2 0 0 0 2-2v-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg>
+    <span id="fsLabel">Tela cheia</span>
+  </button>
 </div>
 
 <div class="deck" id="deck">
@@ -296,10 +306,6 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
       <div class="card team-card"><div class="avatar"><img src="img/vity.jpeg" alt="Foto de Vit&oacute;ria" loading="lazy"></div><div class="nm">Vinicius</div><div class="role">[SLA]</div></div>
       <div class="card team-card"><div class="avatar"><img src="img/ingy.jpeg" alt="Foto de Ingryd" loading="lazy"></div><div class="nm">Ingryd</div><div class="role">[SLA]</div></div>
     </div>
-    <div class="placeholder-note anim4" role="note">
-      <span aria-hidden="true">&#9998;</span>
-      <span><strong style="color:var(--accent-light)">Para preencher:</strong> confirme os nomes (inferidos dos arquivos das fotos) e a <code>[FUN&Ccedil;&Atilde;O]</code> dos demais integrantes &mdash; a do Jo&atilde;o (L&iacute;der &middot; Programador) j&aacute; est&aacute; definida.</span>
-    </div>
   </div>
 </section>
 
@@ -345,7 +351,7 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
       <div class="card stat"><div class="num blue">7</div><div class="lbl">Categorias</div></div>
       <div class="card stat"><div class="num accent">35</div><div class="lbl">Palavras</div></div>
       <div class="card stat"><div class="num green">5</div><div class="lbl">Palavras / frase</div></div>
-      <div class="card stat"><div class="num purple">~30h</div><div class="lbl">Autonomia</div></div>
+      <div class="card stat"><div class="num purple">~14h</div><div class="lbl">Autonomia cont&iacute;nua</div></div>
     </div>
     <div class="cats anim4">
       <div class="cat-pill" style="border-color:rgba(96,165,250,.3)"><h4 class="blue">Necessidades</h4><p>Eu quero, Comer, Beber, Banheiro, Dormir</p></div>
@@ -452,8 +458,8 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
           <div class="it"><i>&#9679;</i><span><b>Chave</b> + <b>case 3D</b> (PLA/PETG)</span></div>
         </div>
         <div class="chips" style="margin-top:14px">
-          <span class="eyebrow green" style="margin:0">~30h autonomia (2600mAh)</span>
-          <span class="eyebrow blue" style="margin:0">~80mA consumo m&eacute;dio</span>
+          <span class="eyebrow green" style="margin:0">~14h cont&iacute;nuo (2600mAh)</span>
+          <span class="eyebrow blue" style="margin:0">~115mA no rail 5V</span>
         </div>
       </div>
       <div class="anim4">
@@ -483,6 +489,67 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
   </div>
 </section>
 
+<!-- ===== CIRCUITO REAL ===== -->
+<section class="slide" aria-label="Circuito real">
+  <div class="bg bg-demo"></div>
+  <div class="sec-num" aria-hidden="true">CIR</div>
+  <div class="content">
+    <div class="sec-head">
+      <span class="eyebrow cyan anim">Circuito real</span>
+      <h2 class="anim">Da bateria ao alto-falante, <span class="blue">por inteiro</span></h2>
+      <p class="lead anim2">Cada bloco foi dimensionado e documentado &mdash; alimenta&ccedil;&atilde;o protegida,
+      n&iacute;veis l&oacute;gicos corretos e drivers calculados. Nada de "liga e torce".</p>
+    </div>
+    <h3 class="anim3" style="font-size:.82em;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Cadeia de alimenta&ccedil;&atilde;o</h3>
+    <div class="anim3" style="display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-bottom:24px">
+      <div class="card" style="flex:1;min-width:120px;text-align:center;padding:14px 10px"><div style="font-weight:800;color:#fff">18650</div><div class="muted" style="font-size:.74em">3,0&ndash;4,2 V</div></div>
+      <span style="align-self:center;color:var(--ink-3);font-size:1.2em" aria-hidden="true">&rarr;</span>
+      <div class="card" style="flex:1;min-width:120px;text-align:center;padding:14px 10px"><div style="font-weight:800;color:#fff">TP4056</div><div class="muted" style="font-size:.74em">carga + DW01A</div></div>
+      <span style="align-self:center;color:var(--ink-3);font-size:1.2em" aria-hidden="true">&rarr;</span>
+      <div class="card" style="flex:1;min-width:120px;text-align:center;padding:14px 10px"><div style="font-weight:800;color:#fff">Chave</div><div class="muted" style="font-size:.74em">liga / desliga</div></div>
+      <span style="align-self:center;color:var(--ink-3);font-size:1.2em" aria-hidden="true">&rarr;</span>
+      <div class="card" style="flex:1;min-width:120px;text-align:center;padding:14px 10px;border-color:rgba(96,165,250,.35)"><div style="font-weight:800;color:var(--primary-light)">Boost MT3608</div><div class="muted" style="font-size:.74em">5,0 V est&aacute;veis</div></div>
+      <span style="align-self:center;color:var(--ink-3);font-size:1.2em" aria-hidden="true">&rarr;</span>
+      <div class="card" style="flex:1;min-width:120px;text-align:center;padding:14px 10px;border-color:rgba(52,211,153,.35)"><div style="font-weight:800;color:var(--success-light)">Rail 5 V</div><div class="muted" style="font-size:.74em">Uno &middot; LCD &middot; DFPlayer</div></div>
+    </div>
+    <div class="grid g2 anim4">
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(244,114,182,.16)" aria-hidden="true">&#128243;</span><div><strong>Driver da vibra&ccedil;&atilde;o</strong><span>2N2222 saturado com <b style="color:#fff">1k</b> na base (I<sub>b</sub>&nbsp;&asymp;&nbsp;4,3&nbsp;mA &rarr; &beta; for&ccedil;ado &asymp;&nbsp;19 para 80&nbsp;mA) e <b style="color:#fff">1N4148</b> antiparalelo como flyback.</span></div></div>
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(96,165,250,.16)" aria-hidden="true">&#128267;</span><div><strong>Monitor de bateria</strong><span>Divisor <b style="color:#fff">100k/33k</b> + 100&nbsp;nF lido contra a refer&ecirc;ncia interna de <b style="color:#fff">1,1&nbsp;V</b> (absoluta). ADC ~969&nbsp;=&nbsp;100%, ~692&nbsp;=&nbsp;0%. Dreno de apenas ~32&nbsp;&micro;A.</span></div></div>
+    </div>
+    <div class="tools anim4">
+      <a class="tool" href="case_3d/visualizar_circuito_3d.html" target="_blank" rel="noopener" style="--tc:#67e8f9"><span class="t-ico" aria-hidden="true">&#128268;</span>Ver circuito em 3D</a>
+      <a class="tool" href="manual_montagem_visual.html" target="_blank" rel="noopener" style="--tc:#f59e0b"><span class="t-ico" aria-hidden="true">&#128295;</span>Esquem&aacute;tico no manual</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ENGENHARIA v2 → v3 ===== -->
+<section class="slide" aria-label="Engenharia v2 para v3">
+  <div class="bg bg-pain"></div>
+  <div class="sec-num" aria-hidden="true">v3</div>
+  <div class="content">
+    <div class="sec-head">
+      <span class="eyebrow amber anim">De prot&oacute;tipo a produto</span>
+      <h2 class="anim">5 bugs reais que viraram <span class="accent">engenharia</span></h2>
+      <p class="lead anim2">A v3.0 n&atilde;o nasceu pronta. Cada falha da v2.0 foi diagnosticada na bancada,
+      cruzada com o datasheet e resolvida &mdash; depura&ccedil;&atilde;o de verdade, n&atilde;o sorte.</p>
+    </div>
+    <div class="tbl-wrap anim3">
+      <table>
+        <thead><tr><th scope="col">Problema (v2.0)</th><th scope="col">Diagn&oacute;stico</th><th scope="col">Solu&ccedil;&atilde;o (v3.0)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Medidor de bateria travado</strong></td><td>A 18650 alimenta o Arduino &rarr; medir Vbat/2 contra o pr&oacute;prio VCC d&aacute; raz&atilde;o constante (leitura ratiom&eacute;trica)</td><td>Divisor 100k+33k + <strong>refer&ecirc;ncia interna 1,1&nbsp;V</strong> (absoluta). B&ocirc;nus: dreno cai de ~210&nbsp;&micro;A &rarr; ~32&nbsp;&micro;A</td></tr>
+          <tr><td><strong>DFPlayer resetava / clicava</strong></td><td>Picos de corrente (~200&nbsp;mA) no in&iacute;cio de cada faixa</td><td>Capacitor <strong>470&nbsp;&micro;F + 100&nbsp;nF</strong> no VCC do m&oacute;dulo (decoupling)</td></tr>
+          <tr><td><strong>N&iacute;vel l&oacute;gico errado no RX</strong></td><td>DFPlayer &eacute; l&oacute;gica 3,3&nbsp;V mas recebia 5&nbsp;V</td><td>Divisor <strong>1k/2k</strong> entrega 3,3&nbsp;V limpos (datasheet DFR0299)</td></tr>
+          <tr><td><strong>Frase "atropelava" palavras</strong></td><td>Delay fixo de 1,3&nbsp;s n&atilde;o casava com a dura&ccedil;&atilde;o real do MP3</td><td>Fio novo <strong>BUSY &rarr; D8</strong>: espera o fim REAL do &aacute;udio + 250&nbsp;ms</td></tr>
+          <tr><td><strong>LCD fraco / ATmega fora de spec</strong></td><td>18650 (3,0&ndash;4,2&nbsp;V) direto no 5&nbsp;V fica abaixo do m&iacute;nimo de 4,5&nbsp;V a 16&nbsp;MHz</td><td><strong>Boost MT3608</strong> ajustado para 5,0&nbsp;V est&aacute;veis</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted anim4" style="font-size:.82em;margin-top:14px">&#9889; Cada linha &eacute; leitura de datasheet + medi&ccedil;&atilde;o + itera&ccedil;&atilde;o &mdash; a hist&oacute;ria de maturidade t&eacute;cnica do projeto.</p>
+  </div>
+</section>
+
 <!-- ===== 8. DEMONSTRAÇÃO AO VIVO (SIMULADOR) ===== -->
 <section class="slide" aria-label="Demonstracao ao vivo">
   <div class="bg bg-green"></div>
@@ -502,6 +569,47 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
       <span class="eyebrow blue" style="margin:0">Voz por Text-to-Speech</span>
       <a class="tool" href="simulador.html" target="_blank" rel="noopener" style="--tc:#34d399">Abrir em tela cheia &#8599;</a>
       <a class="tool" href="wokwi_simulacao/abrir_no_wokwi.html" target="_blank" rel="noopener" style="--tc:#60a5fa">Circuito real no Wokwi &#8599;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== VALIDAÇÃO SEM HARDWARE ===== -->
+<section class="slide" aria-label="Validacao sem hardware">
+  <div class="bg bg-green"></div>
+  <div class="sec-num" aria-hidden="true">SIM</div>
+  <div class="content">
+    <div class="sec-head">
+      <span class="eyebrow green anim">Valida&ccedil;&atilde;o</span>
+      <h2 class="anim">Testado <span class="green">antes</span> de comprar qualquer pe&ccedil;a</h2>
+      <p class="lead anim2">L&oacute;gica e circuito validados em simula&ccedil;&atilde;o, experi&ecirc;ncia de uso no navegador
+      e o case conferido por geometria &mdash; reduzindo risco e custo antes do hardware existir.</p>
+    </div>
+    <div class="grid g3 anim3" style="margin-bottom:18px">
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(96,165,250,.16)" aria-hidden="true">&#9889;</span><div><strong>Wokwi</strong><span>Circuito virtual com <b style="color:#fff">18 partes e 27 conex&otilde;es</b> rodando o c&oacute;digo Arduino real.</span></div></div>
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(52,211,153,.16)" aria-hidden="true">&#127908;</span><div><strong>Simulador no navegador</strong><span>O aparelho funciona no browser com voz por <b style="color:#fff">Text-to-Speech</b>, 100% offline.</span></div></div>
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(167,139,250,.16)" aria-hidden="true">&#128208;</span><div><strong>Case por geometria</strong><span>Tabela de colis&otilde;es em OpenSCAD prova <b style="color:#fff">0 sobreposi&ccedil;&otilde;es</b> entre componentes.</span></div></div>
+    </div>
+    <div class="split" style="align-items:center">
+      <div class="anim4">
+        <h3 style="font-size:.82em;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Mapa simula&ccedil;&atilde;o &rarr; hardware real</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th scope="col">No Wokwi</th><th scope="col">No aparelho real</th></tr></thead>
+            <tbody>
+              <tr><td>Buzzer</td><td><strong>DFPlayer Mini + alto-falante</strong></td></tr>
+              <tr><td>LED</td><td><strong>Motor de vibra&ccedil;&atilde;o</strong></td></tr>
+              <tr><td>Potenci&ocirc;metro</td><td><strong>Bateria 18650 (n&iacute;vel)</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="anim4" style="display:flex;flex-direction:column;gap:10px;justify-content:center">
+        <div class="card" style="border-color:rgba(52,211,153,.3)"><p style="font-size:.9em;color:var(--ink-2);line-height:1.55"><strong style="color:var(--success-light)">Mensagem-chave:</strong> validamos toda a l&oacute;gica e o circuito <em>antes</em> de gastar um centavo em pe&ccedil;as.</p></div>
+        <div class="tools">
+          <a class="tool" href="wokwi_simulacao/abrir_no_wokwi.html" target="_blank" rel="noopener" style="--tc:#60a5fa"><span class="t-ico" aria-hidden="true">&#9889;</span>Abrir no Wokwi</a>
+          <a class="tool" href="simulador.html" target="_blank" rel="noopener" style="--tc:#34d399"><span class="t-ico" aria-hidden="true">&#127908;</span>Abrir simulador</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -530,6 +638,29 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
   </div>
 </section>
 
+<!-- ===== DESIGN PARA QUEM USA ===== -->
+<section class="slide" aria-label="Design para quem usa">
+  <div class="bg bg-features"></div>
+  <div class="sec-num" aria-hidden="true">UX</div>
+  <div class="content">
+    <div class="sec-head">
+      <span class="eyebrow purple anim">Design para quem usa</span>
+      <h2 class="anim">Cada detalhe pensado para o <span class="purple">usu&aacute;rio autista</span></h2>
+      <p class="lead anim2">O case n&atilde;o &eacute; s&oacute; uma caixa. Toda escolha &mdash; t&aacute;til, visual e sensorial &mdash;
+      parte de quem vai segurar o aparelho todos os dias.</p>
+    </div>
+    <div class="grid g3 anim3">
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(167,139,250,.16)" aria-hidden="true">&#9711;</span><div><strong>An&eacute;is t&aacute;teis em relevo</strong><span>1,2&nbsp;mm ao redor de cada bot&atilde;o guiam o dedo e reduzem toques acidentais.</span></div></div>
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(251,191,36,.16)" aria-hidden="true">&#128483;</span><div><strong>Bot&atilde;o FALAR dominante</strong><span>Central, maior e com adaptador impresso &mdash; o mais usado, f&aacute;cil de achar pelo tato.</span></div></div>
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(96,165,250,.16)" aria-hidden="true">&#128172;</span><div><strong>Pictogramas em relevo</strong><span>&#9650;&#9660; &#9664;&#9654; e bal&atilde;o de fala: leitura t&aacute;til + visual, <b style="color:#fff">sem depender de cor</b> (inclui dalt&ocirc;nicos).</span></div></div>
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(52,211,153,.16)" aria-hidden="true">&#128164;</span><div><strong>Superf&iacute;cies foscas e arredondadas</strong><span>Menos reflexo e est&iacute;mulo visual &mdash; pensado na sensibilidade sensorial autista.</span></div></div>
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(103,232,249,.16)" aria-hidden="true">&#128241;</span><div><strong>LCD inclinado a 12&deg;</strong><span>Estilo console: leg&iacute;vel sobre a mesa ou no colo, sem precisar levantar o aparelho.</span></div></div>
+      <div class="card feat"><span class="fi-ico" style="--fi-bg:rgba(244,114,182,.16)" aria-hidden="true">&#128267;</span><div><strong>Tampa de bateria no fundo</strong><span>S&iacute;mbolos +/&minus; em relevo: o cuidador troca a 18650 <b style="color:#fff">sem abrir o case</b>.</span></div></div>
+    </div>
+    <p class="muted anim4" style="font-size:.82em;margin-top:14px">Mais: paredes de 2,5&nbsp;mm com nervuras (resist&ecirc;ncia a queda), chave recuada (n&atilde;o desliga sem querer) e furos &Oslash;4 para cord&atilde;o de pesco&ccedil;o.</p>
+  </div>
+</section>
+
 <!-- ===== 9. CUSTO REAL ===== -->
 <section class="slide" aria-label="Custo real">
   <div class="bg bg-cost"></div>
@@ -546,19 +677,20 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
           <table>
             <thead><tr><th scope="col">Qtd</th><th scope="col">Componente</th><th scope="col" style="text-align:right">Total</th></tr></thead>
             <tbody>
-              <tr><td>1&times;</td><td>Arduino Uno R3</td><td style="text-align:right">R$ 35,00</td></tr>
+              <tr><td>1&times;</td><td>Arduino Uno R3</td><td style="text-align:right">R$ 32,00</td></tr>
               <tr><td>1&times;</td><td>DFPlayer Mini</td><td style="text-align:right">R$ 12,00</td></tr>
               <tr><td>1&times;</td><td>Cart&atilde;o microSD 8GB</td><td style="text-align:right">R$ 6,00</td></tr>
               <tr><td>1&times;</td><td>LCD 16x2 I2C</td><td style="text-align:right">R$ 15,00</td></tr>
               <tr><td>1&times;</td><td>Bateria 18650 2600mAh</td><td style="text-align:right">R$ 15,00</td></tr>
               <tr><td>1&times;</td><td>M&oacute;dulo TP4056</td><td style="text-align:right">R$ 7,00</td></tr>
+              <tr><td>1&times;</td><td>M&oacute;dulo Boost MT3608 (5V)</td><td style="text-align:right">R$ 5,00</td></tr>
               <tr><td>1&times;</td><td>Alto-falante 8&#8486; 2W</td><td style="text-align:right">R$ 5,00</td></tr>
               <tr><td>5&times;</td><td>Bot&atilde;o 12mm (5 cores)</td><td style="text-align:right">R$ 5,00</td></tr>
               <tr><td>1&times;</td><td>Potenci&ocirc;metro 10k</td><td style="text-align:right">R$ 3,00</td></tr>
               <tr><td>1&times;</td><td>Motor de vibra&ccedil;&atilde;o</td><td style="text-align:right">R$ 4,00</td></tr>
               <tr><td>2&times;</td><td>2N2222 + 1N4148</td><td style="text-align:right">R$ 0,80</td></tr>
               <tr><td>1&times;</td><td>Chave deslizante</td><td style="text-align:right">R$ 1,00</td></tr>
-              <tr><td>4&times;</td><td>Resistores + fios</td><td style="text-align:right">R$ 4,20</td></tr>
+              <tr><td>4&times;</td><td>Resistores + fios</td><td style="text-align:right">R$ 2,20</td></tr>
               <tr><td>1&times;</td><td>Impress&atilde;o 3D (PLA ~65g)</td><td style="text-align:right">R$ 15,00</td></tr>
               <tr class="tot"><td colspan="2">TOTAL ESTIMADO</td><td style="text-align:right">~R$ 128</td></tr>
             </tbody>
@@ -601,7 +733,7 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
   <div class="nav-grp">
     <button class="nav-btn" id="prevBtn" onclick="prev()" aria-label="Slide anterior">&#8592;</button>
     <button class="nav-btn" id="nextBtn" onclick="next()" aria-label="Pr&oacute;ximo slide">&#8594;</button>
-    <span class="nav-info" id="counter">1 / 11</span>
+    <span class="nav-info" id="counter">1 / 15</span>
   </div>
   <div class="dots" id="dots"></div>
   <span class="nav-info"><span class="kbd">&larr;</span> <span class="kbd">&rarr;</span></span>
@@ -647,6 +779,20 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
   window.next = function(){ go(cur+1); };
   window.prev = function(){ go(cur-1); };
 
+  // fullscreen toggle (shared by the button and the F key)
+  window.toggleFs = function(){
+    if(!document.fullscreenElement){
+      var el = document.documentElement;
+      (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);
+    } else if(document.exitFullscreen){
+      document.exitFullscreen();
+    }
+  };
+  var fsLabel = document.getElementById('fsLabel');
+  document.addEventListener('fullscreenchange', function(){
+    if(fsLabel) fsLabel.textContent = document.fullscreenElement ? 'Sair' : 'Tela cheia';
+  });
+
   // init aria
   slides.forEach(function(s,i){ if(i!==0) s.setAttribute('aria-hidden','true'); });
   prog.style.width = (1/total*100)+'%';
@@ -660,10 +806,7 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
     else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); prev(); }
     else if(e.key==='Home'){ e.preventDefault(); go(0); }
     else if(e.key==='End'){ e.preventDefault(); go(total-1); }
-    else if(e.key==='f'||e.key==='F'){
-      if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){})(); }
-      else if(document.exitFullscreen){ document.exitFullscreen(); }
-    }
+    else if(e.key==='f'||e.key==='F'){ e.preventDefault(); toggleFs(); }
   });
 
   // touch swipe (ignore when starting inside the 3D iframe / scrollable content handled by browser)
