@@ -432,6 +432,61 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
   </div>
 </section>
 
+<!-- ===== COMO O USUÁRIO OPERA (passo a passo) ===== -->
+<section class="slide" aria-label="Como o usuario opera">
+  <div class="bg bg-use"></div>
+  <div class="sec-num" aria-hidden="true">USO</div>
+  <div class="content">
+    <div class="sec-head">
+      <span class="eyebrow blue anim">Passo a passo</span>
+      <h2 class="anim">Como o usu&aacute;rio <span class="blue">opera</span></h2>
+      <p class="lead anim2">Do liga ao "falar" em seis passos simples &mdash; sem menus e sem leitura obrigat&oacute;ria.</p>
+    </div>
+    <div class="split" style="align-items:start">
+      <div class="anim3" style="display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;gap:13px;align-items:flex-start">
+          <span style="flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--glass-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--primary-light)">1</span>
+          <div><strong style="color:#fff">Ligar</strong><span style="display:block;color:var(--ink-2);font-size:.86em">Chave on/off &mdash; o LCD mostra "Voz Autista v3.0".</span></div>
+        </div>
+        <div style="display:flex;gap:13px;align-items:flex-start">
+          <span style="flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--glass-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--primary-light)">2</span>
+          <div><strong style="color:#fff">Escolher categoria</strong><span style="display:block;color:var(--ink-2);font-size:.86em">Bot&atilde;o <span class="red">vermelho</span> (+) ou <span class="accent">amarelo</span> (&minus;).</span></div>
+        </div>
+        <div style="display:flex;gap:13px;align-items:flex-start">
+          <span style="flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--glass-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--primary-light)">3</span>
+          <div><strong style="color:#fff">Escolher palavra</strong><span style="display:block;color:var(--ink-2);font-size:.86em">Bot&atilde;o <span class="green">verde</span> (+) ou <span class="blue">azul</span> (&minus;).</span></div>
+        </div>
+        <div style="display:flex;gap:13px;align-items:flex-start">
+          <span style="flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--glass-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--primary-light)">4</span>
+          <div><strong style="color:#fff">Falar</strong><span style="display:block;color:var(--ink-2);font-size:.86em">Press <strong style="color:#fff">curto</strong> = fala a palavra &middot; press <strong style="color:#fff">longo</strong> (0,8&nbsp;s) = adiciona &agrave; frase.</span></div>
+        </div>
+        <div style="display:flex;gap:13px;align-items:flex-start">
+          <span style="flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--glass-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--primary-light)">5</span>
+          <div><strong style="color:#fff">Frase composta</strong><span style="display:block;color:var(--ink-2);font-size:.86em"><span class="red">Vermelho</span> + <span class="accent">amarelo</span> juntos = fala a frase inteira.</span></div>
+        </div>
+        <div style="display:flex;gap:13px;align-items:flex-start">
+          <span style="flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--glass-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--primary-light)">6</span>
+          <div><strong style="color:#fff">Limpar frase</strong><span style="display:block;color:var(--ink-2);font-size:.86em"><span class="green">Verde</span> + <span class="blue">azul</span> juntos = limpa e recome&ccedil;a.</span></div>
+        </div>
+      </div>
+      <div class="anim4" style="display:flex;flex-direction:column;align-items:center;gap:14px">
+        <div class="lcd-frame" role="img" aria-label="Display LCD falando a frase composta">
+          <div class="lcd"><div>&#9834; Frase (3)...</div><div>&#9654; &Aacute;gua</div></div>
+        </div>
+        <div class="card" style="width:100%;text-align:center;border-color:rgba(52,211,153,.25)">
+          <p class="muted" style="font-size:.78em;margin-bottom:9px">A frase montada &eacute; falada em sequ&ecirc;ncia</p>
+          <div style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;align-items:center">
+            <span class="eyebrow blue" style="margin:0;padding:4px 11px">Eu quero</span><span class="muted">+</span>
+            <span class="eyebrow green" style="margin:0;padding:4px 11px">Beber</span><span class="muted">+</span>
+            <span class="eyebrow amber" style="margin:0;padding:4px 11px">&Aacute;gua</span>
+          </div>
+        </div>
+        <a class="tool" href="simulador.html" target="_blank" rel="noopener" style="--tc:#34d399"><span class="t-ico" aria-hidden="true">&#127908;</span>Experimentar no simulador &#8599;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== 7. HARDWARE & PINAGEM ===== -->
 <section class="slide" aria-label="Hardware e pinagem">
   <div class="bg bg-demo"></div>
@@ -733,7 +788,7 @@ tr.tot td{background:rgba(37,99,235,.18);font-weight:800;color:#fff;font-size:1e
   <div class="nav-grp">
     <button class="nav-btn" id="prevBtn" onclick="prev()" aria-label="Slide anterior">&#8592;</button>
     <button class="nav-btn" id="nextBtn" onclick="next()" aria-label="Pr&oacute;ximo slide">&#8594;</button>
-    <span class="nav-info" id="counter">1 / 15</span>
+    <span class="nav-info" id="counter">1 / 16</span>
   </div>
   <div class="dots" id="dots"></div>
   <span class="nav-info"><span class="kbd">&larr;</span> <span class="kbd">&rarr;</span></span>
